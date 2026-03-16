@@ -1,31 +1,49 @@
 aid: authologic
 name: Authologic
 description: >-
-  Add government-issued digital IDs, identity wallets and Bank IDs to your
-  existing KYC/AML 
+  Authologic provides identity verification solutions that allow businesses to
+  add government-issued digital IDs, identity wallets, and Bank IDs to their
+  existing KYC/AML workflows. It supports seamless integration of electronic
+  identity verification across multiple countries and identity providers.
 type: Index
-position: Consumer
-access: 3rd-Party
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
-  - API
-created: '2025-05-02'
-modified: '2025-05-02'
+  - Identity Verification
+  - KYC
+  - AML
+  - Digital Identity
 url: >-
   https://raw.githubusercontent.com/api-evangelist/authologic/refs/heads/main/apis.yml
+created: '2025-05-02'
+modified: '2026-03-16'
 specificationVersion: '0.19'
 apis:
-  - aid: authologic:authologic
-    name: Authologic
+  - aid: authologic:authologic-api
+    name: Authologic API
     description: >-
-      Add government-issued digital IDs, identity wallets and Bank IDs to your
-      existing KYC/AML 
+      The Authologic API enables businesses to integrate government-issued
+      digital IDs, identity wallets, and Bank IDs into KYC/AML verification
+      workflows.
     humanURL: https://authologic.com/
+    baseURL: https://api.authologic.com
     tags:
-      - API
+      - Identity Verification
+      - KYC
+      - AML
     properties:
       - type: Documentation
-        url: https://authologic.com/
+        url: https://docs.authologic.com/
+      - type: Getting Started
+        url: https://docs.authologic.com/
+common:
+  - type: Website
+    url: https://authologic.com/
+  - type: Documentation
+    url: https://docs.authologic.com/
+  - type: Blog
+    url: https://authologic.com/blog/
+  - type: Sign Up
+    url: https://authologic.com/
 maintainers:
   - FN: Kin Lane
-    email: info@apievangelist.com
+    email: kin@apievangelist.com

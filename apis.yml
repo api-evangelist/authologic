@@ -8,10 +8,10 @@ description: >-
 type: Index
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
-  - Identity Verification
-  - KYC
   - AML
   - Digital Identity
+  - Identity Verification
+  - KYC
 url: >-
   https://raw.githubusercontent.com/api-evangelist/authologic/refs/heads/main/apis.yml
 created: '2025-05-02'
@@ -27,9 +27,9 @@ apis:
     humanURL: https://authologic.com/
     baseURL: https://api.authologic.com
     tags:
+      - AML
       - Identity Verification
       - KYC
-      - AML
     properties:
       - type: Documentation
         url: https://docs.authologic.com/

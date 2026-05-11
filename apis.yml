@@ -127,6 +127,28 @@ common:
     description: Complete KYC solution for banks, fintechs, and payment providers with AML screening and document verification.
   - name: Digital Identity Verification
     description: Aggregate multiple ID verification methods via single API for flexible identity assurance across user populations.
+- type: Integrations
+  url: https://authologic.com/integrations
+integrations:
+  - name: Available in Croatia
+  - name: Available in Czechia
+  - name: Available in Netherlands
+  - name: Available in Poland
+  - name: Available in Denmark
+  - name: Available in Norway
+  - name: Available in Sweden
+  - name: Available in United Kingdom
+  - name: Available in Germany
+  - name: Available in Portugal
+  - name: Available in Spain
+  - name: Available in Ukraine
+  - name: Available in Finland
+  - name: Available in Belgium
+  - name: Available in Latvia
+  - name: Available in Lithuania
+  - name: Available in Estonia
+  - name: Available in Italy
+  - name: Available in United Arab Emirates
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

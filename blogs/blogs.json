@@ -2,13 +2,13 @@
   "repo": "authologic",
   "feeds": [
     {
-      "source": "https://authologic.com/blog/",
-      "feed_url": "",
+      "source": "https://developer.authologic.com/docs/developer-documentation/integration-overview",
+      "feed_url": "https://developer.authologic.com/docs/developer-documentation/integration-overview",
       "title": "",
       "saved": 0,
-      "error": "no_feed"
+      "method": "none"
     }
   ],
-  "fetched": "2026-05-17T20:48:52Z",
+  "fetched": "2026-06-01T23:35:02Z",
   "post_count": 0
 }

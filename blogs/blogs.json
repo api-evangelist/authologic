@@ -3,19 +3,12 @@
   "feeds": [
     {
       "source": "https://authologic.com/blog/",
-      "feed_url": "https://authologic.com/blog/",
-      "title": "",
+      "feed_url": "",
       "saved": 0,
-      "method": "none"
-    },
-    {
-      "source": "https://developer.authologic.com/docs/developer-documentation/integration-overview",
-      "feed_url": "https://developer.authologic.com/docs/developer-documentation/integration-overview",
-      "title": "",
-      "saved": 0,
-      "method": "none"
+      "method": "agent-scrape"
     }
   ],
-  "post_count": 1,
-  "fetched": "2026-06-14T20:42:17Z"
+  "post_count": 3,
+  "fetched": "2026-06-27T12:26:19Z",
+  "agent_pulled": "2026-06-27"
 }

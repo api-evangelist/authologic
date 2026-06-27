@@ -87,7 +87,7 @@ common:
     url: https://developer.authologic.com/docs/developer-documentation/integration-overview
   - type: Blog
     url: https://authologic.com/blog/
-  - type: SignUp
+  - type: Signup
     url: https://authologic.com/
   - type: PrivacyPolicy
     url: https://authologic.com/privacy-policy/

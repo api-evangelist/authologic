@@ -75,6 +75,8 @@ apis:
     - type: Documentation
       url: https://developer.authologic.com/docs/developer-documentation/product-enquiry-api-integration
 common:
+  - type: DomainSecurity
+    url: security/authologic-domain-security.yml
   - type: LinkedIn
     url: https://www.linkedin.com/company/authologic
   - type: Website

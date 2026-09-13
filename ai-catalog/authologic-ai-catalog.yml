@@ -39,6 +39,7 @@ conformance:
     informational:
     - '[Authologic API] Media type ''application/openapi+json'' is a valid application extension media
       type. ARD permits extension types without core registration.'
+  did_web: null
 catalog:
   host_display_name: Authologic
   host_identifier: developer.authologic.com

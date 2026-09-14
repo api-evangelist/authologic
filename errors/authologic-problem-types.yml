@@ -1,0 +1,101 @@
+generated: '2026-09-14'
+method: derived
+source: openapi/authologic-customer-api-openapi.yml (4xx/5xx responses across all 14 operations),
+  enriched from https://developer.authologic.com/docs/technical/implementation
+specification: API Commons Error Catalog
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+format: proprietary
+rfc9457: false
+description: >-
+  HTTP-level error catalog for the Authologic Customer API, derived from the declared 4xx/5xx responses
+  of every operation. Authologic does not use RFC 9457 problem+json; errors are returned as
+  application/vnd.authologic.v1.1+json with a {status, message, violations[]} envelope.
+envelope:
+  content_type: application/vnd.authologic.v1.1+json
+  schema: ApiError (with BadRequestApiError, MethodArgumentNotValidError, MethodArgumentTypeMismatchError,
+    ConstraintViolationError, CustomValidationApiError, OperationNotSupportedApiFieldError,
+    MissingHeaderApiError and HeadlessPageArgError as 400 variants in a oneOf)
+  fields:
+    - name: status
+      type: string
+      description: Upper-snake error class, e.g. BAD_REQUEST, FORBIDDEN.
+    - name: message
+      type: string
+      description: Human-readable explanation.
+    - name: violations
+      type: array
+      description: Per-field validation violations; empty array when not a validation failure.
+  example:
+    status: FORBIDDEN
+    message: Permission denied.
+    violations: []
+problem_types:
+  - status: 400
+    title: Bad Request
+    operations: 12
+    schema: 'oneOf: BadRequestApiError | MethodArgumentNotValidError | MethodArgumentTypeMismatchError |
+      ConstraintViolationError | CustomValidationApiError | OperationNotSupportedApiFieldError |
+      MissingHeaderApiError'
+    remediation: >-
+      Read violations[] — each entry names the offending field and the constraint. Distinct subtypes
+      separate schema validation, argument type mismatch, bean-validation constraints, custom product
+      rules, unsupported field/operation combinations and missing required headers.
+  - status: 402
+    title: Exhaustion of the plan or limitations related to non-payment
+    operations: 14
+    schema: none declared
+    remediation: >-
+      The account's plan quota is exhausted or the account is restricted for non-payment. Not a
+      per-request throttle — resolve commercially in OmniPanel or with Authologic. This is the API's only
+      published quota-exhaustion signal; there is no 429 and no RateLimit header.
+  - status: 403
+    title: Forbidden / Permission denied
+    operations: 14
+    schema: ApiError
+    remediation: >-
+      Credentials authenticated but are not entitled to this conversation, product or environment. Check
+      that the API key belongs to the same environment as the conversation. Note that the production
+      host api.authologic.com additionally IP-allowlists callers and answers unlisted sources with an
+      nginx 403 HTML page rather than this JSON envelope.
+  - status: 404
+    title: Not found
+    operations: 13
+    schema: ApiError
+    variants:
+      - Conversation not found
+      - Conversation or AML subscription not found
+    remediation: >-
+      The conversationId does not exist in this environment. A frequent cause is using the callback's
+      top-level `id` (the callback identifier) instead of payload.conversation.id (the conversation
+      identifier).
+  - status: 409
+    title: Conflict
+    operations: 1
+    operation_ids:
+      - deleteConversation
+    schema: ApiError
+    remediation: >-
+      The deletion order conflicts with the conversation's current state — e.g. requesting DELETE_DATA on
+      a conversation that has not finished. Check status via getConversation first.
+  - status: 410
+    title: Conversation is unavailable
+    operations: 10
+    schema: ApiError
+    remediation: >-
+      The conversation's data is gone — expired under the account's retention policy, or deleted with
+      deleteConversation mode=DELETE_DATA. This is terminal; the data cannot be recovered.
+  - status: 500
+    title: Server side error
+    operations: 14
+    schema: none declared
+    remediation: Retry with exponential backoff. No Retry-After header is returned.
+notes:
+  - >-
+    HTTP status is only half the error surface. A 200 response can still carry a failed verification:
+    result.<product>.status FAILED with result.<product>.errors[] listing the reason codes. Those are
+    catalogued separately in errors/authologic-error-codes.yml.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

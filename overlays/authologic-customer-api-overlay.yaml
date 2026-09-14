@@ -1,0 +1,173 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Authologic Customer API
+  version: 1.0.0
+extends: openapi/authologic-customer-api-openapi.yml
+x-provenance:
+  generated: '2026-09-14'
+  method: generated
+  source: >-
+    Derived from the verbatim spec at https://developer.authologic.com/openapi.json plus the published
+    documentation at developer.authologic.com. Every value below is traceable to a provider-published
+    statement; nothing is invented. The original spec is never mutated.
+  maintainers:
+    - FN: Kin Lane
+      email: kin@apievangelist.com
+actions:
+  - target: $.info
+    description: >-
+      Record the production host and the licence/terms surface the spec omits. servers[] names only the
+      sandbox, so a reader of the spec alone cannot find the production API.
+    update:
+      x-production-host: https://api.authologic.com
+      x-production-access: >-
+        IP-allowlisted. Unlisted callers receive HTTP 403 with an nginx "IP not allowed" page. The
+        production address is issued to the customer at go-live.
+      x-go-live: https://developer.authologic.com/docs/integration/going-live
+      x-terms-of-service: https://authologic.com/terms-of-use/
+      x-privacy-policy: https://authologic.com/privacy-policy/
+      x-documentation: https://developer.authologic.com/docs/integration/overview
+      x-llms-txt: https://developer.authologic.com/llms.txt
+  - target: $.info
+    description: >-
+      Surface the media-type versioning contract. It is documented in prose but invisible in the spec,
+      and a client that omits the header is not sending a versioned request.
+    update:
+      x-versioning:
+        scheme: media-type
+        media_type: application/vnd.authologic.v1.1+json
+        headers: [Content-Type, Accept]
+        policy: https://developer.authologic.com/docs/technical/implementation
+        breaking_change_signal: a new media-type version number
+        additive_changes_without_bump: true
+  - target: $.info
+    description: >-
+      Record the asynchronous result channel. The spec declares no webhooks block, so the callback —
+      which is how results are actually delivered — is entirely absent from the machine-readable contract.
+    update:
+      x-callbacks:
+        declaration: callbackUrl on POST /api/conversations
+        transport: HTTPS POST
+        events:
+          - CONVERSATION/FINISHED
+          - CONVERSATION/EXPIRED
+          - SUBSCRIPTION/NEW_DATA
+        signature:
+          headers: [X-Signature, X-Signature-Timestamp]
+          algorithm: HMAC-SHA-256 over "<timestamp>:<raw body>"
+          replay_window_minutes: 5
+        retries: at least 20 attempts, final no sooner than 4 days
+        success_statuses: [200, 201, 202, 204]
+        docs: https://developer.authologic.com/docs/integration/callbacks
+        artifact: asyncapi/authologic-callbacks-webhooks.yml
+  - target: $.info
+    description: Record the agent-relevant runtime semantics measured for this contract.
+    update:
+      x-agent-notes:
+        idempotency: none
+        idempotency_note: >-
+          No Idempotency-Key and no client request key. A retried POST /api/conversations creates a
+          second billable conversation.
+        rate_limit_headers: none
+        quota_exhaustion_status: 402
+        error_format: proprietary {status, message, violations[]}; not RFC 9457
+        deprecation_headers: none
+        artifact: conventions/authologic-conventions.yml
+  - target: $.servers
+    description: >-
+      Annotate the single declared server as the test environment, so a tool that defaults to servers[0]
+      does not silently transact against the sandbox believing it is production.
+    update:
+      - url: https://sandbox.authologic.com
+        description: >-
+          Testing environment. This is the ONLY server the published spec declares; production is
+          https://api.authologic.com and is IP-allowlisted.
+        x-environment: sandbox
+  - target: $.paths['/api/conversations'].post
+    description: >-
+      Flag the one billable, non-idempotent, user-facing write in the API and point at the reversal path.
+    update:
+      x-agentic-access:
+        action_class: create
+        consequence: billable
+        idempotent: false
+        reversal_operation: deleteConversation
+        reversal_modes: [EXPIRE, DELETE_DATA]
+        reversal_window: not stated by the provider
+        escalation: >-
+          Creating a conversation causes a real person to be asked to verify their identity. Confirm with
+          a human before calling on behalf of an agent.
+  - target: $.paths['/api/conversations/{conversationId}'].delete
+    description: Mark the destructive branch of the delete operation.
+    update:
+      x-agentic-access:
+        action_class: delete
+        consequence: destructive
+        note: >-
+          mode=EXPIRE ends an unfinished conversation and is recoverable only in the sense that a new
+          conversation can be started. mode=DELETE_DATA permanently removes collected data and may
+          suppress pending callbacks. Subsequent reads return 410.
+  - target: $.paths['/api/conversations/{conversationId}/identity/metadata/media/{id}'].get
+    description: Flag the personal-data egress point.
+    update:
+      x-agentic-access:
+        action_class: read
+        consequence: sensitive
+        data_classes: [biometric, identity-document imagery]
+        note: >-
+          Returns identity-document scans and facial imagery of a natural person. Handle under GDPR; do
+          not pass into a model context or log.
+  - target: $.paths['/api/conversations/{conversationId}/headless/{next}'].post
+    description: Record the required header and the personal-data payload.
+    update:
+      x-agentic-access:
+        action_class: update
+        consequence: sensitive
+        required_headers: [X-User-IP]
+        note: Advances a server-held step machine with end-user personal data. No undo.
+  - target: $.paths['/api/conversations/{conversationId}/bankTransactions'].get
+    description: Record the pagination convention, which is otherwise only discoverable per parameter.
+    update:
+      x-pagination:
+        style: page-number
+        params: [page, pageSize]
+  - target: $.paths['/api/conversations/{conversationId}/aml/{list}'].get
+    description: Record the pagination convention on the other paginated read.
+    update:
+      x-pagination:
+        style: page-number
+        params: [page, pageSize]
+  - target: $.components.schemas.ApiError
+    description: >-
+      Point at the full error catalogs. The contract declares statuses but no remediation, and the
+      product-level failure reasons are not in the contract at all.
+    update:
+      x-error-catalog: errors/authologic-problem-types.yml
+      x-product-error-codes: errors/authologic-error-codes.yml
+      x-note: >-
+        HTTP status is only half the error surface. A 200 can carry result.<product>.status FAILED with
+        result.<product>.errors[] naming a verification failure reason.
+  - target: $.components.schemas.ConversationInfo
+    description: Record the conversation state machine, documented in prose but not enumerated in the spec.
+    update:
+      x-lifecycle:
+        states: [CREATED, IN_PROGRESS, FINISHED, CANCELED, EXPIRED]
+        terminal: [FINISHED, CANCELED, EXPIRED]
+        note: >-
+          status FINISHED means the process ended, NOT that it succeeded. Success is carried by
+          result.<product>.status.
+        retention: >-
+          Per-customer retention policy, not published. Once data is gone, reads return 410.
+        docs: https://developer.authologic.com/docs/technical/conversation-statuses
+  - target: $.components.securitySchemes.oauth2
+    description: Point at the RFC 8414 metadata document, which carries far more than the spec declares.
+    update:
+      x-authorization-server-metadata: https://sandbox.authologic.com/.well-known/oauth-authorization-server
+      x-supported-beyond-spec:
+        - authorization_code, refresh_token, device_code and token-exchange grants
+        - PKCE S256
+        - mTLS client authentication with certificate-bound access tokens (RFC 8705)
+        - DPoP (RFC 9449)
+      x-scopes: >-
+        The clientCredentials flow declares an EMPTY scopes object and no scope taxonomy is published
+        anywhere. Authorization is account- and environment-scoped, not scope-scoped.

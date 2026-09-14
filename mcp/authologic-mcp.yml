@@ -1,0 +1,140 @@
+generated: '2026-09-14'
+method: derived
+source: openapi/authologic-customer-api-openapi.yml (candidate tool list); live probes of
+  sandbox.authologic.com/mcp, /sse and id.authologic.com/mcp found no server
+specification: API Commons MCP
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+status: candidate
+description: >-
+  Authologic publishes no MCP server. This is a DERIVED candidate tool list computed from the 14
+  operations of the published Authologic Customer API (OpenAPI 3.1.0, API version 1.1) — what an MCP
+  server over this API would expose if Authologic or a third party built one. Nothing here is served by
+  Authologic today.
+deployment:
+  mode: none
+  auth: unknown
+  verified: derived
+  note: >-
+    No hosted endpoint and no stdio package. sandbox.authologic.com/mcp and /sse return HTTP 405 from
+    the application's generic error page (the host answers, the route does not exist);
+    id.authologic.com/mcp returns the SPA shell. No @authologic MCP package exists on npm and the
+    GitHub org github.com/authologic has zero public repositories. The llms.txt at
+    developer.authologic.com lists no tool surface.
+probes:
+  - url: https://sandbox.authologic.com/mcp
+    status: 405
+    note: Generic application error page, not an MCP transport.
+  - url: https://sandbox.authologic.com/sse
+    status: 405
+  - url: https://id.authologic.com/mcp
+    status: 200
+    note: SPA HTML shell — a false positive, not a server.
+  - url: https://registry.npmjs.org/-/v1/search?text=authologic
+    status: 200
+    note: Returns only the three @authologic WebSDK packages; no MCP package.
+candidate_tools:
+  - name: create_conversation
+    rest: createConversation
+    method: POST
+    path: /api/conversations
+    description: >-
+      Start a new verification conversation, declaring which products (identity, AML, bank transactions,
+      data verification, enquiry, affordability) and which user fields are required. Returns the
+      conversation id and the URL the end user is redirected to.
+    consequence: write
+    note: Billable and user-facing — creates a verification a person is then asked to complete.
+  - name: get_conversation
+    rest: getConversation
+    method: GET
+    path: /api/conversations/{conversationId}
+    description: Retrieve current status and verification results for a conversation.
+    consequence: read
+  - name: delete_conversation
+    rest: deleteConversation
+    method: DELETE
+    path: /api/conversations/{conversationId}
+    description: >-
+      Expire an in-flight conversation (mode=EXPIRE, default) or delete the collected data of a finished
+      one (mode=DELETE_DATA).
+    consequence: destructive
+    note: DELETE_DATA is irreversible and suppresses pending callbacks.
+  - name: get_conversation_metadata
+    rest: getMetadata
+    method: GET
+    path: /api/conversations/{conversationId}/identity/metadata
+    description: Retrieve metadata collected during the identification process.
+    consequence: read
+  - name: get_conversation_media
+    rest: getMedia
+    method: GET
+    path: /api/conversations/{conversationId}/identity/metadata/media/{id}
+    description: Download a media file (document scan, selfie) collected during identification.
+    consequence: read
+    note: Returns personal data — biometric and identity-document imagery.
+  - name: get_aml_list_hits
+    rest: getAMLList
+    method: GET
+    path: /api/conversations/{conversationId}/aml/{list}
+    description: Retrieve paginated AML list hits (sanctions, PEP, adverse media) for a conversation.
+    consequence: read
+  - name: cancel_aml_subscription
+    rest: cancelAMLSubscription
+    method: DELETE
+    path: /api/subscriptions/{conversationId}/aml
+    description: Cancel the ongoing AML monitoring subscription attached to a conversation.
+    consequence: write
+  - name: get_bank_transactions
+    rest: getBankTransactions
+    method: GET
+    path: /api/conversations/{conversationId}/bankTransactions
+    description: Retrieve paginated bank transactions collected for a conversation.
+    consequence: read
+  - name: get_bank_transaction_stats
+    rest: getBankTransactionsStats
+    method: GET
+    path: /api/conversations/{conversationId}/bankTransactions/stats
+    description: Retrieve aggregate statistics over the collected bank transactions for a date range.
+    consequence: read
+  - name: get_bank_accounts
+    rest: getBankTransactionsAccounts
+    method: GET
+    path: /api/conversations/{conversationId}/bankTransactions/accounts
+    description: Retrieve the bank accounts associated with a conversation.
+    consequence: read
+  - name: get_database_verification
+    rest: getDbV
+    method: GET
+    path: /api/conversations/{conversationId}/databaseVerification/info
+    description: Retrieve database-verification product results for a conversation.
+    consequence: read
+  - name: get_affordability
+    rest: getAffordability
+    method: GET
+    path: /api/conversations/{conversationId}/affordability/info
+    description: Retrieve affordability / source-of-funds assessment results for a conversation.
+    consequence: read
+  - name: get_headless_current_step
+    rest: currentStep
+    method: GET
+    path: /api/conversations/{conversationId}/headless
+    description: >-
+      Enterprise headless integration — obtain the information needed to render the current verification
+      step in the integrator's own UI.
+    consequence: read
+  - name: submit_headless_step
+    rest: nextStep
+    method: POST
+    path: /api/conversations/{conversationId}/headless/{next}
+    description: >-
+      Enterprise headless integration — submit data collected from the user and advance the verification
+      to the next step.
+    consequence: write
+    note: Carries end-user personal data; requires the X-User-IP header.
+coverage:
+  rest_operations: 14
+  candidate_tools: 14
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

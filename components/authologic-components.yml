@@ -1,0 +1,100 @@
+generated: '2026-09-14'
+method: searched
+source: https://developer.authologic.com/docs/websdk/overview,
+  https://developer.authologic.com/docs/websdk/js, /react, /vuejs, /angular,
+  https://developer.authologic.com/docs/additional/custom-layout,
+  https://developer.authologic.com/docs/integration/custom-integration-support
+specification: API Commons Components
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+description: >-
+  Authologic's client-side surface. The default integration is a hosted redirect flow — the API returns a
+  URL and the end user is sent to Authologic's own page — with two alternatives layered on top: an
+  embeddable WebSDK widget that keeps the user on the integrator's site, and a fully headless mode where
+  the integrator builds the UI and drives the step machine through the API.
+families:
+  - name: WebSDK
+    kind: embedded widget
+    description: >-
+      Mounts the Authologic verification experience inside a host page instead of redirecting away.
+      Initialised with a widgetId bound to the embedding site, plus the conversationId returned by
+      createConversation and the target environment.
+    docs: https://developer.authologic.com/docs/websdk/overview
+    parameters:
+      required:
+        - name: widgetId
+          description: >-
+            SDK key tied to the page the widget is installed on. Issued during onboarding after the
+            integrator supplies the site address. `development_only` is the published sandbox placeholder.
+        - name: conversationId
+          description: Identifier returned by POST /api/conversations.
+      other:
+        - name: environment
+          description: Which Authologic environment to talk to, e.g. sandbox.
+    bindings:
+      - framework: Vanilla JavaScript
+        package: '@authologic/websdk'
+        loader: 'https://id.authologic.com/js/sdk.umd.cjs (script tag, global AuthologicSDK)'
+        mount: 'AuthologicSDK.init({ widgetId, conversationId, environment })'
+        container: 'a host element, e.g. <div id="authologic"></div>'
+        docs: https://developer.authologic.com/docs/websdk/js
+      - framework: React
+        package: '@authologic/websdk-react'
+        exports:
+          - AuthologicWidget
+          - Theme
+        docs: https://developer.authologic.com/docs/websdk/react
+      - framework: Vue 3
+        package: '@authologic/websdk-vue'
+        exports:
+          - AuthologicWidget
+        docs: https://developer.authologic.com/docs/websdk/vuejs
+      - framework: Angular
+        package: '@authologic/websdk'
+        note: >-
+          The Angular guide installs the vanilla package — there is no Angular-specific npm package.
+        docs: https://developer.authologic.com/docs/websdk/angular
+  - name: Hosted verification page
+    kind: hosted redirect flow
+    description: >-
+      The default integration. createConversation returns a `url` on Authologic's hosted host; the
+      integrator redirects the browser there and Authologic returns the user to the integrator's
+      `returnUrl` when the flow ends.
+    host_sandbox: https://id.sandbox.authologic.com/c/{conversationId}
+    docs: https://developer.authologic.com/docs/integration/overview
+    customisation:
+      docs: https://developer.authologic.com/docs/additional/custom-layout
+      description: Logo and colour customisation of the verification page.
+  - name: Headless / custom integration
+    kind: API-driven UI
+    description: >-
+      Enterprise mode where the integrator renders every step themselves. currentStep returns what to
+      show the user; nextStep submits what the user supplied and advances the machine. Async provider
+      flows (MobileID, SmartID, mObywatel, SPID) are documented individually.
+    operations:
+      - currentStep
+      - nextStep
+    required_header: X-User-IP
+    docs: https://developer.authologic.com/docs/integration/custom-integration-support
+  - name: WebView (mobile apps)
+    kind: mobile embedding guidance
+    description: >-
+      Requirements for running the verification flow inside a mobile WebView — camera, storage and
+      permission handling.
+    docs: https://developer.authologic.com/docs/technical/webview
+  - name: OmniLink
+    kind: no-integration hosted link
+    description: >-
+      A shareable hosted verification link for teams that do not integrate at all. Described on the
+      Authologic product site rather than in the developer documentation.
+    docs: https://authologic.com/
+  - name: OmniPanel
+    kind: customer console
+    url: https://omnipanel.authologic.com
+    description: >-
+      The customer portal where API keys are generated, environments are managed and verification results
+      are reviewed. Signup at https://omnipanel.authologic.com/signup.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

@@ -1,0 +1,696 @@
+generated: '2026-09-14'
+method: derived
+source: openapi/authologic-customer-api-openapi.yml (verbatim example/examples values carried by the provider's
+  own spec)
+specification: API Commons Examples
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+description: Request and response examples extracted verbatim from the operations of the published Authologic Customer
+  API. Nothing was authored here; every value is the provider's own.
+examples:
+- operationId: createConversation
+  path: /api/conversations
+  method: POST
+  kind: request
+  content_type: application/vnd.authologic.v1.1+json
+  name: Simple verification process example
+  summary: The simplest verification process
+  description: This example shows the main scenario of verification.
+  value:
+    userKey: 7dfb9ded-c38f-49ae-95e2-307283a0b1f6
+    returnUrl: https://authologic.com/tests/return/?conversation={conversationId}
+    strategy: public:default
+    query:
+      identity:
+        requireOneOf:
+        - - PERSON_NAME_FIRSTNAME
+          - PERSON_NAME_LASTNAME
+        optional:
+        - list:
+          - PERSON_CONTACT_EMAIL_OTP
+- operationId: createConversation
+  path: /api/conversations
+  method: POST
+  kind: request
+  content_type: application/vnd.authologic.v1.1+json
+  name: Multiple success options example
+  summary: The process with multiple success options
+  description: This example shows how to use multiple field sets to describe alternative success options.
+  value:
+    userKey: 7dfb9ded-c38f-49ae-95e2-307283a0b1f6
+    returnUrl: https://authologic.com/tests/return/?conversation={conversationId}
+    strategy: public:default
+    query:
+      identity:
+        requireOneOf:
+        - - PERSON_NAME_FIRSTNAME
+          - PERSON_NAME_LASTNAME
+          - PERSON_IDS_NATIONAL_ID
+        - - PERSON_NAME_FIRSTNAME
+          - PERSON_NAME_LASTNAME
+          - PERSON_IDS_PASSPORT_ID
+        optional:
+        - list:
+          - PERSON_CONTACT_EMAIL_OTP
+- operationId: createConversation
+  path: /api/conversations
+  method: POST
+  kind: request
+  content_type: application/vnd.authologic.v1.1+json
+  name: AML verification process example
+  summary: Verification process with AML continuous monitoring
+  description: This example shows how to perform verification and set up the AML monitoring.
+  value:
+    userKey: 7dfb9ded-c38f-49ae-95e2-307283a0b1f6
+    returnUrl: https://authologic.com/tests/return/?conversation={conversationId}
+    strategy: public:default
+    query:
+      identity:
+        requireOneOf:
+        - - PERSON_NAME_FIRSTNAME
+          - PERSON_NAME_LASTNAME
+      aml:
+        checks:
+        - PEP
+        - SANCTIONS
+        subscription: {}
+- operationId: createConversation
+  path: /api/conversations
+  method: POST
+  kind: request
+  content_type: application/vnd.authologic.v1.1+json
+  name: Example usage of the authorization product
+  summary: The user authorization product
+  description: This example shows the main scenario for user authorization.
+  value:
+    userKey: 7dfb9ded-c38f-49ae-95e2-307283a0b1f6
+    returnUrl: https://authologic.com/tests/return/?conversation={conversationId}
+    strategy: public:default
+    query:
+      auth: {}
+- operationId: createConversation
+  path: /api/conversations
+  method: POST
+  kind: request
+  content_type: application/vnd.authologic.v1.1+json
+  name: Example usage of the affordability product
+  summary: The affordability product
+  description: This example shows the main scenario of verification.
+  value:
+    userKey: 7dfb9ded-c38f-49ae-95e2-307283a0b1f6
+    returnUrl: https://authologic.com/tests/return/?conversation={conversationId}
+    strategy: public:default
+    query:
+      affordability:
+        user:
+          country: NL
+          email: test.user@email.com
+- operationId: createConversation
+  path: /api/conversations
+  method: POST
+  kind: request
+  content_type: application/vnd.authologic.v1.1+json
+  name: Example usage of the Database verification product
+  summary: The Database verification product
+  description: This example shows the main scenario of identity and database verification.
+  value:
+    userKey: 7dfb9ded-c38f-49ae-95e2-307283a0b1f6
+    returnUrl: https://authologic.com/tests/return/?conversation={conversationId}
+    strategy: public:default
+    query:
+      identity:
+        requireOneOf:
+        - - PERSON_NAME_FIRSTNAME
+          - PERSON_NAME_LASTNAME
+      databaseVerification: {}
+- operationId: createConversation
+  path: /api/conversations
+  method: POST
+  kind: response
+  status: '200'
+  content_type: application/vnd.authologic.v1.1+json
+  name: Conversation created response example
+  summary: Conversation Created and waiting for the user
+  description: The conversation was created and now the user should be redirected to the given url.
+  value:
+    id: 022e8eaf-b06d-44b9-a68f-45eef1353dbe
+    userKey: 7dfb9ded-c38f-49ae-95e2-307283a0b1f6
+    url: https://sandbox.authologic.com/c/022e8eaf-b06d-44b9-a68f-45eef1353dbe
+    status: CREATED
+    result:
+      identity:
+        status: IN_PROGRESS
+        user: {}
+- operationId: createConversation
+  path: /api/conversations
+  method: POST
+  kind: response
+  status: '400'
+  content_type: application/vnd.authologic.v1.1+json
+  name: Bad request example
+  summary: Bad request example
+  description: Example of bad request in case validation error.
+  value:
+    status: BAD_REQUEST
+    message: Validation failed for argument example_argument
+    violations: []
+- operationId: createConversation
+  path: /api/conversations
+  method: POST
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  name: Forbidden call response example
+  summary: Forbidden example
+  description: Example of forbidden call.
+  value:
+    status: FORBIDDEN
+    message: 'Permission denied for strategy: `public:b`.'
+    violations: []
+- operationId: nextStep
+  path: /api/conversations/{conversationId}/headless/{next}
+  method: POST
+  kind: response
+  status: '400'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: BAD_REQUEST
+    message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was
+      expecting Array entries.'
+    violations: []
+- operationId: nextStep
+  path: /api/conversations/{conversationId}/headless/{next}
+  method: POST
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: FORBIDDEN
+    message: 'Permission denied for strategy: `public:global`.'
+    violations: []
+- operationId: nextStep
+  path: /api/conversations/{conversationId}/headless/{next}
+  method: POST
+  kind: response
+  status: '404'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: NOT_FOUND
+    message: Item not found
+    violations: []
+- operationId: getConversation
+  path: /api/conversations/{conversationId}
+  method: GET
+  kind: response
+  status: '400'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: BAD_REQUEST
+    message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was
+      expecting Array entries.'
+    violations: []
+- operationId: getConversation
+  path: /api/conversations/{conversationId}
+  method: GET
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: FORBIDDEN
+    message: 'Permission denied for strategy: `public:b`.'
+    violations: []
+- operationId: getConversation
+  path: /api/conversations/{conversationId}
+  method: GET
+  kind: response
+  status: '404'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: NOT_FOUND
+    message: Item not found
+    violations: []
+- operationId: getConversation
+  path: /api/conversations/{conversationId}
+  method: GET
+  kind: response
+  status: '410'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: GONE
+    message: Conversation is unavailable due to retention policy.
+    violations: []
+- operationId: deleteConversation
+  path: /api/conversations/{conversationId}
+  method: DELETE
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: FORBIDDEN
+    message: Permission denied.
+    violations: []
+- operationId: deleteConversation
+  path: /api/conversations/{conversationId}
+  method: DELETE
+  kind: response
+  status: '404'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: NOT_FOUND
+    message: Item not found
+    violations: []
+- operationId: deleteConversation
+  path: /api/conversations/{conversationId}
+  method: DELETE
+  kind: response
+  status: '409'
+  content_type: application/vnd.authologic.v1.1+json
+  name: Conversation cannot be expired as it is already finished.
+  summary: null
+  description: Conversation cannot be expired as it is already finished.
+  value:
+    status: CONFLICT
+    message: Conversation cannot be expired as it is already finished.
+    violations: []
+    statusDetail: ConversationAlreadyFinished
+- operationId: deleteConversation
+  path: /api/conversations/{conversationId}
+  method: DELETE
+  kind: response
+  status: '409'
+  content_type: application/vnd.authologic.v1.1+json
+  name: Conversation cannot be deleted because it is not yet finished.
+  summary: null
+  description: Conversation cannot be deleted because it is not yet finished.
+  value:
+    status: CONFLICT
+    message: Conversation cannot be deleted because it is not yet finished.
+    violations: []
+    statusDetail: ConversationNotYetFinished
+- operationId: deleteConversation
+  path: /api/conversations/{conversationId}
+  method: DELETE
+  kind: response
+  status: '409'
+  content_type: application/vnd.authologic.v1.1+json
+  name: Conversation cannot be deleted because it has an active subscription.
+  summary: null
+  description: Conversation cannot be deleted because it has an active subscription.
+  value:
+    status: CONFLICT
+    message: Conversation cannot be deleted because it has an active subscription.
+    violations: []
+    statusDetail: ActiveSubscriptionExists
+- operationId: deleteConversation
+  path: /api/conversations/{conversationId}
+  method: DELETE
+  kind: response
+  status: '410'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: GONE
+    message: Conversation is unavailable due to retention policy.
+    violations: []
+- operationId: getMetadata
+  path: /api/conversations/{conversationId}/identity/metadata
+  method: GET
+  kind: response
+  status: '400'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: BAD_REQUEST
+    message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was
+      expecting Array entries.'
+    violations: []
+- operationId: getMetadata
+  path: /api/conversations/{conversationId}/identity/metadata
+  method: GET
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: FORBIDDEN
+    message: 'Permission denied for strategy: `public:b`.'
+    violations: []
+- operationId: getMetadata
+  path: /api/conversations/{conversationId}/identity/metadata
+  method: GET
+  kind: response
+  status: '404'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: NOT_FOUND
+    message: Item not found
+    violations: []
+- operationId: getMetadata
+  path: /api/conversations/{conversationId}/identity/metadata
+  method: GET
+  kind: response
+  status: '410'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: GONE
+    message: Conversation is unavailable due to retention policy.
+    violations: []
+- operationId: getMedia
+  path: /api/conversations/{conversationId}/identity/metadata/media/{id}
+  method: GET
+  kind: response
+  status: '400'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: BAD_REQUEST
+    message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was
+      expecting Array entries.'
+    violations: []
+- operationId: getMedia
+  path: /api/conversations/{conversationId}/identity/metadata/media/{id}
+  method: GET
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: FORBIDDEN
+    message: 'Permission denied for strategy: `public:b`.'
+    violations: []
+- operationId: getMedia
+  path: /api/conversations/{conversationId}/identity/metadata/media/{id}
+  method: GET
+  kind: response
+  status: '404'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: NOT_FOUND
+    message: Item not found
+    violations: []
+- operationId: getMedia
+  path: /api/conversations/{conversationId}/identity/metadata/media/{id}
+  method: GET
+  kind: response
+  status: '410'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: GONE
+    message: Conversation is unavailable due to retention policy.
+    violations: []
+- operationId: currentStep
+  path: /api/conversations/{conversationId}/headless
+  method: GET
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: FORBIDDEN
+    message: 'Permission denied for strategy: `public:global`.'
+    violations: []
+- operationId: currentStep
+  path: /api/conversations/{conversationId}/headless
+  method: GET
+  kind: response
+  status: '404'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: NOT_FOUND
+    message: Item not found
+    violations: []
+- operationId: getDbV
+  path: /api/conversations/{conversationId}/databaseVerification/info
+  method: GET
+  kind: response
+  status: '400'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: BAD_REQUEST
+    message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was
+      expecting Array entries.'
+    violations: []
+- operationId: getDbV
+  path: /api/conversations/{conversationId}/databaseVerification/info
+  method: GET
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: FORBIDDEN
+    message: 'Permission denied for strategy: `public:b`.'
+    violations: []
+- operationId: getDbV
+  path: /api/conversations/{conversationId}/databaseVerification/info
+  method: GET
+  kind: response
+  status: '404'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: NOT_FOUND
+    message: Item not found
+    violations: []
+- operationId: getDbV
+  path: /api/conversations/{conversationId}/databaseVerification/info
+  method: GET
+  kind: response
+  status: '410'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: GONE
+    message: Conversation is unavailable due to retention policy.
+    violations: []
+- operationId: getBankTransactions
+  path: /api/conversations/{conversationId}/bankTransactions
+  method: GET
+  kind: response
+  status: '400'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: BAD_REQUEST
+    message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was
+      expecting Array entries.'
+    violations: []
+- operationId: getBankTransactions
+  path: /api/conversations/{conversationId}/bankTransactions
+  method: GET
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: FORBIDDEN
+    message: 'Permission denied for strategy: `public:b`.'
+    violations: []
+- operationId: getBankTransactions
+  path: /api/conversations/{conversationId}/bankTransactions
+  method: GET
+  kind: response
+  status: '404'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: NOT_FOUND
+    message: Item not found
+    violations: []
+- operationId: getBankTransactions
+  path: /api/conversations/{conversationId}/bankTransactions
+  method: GET
+  kind: response
+  status: '410'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: GONE
+    message: Conversation is unavailable due to retention policy.
+    violations: []
+- operationId: getBankTransactionsStats
+  path: /api/conversations/{conversationId}/bankTransactions/stats
+  method: GET
+  kind: response
+  status: '400'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: BAD_REQUEST
+    message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was
+      expecting Array entries.'
+    violations: []
+- operationId: getBankTransactionsStats
+  path: /api/conversations/{conversationId}/bankTransactions/stats
+  method: GET
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: FORBIDDEN
+    message: 'Permission denied for strategy: `public:b`.'
+    violations: []
+- operationId: getBankTransactionsStats
+  path: /api/conversations/{conversationId}/bankTransactions/stats
+  method: GET
+  kind: response
+  status: '404'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: NOT_FOUND
+    message: Item not found
+    violations: []
+- operationId: getBankTransactionsStats
+  path: /api/conversations/{conversationId}/bankTransactions/stats
+  method: GET
+  kind: response
+  status: '410'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: GONE
+    message: Conversation is unavailable due to retention policy.
+    violations: []
+- operationId: getBankTransactionsAccounts
+  path: /api/conversations/{conversationId}/bankTransactions/accounts
+  method: GET
+  kind: response
+  status: '400'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: BAD_REQUEST
+    message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was
+      expecting Array entries.'
+    violations: []
+- operationId: getBankTransactionsAccounts
+  path: /api/conversations/{conversationId}/bankTransactions/accounts
+  method: GET
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: FORBIDDEN
+    message: 'Permission denied for strategy: `public:b`.'
+    violations: []
+- operationId: getBankTransactionsAccounts
+  path: /api/conversations/{conversationId}/bankTransactions/accounts
+  method: GET
+  kind: response
+  status: '404'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: NOT_FOUND
+    message: Item not found
+    violations: []
+- operationId: getBankTransactionsAccounts
+  path: /api/conversations/{conversationId}/bankTransactions/accounts
+  method: GET
+  kind: response
+  status: '410'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: GONE
+    message: Conversation is unavailable due to retention policy.
+    violations: []
+- operationId: getAMLList
+  path: /api/conversations/{conversationId}/aml/{list}
+  method: GET
+  kind: response
+  status: '400'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: BAD_REQUEST
+    message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was
+      expecting Array entries.'
+    violations: []
+- operationId: getAMLList
+  path: /api/conversations/{conversationId}/aml/{list}
+  method: GET
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: FORBIDDEN
+    message: 'Permission denied for strategy: `public:b`.'
+    violations: []
+- operationId: getAMLList
+  path: /api/conversations/{conversationId}/aml/{list}
+  method: GET
+  kind: response
+  status: '404'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: NOT_FOUND
+    message: Item not found
+    violations: []
+- operationId: getAMLList
+  path: /api/conversations/{conversationId}/aml/{list}
+  method: GET
+  kind: response
+  status: '410'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: GONE
+    message: Conversation is unavailable due to retention policy.
+    violations: []
+- operationId: getAffordability
+  path: /api/conversations/{conversationId}/affordability/info
+  method: GET
+  kind: response
+  status: '400'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: BAD_REQUEST
+    message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was
+      expecting Array entries.'
+    violations: []
+- operationId: getAffordability
+  path: /api/conversations/{conversationId}/affordability/info
+  method: GET
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: FORBIDDEN
+    message: 'Permission denied for strategy: `public:b`.'
+    violations: []
+- operationId: getAffordability
+  path: /api/conversations/{conversationId}/affordability/info
+  method: GET
+  kind: response
+  status: '404'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: NOT_FOUND
+    message: Item not found
+    violations: []
+- operationId: getAffordability
+  path: /api/conversations/{conversationId}/affordability/info
+  method: GET
+  kind: response
+  status: '410'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: GONE
+    message: Conversation is unavailable due to retention policy.
+    violations: []
+- operationId: cancelAMLSubscription
+  path: /api/subscriptions/{conversationId}/aml
+  method: DELETE
+  kind: response
+  status: '400'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: BAD_REQUEST
+    message: 'AML subscription in conversation: `example_conversation_id` already inactive.'
+    violations: []
+- operationId: cancelAMLSubscription
+  path: /api/subscriptions/{conversationId}/aml
+  method: DELETE
+  kind: response
+  status: '403'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: FORBIDDEN
+    message: Permission denied.
+    violations: []
+- operationId: cancelAMLSubscription
+  path: /api/subscriptions/{conversationId}/aml
+  method: DELETE
+  kind: response
+  status: '404'
+  content_type: application/vnd.authologic.v1.1+json
+  value:
+    status: NOT_FOUND
+    message: Item not found
+    violations: []
+example_count: 59
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

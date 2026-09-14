@@ -1,0 +1,258 @@
+generated: '2026-09-14'
+method: searched
+source: https://developer.authologic.com/docs/technical/errors
+specification: API Commons Error Catalog
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+description: >-
+  Authologic's verification failure-reason registry — the product-level error channel that rides inside
+  successful HTTP 200 responses. When result.<product>.status is FAILED, result.<product>.errors[] lists
+  one or more of these codes. This is the catalog an integrator needs to decide whether a failed
+  verification is worth retrying.
+envelope:
+  location: result.<product>.errors[]
+  sibling_status: result.<product>.status
+  example:
+    id: 2161d11b-24ff-1430-8635-e3d4dc138fff
+    status: FINISHED
+    result:
+      identity:
+        status: FAILED
+        errors:
+          - SCAN_DOCUMENT_NOT_DETECTED
+caveats:
+  - >-
+    The provider states plainly that the list is method-dependent and NOT final — new reasons are added
+    over time and a client must not assume closed-world handling.
+  - >-
+    FRAUD_SUSPICION and PROVIDER_BLACKLIST are marked by Authologic as internal-use only. They must not
+    be surfaced to end users or used in user-facing messaging; handle them inside internal systems and
+    logging only.
+groups:
+  - name: Document scan
+    prefix: SCAN_DOCUMENT_*
+    retryable_guidance: >-
+      Quality reasons (too blurry, not fully visible, low quality, not detected, side mismatch) are worth
+      a retry with a better capture. Validity reasons (expired, probably fake, not supported, data
+      inconsistency, data mismatch) are not — retrying the same document will fail again.
+  - name: Face / liveness
+    prefix: SCAN_FACE_*
+    retryable_guidance: >-
+      Capture-quality reasons (too blurry, not detected, too many people) are retryable; mismatch and
+      probably-fake are not.
+  - name: User behaviour
+    retryable_guidance: Abandonment and cancellation are retryable by re-inviting the user.
+  - name: Provider / source availability
+    prefix: PROVIDER_*, SOURCE_UNAVAILABLE
+    retryable_guidance: Transient upstream failures — retry later, or route to a fallback method.
+  - name: Eligibility / authorization
+    retryable_guidance: >-
+      Not retryable with the same user and method; these describe the end user's standing with the
+      identity provider.
+error_codes:
+  - code: SCAN_GENERIC_ERROR
+    group: Document scan
+    meaning: Other errors associated with scanning documents.
+  - code: SCAN_DOCUMENT_NOT_DETECTED
+    group: Document scan
+    meaning: Document not detected in the picture.
+    action: retry with a clearer capture
+  - code: SCAN_DOCUMENT_TYPE_MISMATCH
+    group: Document scan
+    meaning: A different type was given than the actual scanned document.
+  - code: SCAN_DOCUMENT_EXPIRED
+    group: Document scan
+    meaning: The expiration date of the document has passed.
+    action: do not retry with this document
+  - code: SCAN_DOCUMENT_SIDE_MISMATCH
+    group: Document scan
+    meaning: Document page not shown.
+    action: retry
+  - code: SCAN_DOCUMENT_NOT_SUPPORTED
+    group: Document scan
+    meaning: This document type is not supported by the vendor.
+    action: route to another method
+  - code: SCAN_DOCUMENT_TOO_BLURRY
+    group: Document scan
+    meaning: Document photo too blurry.
+    action: retry
+  - code: SCAN_DOCUMENT_COUNTRY_MISMATCH
+    group: Document scan
+    meaning: The country selected by the user does not match the document.
+  - code: SCAN_DOCUMENT_DAMAGED
+    group: Document scan
+    meaning: The document is corrupted in some way.
+  - code: SCAN_DOCUMENT_NOT_FULLY_VISIBLE
+    group: Document scan
+    meaning: Document not fully visible.
+    action: retry
+  - code: SCAN_DOCUMENT_READ_FAILED_ID
+    group: Document scan
+    meaning: Could not read document number.
+  - code: SCAN_DOCUMENT_READ_FAILED_NATIONAL_ID
+    group: Document scan
+    meaning: Failed to read user ID.
+  - code: SCAN_DOCUMENT_READ_FAILED_FIRSTNAME
+    group: Document scan
+    meaning: Failed to read name.
+  - code: SCAN_DOCUMENT_READ_FAILED_LASTNAME
+    group: Document scan
+    meaning: Could not read last name.
+  - code: SCAN_DOCUMENT_READ_FAILED_FULLNAME
+    group: Document scan
+    meaning: Could not read full name.
+  - code: SCAN_DOCUMENT_READ_FAILED_ADDRESS
+    group: Document scan
+    meaning: Could not read address.
+  - code: SCAN_DOCUMENT_READ_FAILED_ISSUE_DATE
+    group: Document scan
+    meaning: Failed to read document issue date.
+  - code: SCAN_DOCUMENT_READ_FAILED_EXPIRY_DATE
+    group: Document scan
+    meaning: Failed to read document expiration date.
+  - code: SCAN_DOCUMENT_READ_FAILED_BIRTHDATE
+    group: Document scan
+    meaning: Date of birth could not be read.
+  - code: SCAN_DOCUMENT_DATA_INCONSISTENCY
+    group: Document scan
+    meaning: The data in the document is inconsistent, e.g. dates that are not logically consistent.
+  - code: SCAN_DOCUMENT_MRZ_NOT_DETECTED
+    group: Document scan
+    meaning: The document MRZ data could not be found.
+  - code: SCAN_DOCUMENT_MRZ_READ_FAILED
+    group: Document scan
+    meaning: Could not read document MRZ data.
+  - code: SCAN_DOCUMENT_PROBABLY_FAKE
+    group: Document scan
+    meaning: The document may be fake.
+    action: do not retry
+  - code: SCAN_DOCUMENT_LOW_QUALITY
+    group: Document scan
+    meaning: The quality of the scanned document is too low.
+    action: retry
+  - code: SCAN_DOCUMENT_WRONG_ADDRESS
+    group: Document scan
+    meaning: The address does not match the one in the database.
+  - code: SCAN_DOCUMENT_UNIQUE_DOCUMENT
+    group: Document scan
+    meaning: The uniqueness of the document is not confirmed.
+  - code: SCAN_DOCUMENT_DATA_MISMATCH
+    group: Document scan
+    meaning: User data does not match the data in the documents.
+  - code: SCAN_FACE_TOO_MANY_PEOPLE
+    group: Face / liveness
+    meaning: More people have been detected in the photo.
+    action: retry
+  - code: SCAN_FACE_TOO_BLURRY
+    group: Face / liveness
+    meaning: Photo of the face is too blurry.
+    action: retry
+  - code: SCAN_FACE_NOT_DETECTED
+    group: Face / liveness
+    meaning: No face detected in the photo.
+    action: retry
+  - code: SCAN_FACE_UNCERTAIN
+    group: Face / liveness
+    meaning: The face cannot be confirmed to match the photo.
+  - code: SCAN_FACE_MISMATCH
+    group: Face / liveness
+    meaning: The face does not match the face in the photo.
+    action: do not retry
+  - code: SCAN_FACE_PROBABLY_FAKE
+    group: Face / liveness
+    meaning: The face cannot be confirmed to match the photograph.
+  - code: ABANDONED
+    group: User behaviour
+    meaning: User abandoned the verification process.
+    action: re-invite the user
+  - code: ABANDONED_AFTER_PROCESSED
+    group: User behaviour
+    meaning: User abandoned the verification process after the data was processed.
+  - code: FRAUD_SUSPICION
+    group: Eligibility / authorization
+    meaning: Suspected fraud.
+    internal_only: true
+    action: handle internally; never expose to the end user
+  - code: INSUFFICIENT_AGE
+    group: Eligibility / authorization
+    meaning: >-
+      User has insufficient age to perform the operation requested by the identity service provider.
+  - code: INSUFFICIENT_PRIVILEGES
+    group: Eligibility / authorization
+    meaning: >-
+      The user has insufficient privileges for the requested operation, e.g. an account with limited
+      access.
+  - code: ELECTRONIC_DOCUMENT_ACCESS_ERROR
+    group: Eligibility / authorization
+    meaning: Failed to read the electronic layer of the document, or a wrong PIN was provided.
+  - code: BANK_NO_ACCOUNTS_SHARED
+    group: Eligibility / authorization
+    meaning: >-
+      The user has not selected an account on the bank's side, or the accounts were not made available.
+  - code: NO_DATA_SHARED
+    group: User behaviour
+    meaning: >-
+      Authentication or authorization was not completed because of a user action — data sharing rejected
+      or the process cancelled on the identity provider's side.
+  - code: NO_IDENTITY_FOUND
+    group: Eligibility / authorization
+    meaning: >-
+      The end user has no identity matching the identity provider's assumptions, e.g. not eligible.
+  - code: NO_USER_FOUND
+    group: Eligibility / authorization
+    meaning: >-
+      The user account was not found by the identity service provider, e.g. no account for the given
+      national identification number.
+  - code: PROVIDER_SERVER_ERROR
+    group: Provider / source availability
+    meaning: The provider returned a technical error, e.g. an internal server error.
+    action: retry later or fall back
+  - code: PROVIDER_UNAVAILABLE
+    group: Provider / source availability
+    meaning: There is a problem connecting to the provider's systems.
+    action: retry later or fall back
+  - code: SOURCE_UNAVAILABLE
+    group: Provider / source availability
+    meaning: >-
+      The provider could not reach the identity source system, e.g. between the provider and the banking
+      system.
+    action: retry later or fall back
+  - code: PROVIDER_BLACKLIST
+    group: Eligibility / authorization
+    meaning: The user is blacklisted by the provider.
+    internal_only: true
+    action: handle internally; never expose to the end user
+  - code: USER_NOT_AUTHORIZED
+    group: Eligibility / authorization
+    meaning: The user could not be authorized — wrong password, PIN, code, etc.
+  - code: ENQUIRY_FORM_NOT_FILLED
+    group: User behaviour
+    meaning: The user did not fill out the requested form fully.
+  - code: E_IDENTITY_ACCESS_ERROR
+    group: Eligibility / authorization
+    meaning: The user could not be authorized due to a problem accessing the electronic ID wallet.
+  - code: TOO_MANY_ATTEMPTS
+    group: Eligibility / authorization
+    meaning: >-
+      The user attempted the process too many times and the provider rejected the verification.
+  - code: MANUAL_OPERATION_REQUIRED
+    group: Provider / source availability
+    meaning: The verification process requires manual verification.
+validation_checks:
+  note: >-
+    A parallel, non-fatal channel: result.<product>.checks[] carries additional validations with
+    name/result/details. Documented at https://developer.authologic.com/docs/technical/checks.
+  results:
+    - ACCEPTED
+    - FAILED
+    - ERROR
+  validators:
+    - name: CONSISTENCY_CHECK
+      description: Validates data returned in result.identity.user.
+      details_fields:
+        - field (e.g. PERSON_IDS_NATIONAL_ID)
+        - reason (e.g. FORMAT_ERROR)
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

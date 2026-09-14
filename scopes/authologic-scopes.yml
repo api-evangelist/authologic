@@ -1,0 +1,49 @@
+generated: '2026-09-14'
+method: searched
+source: openapi/authologic-customer-api-openapi.yml (components.securitySchemes.oauth2),
+  well-known/authologic-sandbox-oauth-authorization-server.json (RFC 8414, probed 2026-09-14),
+  https://developer.authologic.com/sitemap.xml (95 URLs, no scopes or permissions page),
+  https://developer.authologic.com/docs/technical/implementation
+docs: https://developer.authologic.com/docs/technical/implementation
+specification: API Commons OAuth Scopes
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+scope_count: 0
+description: >-
+  Authologic operates an OAuth 2.0 authorization server but publishes no scopes. This artifact records
+  that measured absence rather than omitting the file, because "OAuth exists but is unscoped" is a
+  materially different fact from "no OAuth".
+schemes:
+  - name: oauth2
+    source: openapi/authologic-customer-api-openapi.yml
+    flows:
+      - flow: clientCredentials
+        tokenUrl: https://sandbox.authologic.com/api/oauth2/token
+        scopes: {}
+scopes: []
+findings:
+  - >-
+    The clientCredentials flow in the contract declares an EMPTY scopes object. No operation carries a
+    per-operation scope requirement — security is declared once at the document level as
+    [{apiKey: []}, {oauth2: []}] and every operation inherits it with an empty scope list.
+  - >-
+    The RFC 8414 authorization server metadata at
+    https://sandbox.authologic.com/.well-known/oauth-authorization-server omits scopes_supported
+    entirely. An RFC 8414 server that supported scopes would normally advertise them there.
+  - >-
+    No scopes, permissions or roles reference page exists in the developer documentation. All 95 URLs in
+    the sitemap were checked; the implementation notes cover authentication without mentioning scopes.
+  - >-
+    Authorization is therefore account- and environment-scoped. A credential is entitled to the products
+    the account has contracted for, in the environment the key belongs to. There is no way to mint a
+    narrower token — a token that can read a conversation can also create one and delete its data.
+implication_for_agents: >-
+  Least privilege is not achievable on this API today. An agent given credentials to read verification
+  results holds the same authority as one permitted to create billable conversations and to issue
+  DELETE_DATA. The mitigation available now is operational, not contractual: separate accounts per use
+  case, and the mTLS/DPoP binding the authorization server advertises (see
+  authentication/authologic-authentication.yml) to at least bind the credential to a workload.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

@@ -1,0 +1,102 @@
+generated: '2026-09-14'
+method: searched
+source: https://authologic.com/ (Trust Service document column),
+  https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf,
+  https://authologic.com/docs/trust-service/TSP-TCs.pdf,
+  https://authologic.com/docs/trust-service/Authologic-Status-List.pdf,
+  https://authologic.com/docs/trust-service/Authologic-EAAP-Example.pdf,
+  https://authologic.com/docs/trust-service/Privacy-Policy.pdf
+specification: API Commons Trust Center
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+description: >-
+  Authologic does not run a conventional SaaS trust portal (no trust.authologic.com, no SOC 2 report
+  room, no security.txt). What it publishes instead is an eIDAS trust-service repository: the policy,
+  terms and status-list documents an EU Trust Service Provider is obliged to make public. That is a
+  stronger and more specific disclosure than most vendor trust pages, and it is where the certification
+  claims live.
+trust_center:
+  present: true
+  type: eIDAS trust service repository
+  url: https://authologic.com/
+  location: >-
+    Linked from the marketing site footer as the "Trust Service" column; documents are served from
+    https://authologic.com/docs/trust-service/. All five were fetched with HTTP 200 on 2026-09-14.
+  availability: >-
+    The Trust Service Policy commits to a public repository on the official website accessible 24/7,
+    subject to reasonable maintenance windows.
+  legal_entity: Authologic Sp. z o.o.
+  contact: contact@authologic.com
+documents:
+  - name: Trust Service Policy for the Non-Qualified Electronic Attestation of Attributes Issuance Service
+    url: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+    version: '1.0'
+    effective: '2026-07-13'
+    status: 200
+    content_type: application/pdf
+    bytes: 427849
+    note: >-
+      The governing policy document. Names the eIDAS Regulation, the 2024-2025 Commission Implementing
+      Regulations (2024/2690, 2024/2977, 2024/2979, 2024/2982, 2025/848, 2025/2160), ETSI EN 319 401,
+      ETSI TS 119 471, TS 119 472-1 and TS 119 412-6, GDPR, and the ISO/IEC 27001 + 22301 certification
+      claim.
+  - name: Terms and Conditions for the Provision of the Service of Issuing Electronic Attestations of Attributes
+    url: https://authologic.com/docs/trust-service/TSP-TCs.pdf
+    status: 200
+    content_type: application/pdf
+    bytes: 662217
+  - name: Authologic Status List
+    url: https://authologic.com/docs/trust-service/Authologic-Status-List.pdf
+    status: 200
+    content_type: application/pdf
+    bytes: 58431
+    note: >-
+      The attestation revocation/status list. As of 2026-09-14 its entire content is "Status list is
+      empty. No attestation has been issued yet." — the EAA issuance service is published and operable
+      but has not yet issued an attestation.
+  - name: Authologic EAAP Example
+    url: https://authologic.com/docs/trust-service/Authologic-EAAP-Example.pdf
+    status: 200
+    content_type: application/pdf
+    bytes: 109759
+  - name: Trust Service Privacy Policy
+    url: https://authologic.com/docs/trust-service/Privacy-Policy.pdf
+    status: 200
+    content_type: application/pdf
+certifications:
+  - name: ISO/IEC 27001
+    scope: Information security management system covering the trust service
+    status: claimed-certified
+    evidence: >-
+      "TSP has implemented an information security management system certified against ISO/IEC 27001 and
+      ISO/IEC 22301."
+    source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+    certificate_published: false
+  - name: ISO/IEC 22301
+    scope: Business continuity management covering the trust service
+    status: claimed-certified
+    evidence: Same statement as ISO/IEC 27001 above.
+    source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+    certificate_published: false
+  - name: eIDAS non-qualified trust service provider (EAA issuance)
+    scope: Electronic Attestation of Attributes issuance under Regulation (EU) No 910/2014 as amended
+    status: self-declared, policy published
+    source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+referenced_standards:
+  - ETSI EN 319 401 v3.1.1
+  - ETSI TS 119 471 v1.1.1
+  - ETSI TS 119 472-1
+  - ETSI TS 119 412-6
+  - EN 50600
+  - ISO/IEC 18013-5 and 18013-7
+  - OpenID for Verifiable Credential Issuance
+gaps:
+  - No SOC 2 report, no HIPAA/PCI attestation, and no certificate PDFs — only the claim in prose.
+  - >-
+    No /.well-known/security.txt on any Authologic host, no published vulnerability-disclosure policy and
+    no bug-bounty program (HackerOne, Bugcrowd and Intigriti all return nothing for this domain).
+  - No public status page and no published SLA.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

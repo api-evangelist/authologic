@@ -1,0 +1,158 @@
+generated: '2026-09-14'
+method: searched
+source: https://developer.authologic.com/docs/sdk/java, https://developer.authologic.com/docs/websdk/overview,
+  Maven Central (search.maven.org + repo1.maven.org maven-metadata.xml), registry.npmjs.org
+specification: API Commons Packages
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+description: >-
+  First-party client libraries published by Authologic. Two distinct families: a server-side Java SDK
+  distributed on Maven Central under the com.authologic.client group (ten modular artifacts released in
+  lockstep), and a browser WebSDK family on npm that embeds the hosted verification widget. Versions and
+  publish dates below were read from the registries' own metadata endpoints on 2026-09-14.
+notes:
+  - The Java SDK docs page pins 0.2.42 in its Maven/Gradle snippets while Maven Central's
+    maven-metadata.xml reports <release>0.2.46</release> (lastUpdated 20260824081911) — the documented
+    version trails the published one by four releases.
+  - The WebSDK npm packages have not been republished since 2025; @authologic/websdk-react last shipped
+    2025-01-09. The docs continue to reference them as the current integration path.
+  - The Angular WebSDK guide installs @authologic/websdk (the vanilla package); there is no
+    @authologic/websdk-angular package on npm (registry returns 404).
+packages:
+  - name: com.authologic.client:authologic-client
+    registry: maven
+    url: https://central.sonatype.com/artifact/com.authologic.client/authologic-client
+    language: java
+    official: true
+    version: 0.2.46
+    published: '2026-08-24'
+    license: Apache-2.0
+    docs: https://developer.authologic.com/docs/sdk/java
+    note: >-
+      Aggregate entry point of the Authologic Java SDK. Ships ClientBuilder/Requests/Conversation types
+      and callback deserialization. 16 published versions; release 0.2.46 dated 2026-08-24 07:47 in the
+      Maven Central directory listing.
+  - name: com.authologic.client:authologic-client-core
+    registry: maven
+    url: https://central.sonatype.com/artifact/com.authologic.client/authologic-client-core
+    language: java
+    official: true
+    version: 0.2.46
+    published: '2026-08-24'
+    note: Core module of the Java SDK; released in lockstep with authologic-client.
+  - name: com.authologic.client:authologic-client-model
+    registry: maven
+    url: https://central.sonatype.com/artifact/com.authologic.client/authologic-client-model
+    language: java
+    official: true
+    version: 0.2.46
+    published: '2026-08-24'
+    note: Data model types mirroring the Customer API schemas.
+  - name: com.authologic.client:authologic-client-http
+    registry: maven
+    url: https://central.sonatype.com/artifact/com.authologic.client/authologic-client-http
+    language: java
+    official: true
+    version: 0.2.46
+    published: '2026-08-24'
+    note: HTTP transport abstraction.
+  - name: com.authologic.client:authologic-client-module-okhttp
+    registry: maven
+    url: https://central.sonatype.com/artifact/com.authologic.client/authologic-client-module-okhttp
+    language: java
+    official: true
+    version: 0.2.46
+    published: '2026-08-24'
+    note: OkHttp transport binding.
+  - name: com.authologic.client:authologic-client-json
+    registry: maven
+    url: https://central.sonatype.com/artifact/com.authologic.client/authologic-client-json
+    language: java
+    official: true
+    version: 0.2.46
+    published: '2026-08-24'
+    note: JSON engine abstraction (JsonEngine / JsonEngineProvider).
+  - name: com.authologic.client:authologic-client-module-jackson
+    registry: maven
+    url: https://central.sonatype.com/artifact/com.authologic.client/authologic-client-module-jackson
+    language: java
+    official: true
+    version: 0.2.46
+    published: '2026-08-24'
+    note: Jackson JSON binding used by the documented callback-parsing example.
+  - name: com.authologic.client:authologic-client-module
+    registry: maven
+    url: https://central.sonatype.com/artifact/com.authologic.client/authologic-client-module
+    language: java
+    official: true
+    version: 0.2.46
+    published: '2026-08-24'
+    note: Module SPI shared by the transport and JSON bindings.
+  - name: com.authologic.client:authologic-client-version
+    registry: maven
+    url: https://central.sonatype.com/artifact/com.authologic.client/authologic-client-version
+    language: java
+    official: true
+    version: 0.2.46
+    published: '2026-08-24'
+    note: Version constant module.
+  - name: com.authologic.client:authologic-client-test
+    registry: maven
+    url: https://central.sonatype.com/artifact/com.authologic.client/authologic-client-test
+    language: java
+    official: true
+    version: 0.2.46
+    published: '2026-08-24'
+    note: Test fixtures for SDK consumers.
+  - name: '@authologic/websdk'
+    registry: npm
+    url: https://www.npmjs.com/package/@authologic/websdk
+    language: javascript
+    official: true
+    version: 0.0.22
+    published: '2025-05-09'
+    license: MIT
+    homepage: https://authologic.com/
+    docs: https://developer.authologic.com/docs/websdk/js
+    note: >-
+      Vanilla-JS WebSDK that mounts the Authologic verification widget into a host page
+      (AuthologicSDK.init). Also the package the Angular integration guide installs.
+  - name: '@authologic/websdk-react'
+    registry: npm
+    url: https://www.npmjs.com/package/@authologic/websdk-react
+    language: javascript
+    official: true
+    version: 0.0.9
+    published: '2025-01-09'
+    license: MIT
+    homepage: https://authologic.com/
+    docs: https://developer.authologic.com/docs/websdk/react
+    note: React binding exporting the AuthologicWidget component and Theme type.
+  - name: '@authologic/websdk-vue'
+    registry: npm
+    url: https://www.npmjs.com/package/@authologic/websdk-vue
+    language: javascript
+    official: true
+    version: 0.0.18
+    published: '2025-01-30'
+    license: MIT
+    homepage: https://authologic.com/
+    docs: https://developer.authologic.com/docs/websdk/vuejs
+    note: Vue 3 binding exporting the AuthologicWidget component.
+  - name: sdk.umd.cjs
+    registry: cdn
+    url: https://id.authologic.com/js/sdk.umd.cjs
+    language: javascript
+    official: true
+    version: null
+    published: null
+    docs: https://developer.authologic.com/docs/websdk/js
+    note: >-
+      Script-tag distribution of the WebSDK served from Authologic's own id.authologic.com host. The URL
+      carries no version segment and there is no CDN metadata endpoint for a first-party host, so a
+      consumer cannot pin or even observe which build they receive — version and published recorded as
+      null after checking, not skipped.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

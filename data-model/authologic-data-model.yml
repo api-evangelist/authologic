@@ -1,0 +1,236 @@
+generated: '2026-09-14'
+method: derived
+source: openapi/authologic-customer-api-openapi.yml ($ref graph + id-reference fields across 117
+  component schemas), enriched from https://developer.authologic.com/docs/technical/conversation-statuses
+  and https://developer.authologic.com/docs/integration/user-info-fields
+specification: API Commons Data Model
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+description: >-
+  The Authologic Customer API has one root entity. Everything — identity, AML, bank transactions,
+  database verification, affordability, enquiry — hangs off a Conversation, and every non-creation
+  operation is addressed by conversationId. There is no customer, user, account or subscription resource
+  addressable in its own right; the conversation is both the request and the record.
+root_entity: Conversation
+entities:
+  - name: Conversation
+    schema: ConversationInfo
+    creation_schema: CreateConversation
+    id_field: id
+    id_format: UUID
+    description: >-
+      One verification process. Created with the products and user fields required, returns the URL the
+      end user is sent to, and accumulates per-product results until it reaches a terminal status.
+    key_fields:
+      - name: id
+        description: Authologic's conversation identifier.
+      - name: userKey
+        description: >-
+          The integrator's own identifier for the end user, supplied at creation and echoed back. A
+          foreign key OUT of Authologic into the customer's system — not an Authologic-side entity.
+      - name: url
+        description: Address the end user is redirected to.
+      - name: status
+        description: CREATED | IN_PROGRESS | FINISHED | CANCELED | EXPIRED.
+      - name: result
+        description: Per-product result map — the branch point for every product entity below.
+      - name: callbackUrl
+        description: Per-conversation webhook receiver.
+      - name: returnUrl
+        description: Where the end user is sent when the flow ends.
+    operations:
+      - createConversation
+      - getConversation
+      - deleteConversation
+  - name: IdentityResult
+    path: result.identity
+    description: >-
+      Identity verification outcome. Carries status, errors[] (see errors/authologic-error-codes.yml),
+      checks[] and the user attribute tree.
+    children:
+      - UserInfo
+  - name: UserInfo
+    path: result.identity.user
+    description: >-
+      The resolved attribute set, split into person and company branches. The public attribute vocabulary
+      is Authologic's own PERSON_* / COMPANY_* namespace (194 PERSON_ references in the contract),
+      requested at creation via query.<product>.requireOneOf.
+    children:
+      - PersonIdsInfo
+      - PersonAccountInfo
+      - CompanyIds
+      - CompanyAccountInfo
+      - IdCardInfo
+      - PassportInfo
+      - DriverLicenceInfo
+      - ResidencePermitInfo
+      - OtherDocumentInfo
+  - name: PersonIdsInfo
+    id_field: nationalId
+    description: National identification numbers for a natural person.
+  - name: PersonAccountInfo
+    id_field: accountId
+    description: >-
+      Bank account identifier for a natural person. Note the deprecation: accounts.iban was removed in
+      favour of accounts.accountId.
+  - name: CompanyIds
+    id_fields:
+      - taxId
+      - additionalId
+    description: Company registration and tax identifiers for KYB.
+  - name: CompanyAccountInfo
+    id_field: accountId
+  - name: IdentityMetadata
+    schema: IdentityMetadata
+    id_field: id
+    description: Metadata collected during the identification process.
+    operations:
+      - getMetadata
+  - name: Media
+    schema: Media
+    id_field: id
+    description: >-
+      A media file captured during identification — document scan or selfie. Retrieved individually by
+      media id. Personal and biometric data.
+    operations:
+      - getMedia
+  - name: AMLInfo
+    schema: AMLInfo
+    description: >-
+      AML list findings for the conversation, paginated per list (sanctions, PEP, adverse media). PEP
+      appears 9 times in the contract.
+    operations:
+      - getAMLList
+  - name: AMLSubscription
+    description: >-
+      Ongoing AML list-change monitoring attached to a conversation. Addressed at
+      /api/subscriptions/{conversationId}/aml — keyed by the conversation, with no subscription id of its
+      own. Emits SUBSCRIPTION/NEW_DATA callbacks.
+    operations:
+      - cancelAMLSubscription
+  - name: Account
+    schema: Account
+    id_field: accountId
+    description: A bank account discovered for the conversation.
+    operations:
+      - getBankTransactionsAccounts
+  - name: Transaction
+    schema: Transaction
+    id_field: id
+    description: A single bank transaction.
+    key_fields:
+      - accountId
+      - senderAccountId
+      - recipientAccountId
+    operations:
+      - getBankTransactions
+  - name: TransactionStatistics
+    schema: TransactionStatistics
+    description: Aggregates over collected transactions for a date range, per account.
+    operations:
+      - getBankTransactionsStats
+  - name: DatabaseVerification
+    schema: DatabaseVerification
+    description: Database-verification product result for the conversation.
+    operations:
+      - getDbV
+  - name: Affordability
+    schema: Affordability
+    description: Source-of-funds / source-of-wealth assessment result.
+    operations:
+      - getAffordability
+  - name: EnquiryProduct
+    schema: EnquiryProduct
+    id_field: formId
+    description: >-
+      Dynamic form definition used by the Enquiry product; the result carries the matching formId.
+  - name: HeadlessPage
+    schema: HeadlessPage
+    description: >-
+      The current step an enterprise headless integrator must render. Advanced with
+      HeadlessNextPageRequest.
+    operations:
+      - currentStep
+      - nextStep
+  - name: ApiError
+    schema: ApiError
+    description: >-
+      The error envelope, referenced 38 times across the paths object — by a wide margin the most-reused
+      schema in the contract.
+relationships:
+  - from: Conversation
+    to: IdentityResult
+    type: has_one
+    via: result.identity
+  - from: Conversation
+    to: AMLInfo
+    type: has_many
+    via: /api/conversations/{conversationId}/aml/{list}
+  - from: Conversation
+    to: AMLSubscription
+    type: has_one
+    via: /api/subscriptions/{conversationId}/aml
+  - from: Conversation
+    to: Account
+    type: has_many
+    via: /api/conversations/{conversationId}/bankTransactions/accounts
+  - from: Conversation
+    to: Transaction
+    type: has_many
+    via: /api/conversations/{conversationId}/bankTransactions
+  - from: Conversation
+    to: TransactionStatistics
+    type: has_many
+    via: /api/conversations/{conversationId}/bankTransactions/stats
+  - from: Conversation
+    to: IdentityMetadata
+    type: has_one
+    via: /api/conversations/{conversationId}/identity/metadata
+  - from: Conversation
+    to: DatabaseVerification
+    type: has_one
+    via: /api/conversations/{conversationId}/databaseVerification/info
+  - from: Conversation
+    to: Affordability
+    type: has_one
+    via: /api/conversations/{conversationId}/affordability/info
+  - from: Conversation
+    to: HeadlessPage
+    type: has_one
+    via: /api/conversations/{conversationId}/headless
+  - from: IdentityMetadata
+    to: Media
+    type: has_many
+    via: metadata/media/{id}
+  - from: IdentityResult
+    to: UserInfo
+    type: has_one
+    via: result.identity.user
+  - from: Transaction
+    to: Account
+    type: belongs_to
+    via: accountId
+  - from: TransactionStatistics
+    to: Account
+    type: belongs_to
+    via: accountId
+  - from: Conversation
+    to: 'customer system (external)'
+    type: belongs_to
+    via: userKey
+    note: Foreign key out of Authologic into the integrator's own user store.
+observations:
+  - >-
+    The API is almost entirely read-after-create. Of 14 operations, 11 are GETs against a conversation,
+    one creates, two delete. There is no update operation of any kind.
+  - >-
+    Every product read is a sub-resource of a conversation, so an agent that has lost the conversationId
+    has no way back in — there is no list-conversations operation and no search by userKey.
+  - >-
+    id fields are opaque UUIDs with no type prefix, so an identifier tells you nothing about what it
+    identifies. The one place this bites is callbacks, where the envelope id and the conversation id look
+    identical and the docs have to warn about the confusion explicitly.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

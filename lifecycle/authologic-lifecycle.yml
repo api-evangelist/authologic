@@ -1,0 +1,108 @@
+generated: '2026-09-14'
+method: searched
+source: https://developer.authologic.com/docs/technical/implementation,
+  https://developer.authologic.com/docs/integration/deprecations,
+  https://developer.authologic.com/docs/integration/going-live,
+  https://developer.authologic.com/docs/technical/conversation-statuses
+specification: API Commons Lifecycle
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+description: >-
+  Versioning, deprecation and environment-promotion policy for the Authologic Customer API, plus the
+  object lifecycle of the conversation — the single resource every product hangs off.
+versioning:
+  scheme: media-type
+  current_version: '1.1'
+  media_type: application/vnd.authologic.v1.1+json
+  headers:
+    - Content-Type
+    - Accept
+  policy_url: https://developer.authologic.com/docs/technical/implementation
+  policy: >-
+    Minor, non-breaking changes are applied without a version bump. The published forward-compatibility
+    rules an integrator must obey: ignore new response fields; expect additional API methods at any time;
+    expect new parameters, always optional; expect new error explanations behind unchanged status codes;
+    do not depend on field order or on response formatting.
+  breaking_change_signal: a new media-type version number
+deprecation:
+  policy_url: https://developer.authologic.com/docs/integration/deprecations
+  policy: >-
+    Authologic maintains a dedicated deprecations page listing functionality that will be removed and may
+    require integrator changes, split into upcoming changes, recently removed features, and support that
+    has ended.
+  headers:
+    rfc8594_sunset: false
+    rfc8594_deprecation: false
+    note: >-
+      No Sunset or Deprecation response headers are declared in the OpenAPI (zero occurrences), and no
+      operation or schema carries `deprecated: true`. The policy is documented in prose only, so an agent
+      cannot detect a deprecation at runtime.
+  upcoming: none announced as of 2026-09-14
+  recently_removed:
+    - Using the `identity` product alongside AML verification without KYC is no longer required.
+  support_ended:
+    - Conversation creation with an AML product without KYC no longer requires the query.identity section.
+    - The accounts.iban attribute is discontinued in the API.
+    - >-
+      The person.ids.accounts.iban parameter was removed from the conversation result data set; use
+      person.ids.accounts.accountId.
+    - >-
+      Providing an accounts.iban identifier for the data verification product is discontinued; use
+      verify.user.ids.accounts.accountId.
+environments:
+  - name: sandbox
+    url: https://sandbox.authologic.com
+    role: Test environment; the only host declared in the OpenAPI servers[] block.
+    note: Remains available after go-live for further testing and integration changes.
+  - name: production
+    url: https://api.authologic.com
+    role: Production API host.
+    access: >-
+      IP-allowlisted. Probing from an unlisted address returns HTTP 403 with an nginx "IP not allowed"
+      page on every path (observed 2026-09-14). The go-live doc says the production API address is
+      "the one provided to you".
+promotion:
+  url: https://developer.authologic.com/docs/integration/going-live
+  process: >-
+    Authologic copies the customer's sandbox configuration to production on request. The integrator then
+    changes three things: the API address, the API key, and the signature verification key used by the
+    callback mechanism.
+object_lifecycle:
+  resource: conversation
+  docs: https://developer.authologic.com/docs/technical/conversation-statuses
+  states:
+    - name: CREATED
+      description: Conversation set up; the user has not yet been redirected into the process.
+    - name: IN_PROGRESS
+      description: The user has started but not finished the verification.
+    - name: FINISHED
+      description: >-
+        The process is complete regardless of outcome. Success or failure is carried by the per-product
+        status in result.<product>.status, not by this field.
+    - name: CANCELED
+      description: >-
+        The user interrupted the conversation on Authologic's own pages. Closing the browser on a
+        downstream provider page may not produce this status.
+    - name: EXPIRED
+      description: >-
+        Not finished and now expired under the customer's retention policy, or expired early via
+        deleteConversation mode=EXPIRE.
+  retention: >-
+    Governed by a per-customer retention policy that the public documentation does not quantify. Once
+    data is gone, reads return HTTP 410 "Conversation is unavailable".
+status_page:
+  published: false
+  note: >-
+    No status page found. status.authologic.com does not resolve (DNS failure, curl exit 6), and neither
+    the marketing site, the developer portal, the sitemaps nor either llms.txt links one.
+sla:
+  published: false
+  note: No public SLA document. Availability commitments appear to be contractual only.
+support:
+  channel: email
+  contact: tech-support@authologic.com
+  note: Named on every documentation page as the technical support address.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

@@ -1,0 +1,71 @@
+# Authologic
+
+> Identity verification, AML screening, and user authentication platform.
+
+## Quick Start
+
+- [5 Minutes Tutorial](https://developer.authologic.com/raw/docs/products/5-minutes-tutorial.md): Step-by-step first integration with the Authologic API
+- [Integration Overview](https://developer.authologic.com/raw/docs/integration/overview.md): Core concepts: conversations, redirects, callbacks
+
+## Products
+
+Each product can be used independently or combined in a single conversation.
+
+- [Identity](https://developer.authologic.com/raw/docs/products/identity.md): KYC verification using biometrics, eID, document OCR, bank ID
+- [Identity — API Integration](https://developer.authologic.com/raw/docs/products/identity/api-integration.md): REST API guide for identity verification
+- [AML](https://developer.authologic.com/raw/docs/products/aml.md): Anti-money laundering list screening
+- [AML With Identity — API](https://developer.authologic.com/raw/docs/products/aml/api-integration-with-identity.md): AML check combined with identity verification
+- [AML Without Identity — API](https://developer.authologic.com/raw/docs/products/aml/api-integration-without-identity.md): AML check using provided data only
+- [AML Monitoring — API](https://developer.authologic.com/raw/docs/products/aml/api-integration-aml-monitoring.md): Ongoing AML list change monitoring
+- [Bank Transactions](https://developer.authologic.com/raw/docs/products/bank-transactions.md): Retrieve user bank transactions and statistics
+- [Bank Transactions — API](https://developer.authologic.com/raw/docs/products/bank-transactions/api-integration.md): REST API guide for bank transactions
+- [User Authentication](https://developer.authologic.com/raw/docs/products/user-authentication.md): Login/access authentication via identity providers
+- [User Authentication — API](https://developer.authologic.com/raw/docs/products/user-authentication/api-integration.md): REST API guide for user authentication
+- [Data Verification](https://developer.authologic.com/raw/docs/products/data-verification.md): Score-based verification of provided data against identity
+- [Data Verification — API](https://developer.authologic.com/raw/docs/products/data-verification/api-integration.md): REST API guide for data verification
+- [Enquiry](https://developer.authologic.com/raw/docs/products/enquiry.md): Custom data collection via dynamic forms
+- [Enquiry — API](https://developer.authologic.com/raw/docs/products/enquiry/api-integration.md): REST API guide for enquiry forms
+- [Affordability](https://developer.authologic.com/raw/docs/products/affordability.md): Source of Funds/Wealth assessment
+- [Affordability — API](https://developer.authologic.com/raw/docs/products/affordability/api-integration.md): REST API guide for affordability assessment
+
+## Integration Guides
+
+- [Combining Products](https://developer.authologic.com/raw/docs/integration/combining-products.md): Use multiple products in a single conversation
+- [Callbacks](https://developer.authologic.com/raw/docs/integration/callbacks.md): Receiving verification results via webhooks
+- [Testing](https://developer.authologic.com/raw/docs/integration/testing.md): Sandbox strategies and test environment setup
+- [Going Live](https://developer.authologic.com/raw/docs/integration/going-live.md): Production launch checklist
+- [Use Cases](https://developer.authologic.com/raw/docs/integration/use-cases.md): Common integration patterns and recipes
+- [FAQ](https://developer.authologic.com/raw/docs/integration/faq.md): Frequently asked questions
+
+## SDK & WebSDK
+
+- [Java SDK](https://developer.authologic.com/raw/docs/sdk/java.md): Java SDK for Authologic API integration
+- [WebSDK — JavaScript](https://developer.authologic.com/raw/docs/websdk/js.md): Embed verification in vanilla JS
+- [WebSDK — React](https://developer.authologic.com/raw/docs/websdk/react.md): Embed verification in React apps
+- [WebSDK — Vue.js](https://developer.authologic.com/raw/docs/websdk/vuejs.md): Embed verification in Vue.js apps
+- [WebSDK — Angular](https://developer.authologic.com/raw/docs/websdk/angular.md): Embed verification in Angular apps
+
+## API Reference
+
+- [OpenAPI Specification](https://developer.authologic.com/openapi.json): Full API schema (OpenAPI 3.1.0) — 12 endpoints
+- [User Data Fields](https://developer.authologic.com/raw/docs/integration/user-info-fields.md): All PERSON_* and COMPANY_* fields available in verification results
+- [Conversation Statuses](https://developer.authologic.com/raw/docs/technical/conversation-statuses.md): Status lifecycle: CREATED → IN_PROGRESS → FINISHED
+- [Error Codes](https://developer.authologic.com/raw/docs/technical/errors.md): Verification failure reasons and error details
+- [Mandatory & Optional Queries](https://developer.authologic.com/raw/docs/technical/mandatory-and-optional-queries.md): requireOneOf vs optional field syntax
+- [Verification Checks](https://developer.authologic.com/raw/docs/technical/checks.md): Additional validation checks on user data
+- [Verification Methods](https://developer.authologic.com/raw/docs/technical/methods.md): Country and method metadata
+- [Implementation Notes](https://developer.authologic.com/raw/docs/technical/implementation.md): Auth, API versioning, date formats
+- [Media Types per Provider](https://developer.authologic.com/raw/docs/integration/media-types-per-provider.md): Supported media types by verification provider
+- [Deprecations](https://developer.authologic.com/raw/docs/integration/deprecations.md): Deprecated features and migration notes
+
+## Advanced
+
+- [WebView in Mobile Apps](https://developer.authologic.com/raw/docs/technical/webview.md): Camera, storage, and permissions for WebView
+- [Custom UI Layout](https://developer.authologic.com/raw/docs/additional/custom-layout.md): Customizing verification page logo and colors
+- [Metadata & Photos](https://developer.authologic.com/raw/docs/additional/metadata.md): Downloading photos and process-related data
+- [Conversation Expiration](https://developer.authologic.com/raw/docs/additional/conversation-expiration.md): Disabling unfinished conversations
+- [Custom Integration (Headless)](https://developer.authologic.com/raw/docs/integration/custom-integration-support.md): Build your own UI with headless API
+- [MobileID](https://developer.authologic.com/raw/docs/custom-data/async-mobileid.md): Async MobileID verification via headless API
+- [SmartID](https://developer.authologic.com/raw/docs/custom-data/async-smartid.md): Async SmartID verification via headless API
+- [mObywatel](https://developer.authologic.com/raw/docs/custom-data/async-mobywatel.md): Async mObywatel verification via headless API
+- [SPID](https://developer.authologic.com/raw/docs/custom-data/headless-fspid.md): Async SPID verification via headless API

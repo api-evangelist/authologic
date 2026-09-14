@@ -1,0 +1,118 @@
+generated: '2026-09-14'
+method: searched
+source: https://developer.authologic.com/docs/integration/callbacks
+specification: API Commons Webhooks
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+description: >-
+  Authologic's asynchronous event surface. Verification is inherently slow and sometimes multi-day, so
+  the callback ("callback mechanism") is the primary way results are delivered — polling
+  getConversation is described by the provider as the inconvenient alternative. Authologic publishes no
+  AsyncAPI document; this is the webhook catalog captured from the published callbacks reference.
+asyncapi_spec:
+  published: false
+  probes:
+    - url: https://developer.authologic.com/asyncapi.json
+      status: 404
+    - url: https://sandbox.authologic.com/asyncapi.yaml
+      status: 405
+  note: >-
+    No AsyncAPI document exists. None was generated — the event payload is described as "analogous to
+    the conversation details response" rather than schematised, and inventing channel schemas would be
+    fabrication. The OpenAPI declares no `webhooks` block either (OpenAPI 3.1 supports one).
+subscription:
+  style: per-request callback URL
+  declaration: >-
+    Set `callbackUrl` in the POST /api/conversations body. There is no subscription management API and no
+    account-level endpoint registry — each conversation names its own receiver.
+  templating: >-
+    {conversationId}, {target} and {event} placeholders in the callbackUrl are substituted at delivery
+    time with the conversation id, the emitting object and the event type.
+  transport: HTTPS POST
+  transport_requirement: >-
+    Production callback receivers MUST use HTTPS. Test-environment receivers need not.
+message:
+  content_type: application/json;charset=UTF-8
+  envelope:
+    - name: id
+      description: >-
+        Unique event identifier, stable across redeliveries. The receiving system is instructed to drop
+        duplicates on this value.
+    - name: created
+      description: RFC 3339 UTC timestamp of when the event occurred.
+    - name: target
+      description: The object that generated the event.
+    - name: event
+      description: The event type.
+    - name: payload
+      description: >-
+        Event-specific object. For conversation events it contains `conversation`, whose shape matches
+        the getConversation response.
+  gotcha: >-
+    The top-level `id` is the CALLBACK identifier, not the conversation identifier. Calls back into the
+    API must use payload.conversation.id. The provider calls this out explicitly because it is the
+    common integration mistake.
+events:
+  - target: CONVERSATION
+    event: FINISHED
+    payload: conversation
+    description: >-
+      The conversation has ended, regardless of outcome. payload.conversation carries the full result,
+      including per-product status and any failure reasons.
+  - target: CONVERSATION
+    event: EXPIRED
+    payload: conversation
+    description: >-
+      The conversation expired — either under the retention policy or via deleteConversation
+      mode=EXPIRE.
+  - target: SUBSCRIPTION
+    event: NEW_DATA
+    payload: conversation
+    description: >-
+      New data on an AML monitoring subscription attached to the conversation. payload.conversation
+      carries the updated AML list findings.
+forward_compatibility: >-
+  Receivers must accept unknown target/event combinations, answer with a success status and ignore
+  them. New event types can appear at any time.
+delivery:
+  success_statuses: [200, 201, 202, 204]
+  retry_policy: >-
+    Any other status is treated as a failed delivery. The first retry is immediate, then attempts
+    continue at increasing intervals. At least 20 attempts are guaranteed and the final attempt occurs no
+    sooner than 4 days after the first.
+  ordering: >-
+    Not guaranteed to be a single message. A conversation combining identity and bank transactions may
+    emit one notification after user data is obtained and a second after the transaction data is ready;
+    the final one carries status FINISHED.
+  at_least_once: true
+security:
+  scheme: HMAC-SHA-256 signature
+  headers:
+    - name: X-Signature
+      description: Hex HMAC-SHA-256 digest.
+    - name: X-Signature-Timestamp
+      description: Milliseconds since the UNIX epoch.
+  algorithm: >-
+    HMAC_SHA_256 over the exact string "<X-Signature-Timestamp>:<raw request body>", keyed with the
+    signing key Authologic issues (a distinct key from the API key). Compare the result to X-Signature.
+  replay_window: >-
+    Reject the request if X-Signature-Timestamp differs from now by more than 5 minutes.
+  implementation_notes:
+    - Use the dedicated signature key, never the API key.
+    - >-
+      Verify against the raw body — a framework that re-serialises or re-formats the JSON will break the
+      digest.
+    - Treat the body as UTF-8.
+  key_rotation: >-
+    The signing key changes at go-live; the go-live checklist names it as one of the three values that
+    must be swapped.
+testing:
+  - >-
+    Authologic's own docs suggest webhook.site for capturing callbacks during integration.
+  - >-
+    Integration verification simulates a callback containing random extra fields in the payload; a
+    receiver that rejects unknown fields fails the check.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

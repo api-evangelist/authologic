@@ -1,0 +1,221 @@
+generated: '2026-09-14'
+method: searched
+source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+  (Trust Service Policy v1.0, effective 2026-07-13),
+  well-known/authologic-sandbox-oauth-authorization-server.json,
+  openapi/authologic-customer-api-openapi.yml,
+  https://developer.authologic.com/docs/technical/implementation
+specification: API Commons Conformance
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+description: >-
+  Standards and regulatory regimes Authologic conforms to, split by where the claim actually lives. Two
+  very different bodies of evidence: a formally published eIDAS Trust Service Policy naming the ETSI and
+  ISO norms Authologic operates under as a Trust Service Provider, and the protocol-level standards
+  observable in the API surface itself.
+conformance:
+  - id: oauth2
+    name: OAuth 2.0 (RFC 6749) — client credentials
+    conforms: true
+    evidence: >-
+      securitySchemes.oauth2 in the OpenAPI declares a clientCredentials flow with tokenUrl
+      https://sandbox.authologic.com/api/oauth2/token; the documented curl uses
+      grant_type=client_credentials with HTTP Basic client authentication.
+    source: openapi/authologic-customer-api-openapi.yml
+  - id: rfc8414
+    name: OAuth 2.0 Authorization Server Metadata (RFC 8414)
+    conforms: true
+    evidence: >-
+      https://sandbox.authologic.com/.well-known/oauth-authorization-server returns HTTP 200
+      application/json with issuer, authorization_endpoint, token_endpoint, jwks_uri,
+      grant_types_supported and response_types_supported. Probed 2026-09-14.
+    source: well-known/authologic-sandbox-oauth-authorization-server.json
+  - id: rfc7636
+    name: PKCE (RFC 7636)
+    conforms: true
+    evidence: 'code_challenge_methods_supported: ["S256"] in the authorization server metadata.'
+    source: well-known/authologic-sandbox-oauth-authorization-server.json
+  - id: rfc7662
+    name: OAuth 2.0 Token Introspection (RFC 7662)
+    conforms: true
+    evidence: introspection_endpoint https://sandbox.authologic.com/oauth2/introspect is advertised.
+    source: well-known/authologic-sandbox-oauth-authorization-server.json
+  - id: rfc7009
+    name: OAuth 2.0 Token Revocation (RFC 7009)
+    conforms: true
+    evidence: revocation_endpoint https://sandbox.authologic.com/oauth2/revoke is advertised.
+    source: well-known/authologic-sandbox-oauth-authorization-server.json
+  - id: rfc8628
+    name: OAuth 2.0 Device Authorization Grant (RFC 8628)
+    conforms: true
+    evidence: >-
+      device_authorization_endpoint advertised and
+      urn:ietf:params:oauth:grant-type:device_code listed in grant_types_supported.
+    source: well-known/authologic-sandbox-oauth-authorization-server.json
+  - id: rfc8693
+    name: OAuth 2.0 Token Exchange (RFC 8693)
+    conforms: true
+    evidence: urn:ietf:params:oauth:grant-type:token-exchange listed in grant_types_supported.
+    source: well-known/authologic-sandbox-oauth-authorization-server.json
+  - id: rfc8705
+    name: OAuth 2.0 Mutual-TLS Client Authentication and Certificate-Bound Tokens (RFC 8705)
+    conforms: true
+    evidence: >-
+      tls_client_auth and self_signed_tls_client_auth in token_endpoint_auth_methods_supported, with
+      tls_client_certificate_bound_access_tokens true.
+    source: well-known/authologic-sandbox-oauth-authorization-server.json
+  - id: rfc9449
+    name: OAuth 2.0 Demonstrating Proof of Possession — DPoP (RFC 9449)
+    conforms: true
+    evidence: >-
+      dpop_signing_alg_values_supported lists RS256/384/512, PS256/384/512 and ES256/384/512.
+    source: well-known/authologic-sandbox-oauth-authorization-server.json
+  - id: rfc7617
+    name: HTTP Basic Authentication (RFC 7617)
+    conforms: true
+    evidence: >-
+      securitySchemes.apiKey is type http / scheme basic. Confirmed live: an unauthenticated POST to
+      https://sandbox.authologic.com/api/conversations returns 401 with
+      WWW-Authenticate: Basic realm="Realm" (probed 2026-09-14).
+  - id: rfc3339
+    name: RFC 3339 date-time
+    conforms: true
+    evidence: >-
+      The implementation notes state all datetimes are RFC 3339, returned in UTC with a Z suffix, and
+      accepted in UTC or with an explicit offset.
+    source: https://developer.authologic.com/docs/technical/implementation
+  - id: openapi
+    name: OpenAPI 3.1.0
+    conforms: true
+    evidence: >-
+      https://developer.authologic.com/openapi.json is a valid OpenAPI 3.1.0 document with 13 paths, 14
+      operations, 117 component schemas, unique operationIds on every operation, tags on every operation
+      and declared 2xx/4xx/5xx responses.
+    source: openapi/authologic-customer-api-openapi.yml
+  - id: hmac-webhook-signing
+    name: HMAC-SHA-256 webhook signatures with a replay window
+    conforms: true
+    evidence: >-
+      X-Signature / X-Signature-Timestamp over "<timestamp>:<body>", with a documented 5-minute clock
+      tolerance and a published test vector.
+    source: https://developer.authologic.com/docs/integration/callbacks
+  - id: rfc9457
+    name: RFC 9457 Problem Details for HTTP APIs
+    conforms: false
+    evidence: >-
+      Errors are returned as application/vnd.authologic.v1.1+json with a proprietary
+      {status, message, violations[]} envelope. No application/problem+json appears anywhere in the
+      contract.
+  - id: rfc8594
+    name: RFC 8594 Sunset header (deprecation signalling)
+    conforms: false
+    evidence: >-
+      A deprecations page is published, but no Sunset or Deprecation response header is declared in the
+      contract and no operation or schema carries deprecated: true.
+  - id: eidas
+    name: eIDAS — Regulation (EU) No 910/2014 as amended by Regulation (EU) 2024/1183 (eIDAS 2.0)
+    conforms: true
+    evidence: >-
+      Authologic Sp. z o.o. publishes a Trust Service Policy for the Non-Qualified Electronic Attestation
+      of Attributes (EAA) Issuance Service, version 1.0, effective 2026-07-13, which states the service is
+      a trust service within the meaning of the eIDAS Regulation and that the policy supports compliance
+      with Article 19a.
+    source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+  - id: etsi-en-319-401
+    name: ETSI EN 319 401 v3.1.1 — General Policy Requirements for Trust Service Providers
+    conforms: true
+    evidence: >-
+      Named as a normative reference in the Trust Service Policy; the policy states its publication
+      supports EN 319 401 requirements on specifying and publishing trust-service policies and practices,
+      as referenced in the Annex of CIR (EU) 2025/2160.
+    source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+  - id: etsi-ts-119-471
+    name: ETSI TS 119 471 v1.1.1 — Security requirements for EAA service providers
+    conforms: true
+    evidence: Named as a normative reference in the Trust Service Policy.
+    source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+  - id: etsi-ts-119-472-1
+    name: ETSI TS 119 472-1 — Profiles for Electronic Attestation of Attributes, Part 1
+    conforms: true
+    evidence: >-
+      Named as a normative reference; the policy states the TSP may use attribute identifiers defined in
+      ETSI TS 119 472-1.
+    source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+  - id: etsi-ts-119-412-6
+    name: ETSI TS 119 412-6 — Certificate profiles for trust service providers
+    conforms: true
+    evidence: Named as a normative reference in the Trust Service Policy.
+    source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+  - id: iso-iec-27001
+    name: ISO/IEC 27001 — Information Security Management
+    conforms: true
+    evidence: >-
+      Trust Service Policy, section on risk management: "TSP has implemented an information security
+      management system certified against ISO/IEC 27001 and ISO/IEC 22301. Provisions of this trust
+      service is covered by the management system."
+    source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+    caveat: >-
+      A certification claim made in Authologic's own policy document. No certificate number, certification
+      body or audit date is published, and no trust portal hosts the certificate itself.
+  - id: iso-iec-22301
+    name: ISO/IEC 22301 — Business Continuity Management
+    conforms: true
+    evidence: Same sentence as ISO/IEC 27001 above; the management system is certified against both.
+    source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+  - id: gdpr
+    name: GDPR — Regulation (EU) 2016/679
+    conforms: true
+    evidence: >-
+      Cited as a normative reference throughout the Trust Service Policy, and a public privacy policy is
+      published at https://authologic.com/privacy-policy/ (HTTP 200).
+    source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+  - id: openid4vci
+    name: OpenID for Verifiable Credential Issuance
+    conforms: partial
+    evidence: >-
+      The Trust Service Policy names OpenID for Verifiable Credential Issuance and ISO/IEC 18013-5 /
+      18013-7 as the complementary standards used when issuing an EAA to an EU Digital Identity Wallet.
+    source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+    caveat: >-
+      Recorded as partial deliberately: the policy names the standard, but no OpenID4VCI issuer metadata,
+      credential endpoint or wallet interface appears in the published Customer API contract, and no
+      credential-issuance surface was found on any Authologic host.
+  - id: iso-iec-18013-5
+    name: ISO/IEC 18013-5 / 18013-7 — Mobile driving licence (mdoc)
+    conforms: partial
+    evidence: Named in the Trust Service Policy alongside OpenID4VCI for EUDI Wallet issuance.
+    source: https://authologic.com/docs/trust-service/Trust-Service-Policy-for-Non-Qualified-EAA-Issuance.pdf
+    caveat: Same as openid4vci — a policy reference, with no matching surface in the published contract.
+  - id: psd2
+    name: PSD2 / open banking account access
+    conforms: partial
+    evidence: >-
+      The testing guide describes "PSD2 based strategies" and names Kontomatik as a PSD2 aggregator whose
+      test accounts integrators can use. The bank-transaction operations (getBankTransactions,
+      getBankTransactionsStats, getBankTransactionsAccounts) are the consuming surface.
+    source: https://developer.authologic.com/docs/integration/testing
+    caveat: >-
+      Authologic consumes PSD2 access through upstream aggregators; it does not itself expose a PSD2/Berlin
+      Group-conformant interface, and no NextGenPSD2 shapes appear in the contract.
+domain_standard:
+  market: digital identity / eID / KYC-AML (EU)
+  standards_in_market:
+    - eIDAS 2.0 / EUDI Wallet
+    - OpenID for Verifiable Credential Issuance
+    - ISO/IEC 18013-5 (mdoc)
+    - ETSI EN 319 401 / TS 119 471 / TS 119 472-1
+  contract_signature: false
+  finding: >-
+    Authologic is a recognised eIDAS trust-service actor and says so in a formal published policy, but
+    that conformance is NOT visible in the machine-readable contract. The OpenAPI contains zero
+    occurrences of eIDAS, EUDI, eID, wallet, verifiable, OpenID, mdoc or ISO 18013; the verification
+    methods it aggregates (mObywatel, BankID, SmartID, MobileID, SPID) are selected through an opaque
+    free-text `strategy` string rather than a standardised identifier, and the attribute vocabulary is
+    Authologic's own PERSON_* / COMPANY_* namespace rather than ETSI TS 119 472-1 attribute identifiers
+    the policy says it may use. An integrator who already speaks eIDAS/OpenID4VCI still needs a bespoke
+    connector for this API. Recorded as an honest negative on the contract signal, not as a conformance
+    the contract does not carry.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

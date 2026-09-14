@@ -1,0 +1,188 @@
+generated: '2026-09-14'
+method: searched
+source: https://developer.authologic.com/docs/technical/implementation,
+  https://developer.authologic.com/docs/integration/callbacks,
+  https://developer.authologic.com/docs/technical/conversation-statuses,
+  https://developer.authologic.com/docs/additional/conversation-expiration, and
+  openapi/authologic-customer-api-openapi.yml
+specification: API Commons Conventions
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+description: >-
+  Cross-cutting runtime semantics of the Authologic Customer API — how it authenticates, versions,
+  paginates, reports errors, traces requests, notifies asynchronously, and what can be undone.
+authentication:
+  styles:
+    - name: HTTP Basic
+      description: >-
+        Account name as username, environment-specific API key as password. This is the style every
+        published example uses (curl -u my_login). Declared in the spec as securityScheme `apiKey`
+        (type http, scheme basic).
+      docs: https://developer.authologic.com/docs/technical/implementation
+    - name: OAuth 2.0 client credentials
+      description: >-
+        POST the same login/API-key pair as client_id/client_secret to /api/oauth2/token with
+        grant_type=client_credentials, then send Authorization: Bearer <token>. The environment publishes
+        RFC 8414 metadata advertising PKCE S256, mTLS-bound tokens, DPoP, device code and token exchange.
+      token_url: https://sandbox.authologic.com/api/oauth2/token
+      metadata: well-known/authologic-sandbox-oauth-authorization-server.json
+  key_management: >-
+    API keys are generated per environment in the API Keys section of OmniPanel
+    (https://omnipanel.authologic.com). Sandbox and production keys are distinct; the production API
+    address and the callback signing key are both replaced at go-live.
+  transport: HTTPS only. Production callback receivers must also be HTTPS; test receivers need not be.
+  detail: authentication/authologic-authentication.yml
+versioning:
+  style: media-type
+  header_fields:
+    - Content-Type
+    - Accept
+  current: application/vnd.authologic.v1.1+json
+  spec_info_version: '1.1'
+  policy: >-
+    Additive changes ship without a version bump. The provider states the forward-compatibility contract
+    explicitly: ignore unknown response fields, expect new optional parameters and new API methods at any
+    time, expect new error explanations behind unchanged status codes, and do not depend on field order
+    or response formatting.
+  docs: https://developer.authologic.com/docs/technical/implementation
+pagination:
+  style: page-number
+  params:
+    - name: page
+      in: query
+    - name: pageSize
+      in: query
+  applies_to:
+    - getBankTransactions
+    - getAMLList
+  note: >-
+    Only the two list-returning operations paginate; every other read is a single-object fetch keyed by
+    conversationId. There is no cursor and no Link header.
+date_time:
+  format: RFC 3339
+  timezone: Responses always UTC with a Z suffix; requests accept UTC or an explicit offset.
+  date_only: 'Bare dates (e.g. date of birth) use YYYY-MM-DD with no time part.'
+  docs: https://developer.authologic.com/docs/technical/implementation
+request_tracing:
+  header: x-request-id
+  direction: response
+  method: probed
+  evidence: >-
+    Observed on an unauthenticated POST to https://sandbox.authologic.com/api/conversations on
+    2026-09-14 (HTTP 401, x-request-id: 69918a84174c2a4cceded39be5f5aacd). The header is returned by the
+    API but is not documented, so a client cannot rely on it contractually.
+error_envelope:
+  shape: proprietary
+  rfc9457: false
+  content_type: application/vnd.authologic.v1.1+json
+  fields:
+    - name: status
+      description: Upper-snake error class, e.g. BAD_REQUEST, FORBIDDEN, NOT_FOUND.
+    - name: message
+      description: Human-readable explanation.
+    - name: violations
+      description: Array of per-field validation violations; empty for non-validation errors.
+  note: >-
+    A second, product-level error channel exists inside successful 200 responses:
+    result.<product>.errors[] carries verification failure reasons (SCAN_*, ABANDONED, PROVIDER_*, …)
+    when result.<product>.status is FAILED. A 200 does not mean the verification succeeded.
+  detail: errors/authologic-problem-types.yml
+rate_limit_signaling:
+  headers: none
+  status_on_exhaustion: 402
+  note: >-
+    The API declares no RateLimit-*/X-RateLimit-* headers and documents no numeric limits. The only
+    published exhaustion signal is HTTP 402, described in the spec as "Exhaustion of the plan or
+    limitations related to non-payment" and declared on all 14 operations.
+  detail: rate-limits/authologic-rate-limits.yml
+async_delivery:
+  style: signed webhooks (callbacks)
+  declaration: per-conversation callbackUrl at creation time
+  signature: HMAC-SHA-256 over "<X-Signature-Timestamp>:<body>" in X-Signature
+  retries: at least 20 attempts with increasing backoff, final attempt no sooner than 4 days
+  deduplication: >-
+    Each event carries a stable top-level `id`; a redelivery of the same event reuses it. The provider
+    instructs receivers to drop duplicates on that id — consumer-side idempotency, not request
+    idempotency.
+  detail: asyncapi/authologic-callbacks-webhooks.yml
+idempotency:
+  coverage: none
+  mechanism: none
+  note: >-
+    No Idempotency-Key header, no client-supplied request key, and no replay-protection prose anywhere in
+    the OpenAPI (zero occurrences of "idempot") or in the integration docs. Of the four mutating
+    operations, createConversation is the one that matters — a retried POST /api/conversations creates a
+    second billable conversation with a new id. The optional `userKey` field is the integrator's own
+    reference for the end user, not a request key, and is not documented as deduplicating. The two
+    DELETEs (deleteConversation, cancelAMLSubscription) are naturally idempotent by target state, and
+    nextStep advances a server-held step machine; none of that is a documented mechanism, so the verdict
+    is none rather than partial.
+reversibility:
+  grade: documented
+  note: >-
+    A reversal path exists and is documented, but no window is stated anywhere, so this grades
+    `documented` and not `verified`. Retention — the thing that actually bounds the window — is
+    described only as "the customer's retention policy", a per-contract setting the public docs never
+    quantify.
+  write_surface:
+    - operation: createConversation
+      operationId: createConversation
+      reversal: deleteConversation
+      reversal_operation_id: deleteConversation
+      mode: EXPIRE
+      effect: >-
+        Ends an unfinished conversation early. Status moves to EXPIRED; a user who opens the process URL
+        is redirected to the integrator's returnUrl.
+      window: not stated
+      window_source: >-
+        The docs say a conversation stays open until it is completed, the user terminates it, or "the
+        time related to the retention settings has passed" — the retention period itself is never
+        published.
+      docs: https://developer.authologic.com/docs/additional/conversation-expiration
+    - operation: createConversation
+      operationId: createConversation
+      reversal: deleteConversation
+      reversal_operation_id: deleteConversation
+      mode: DELETE_DATA
+      effect: >-
+        Deletes the collected data of a FINISHED conversation. Not itself reversible, and the docs warn
+        that callbacks associated with the conversation may no longer be delivered.
+      window: not stated
+      docs: https://developer.authologic.com/api/operations/deleteConversation
+    - operation: AML monitoring subscription
+      operationId: cancelAMLSubscription
+      reversal: cancelAMLSubscription
+      reversal_operation_id: cancelAMLSubscription
+      effect: Cancels ongoing AML list-change monitoring attached to a conversation; returns 204.
+      window: not stated
+    - operation: nextStep
+      operationId: nextStep
+      reversal: none
+      effect: >-
+        Headless step submission has no undo. The enclosing conversation can still be expired or its
+        data deleted via deleteConversation.
+      window: not applicable
+dry_run_mode:
+  supported: false
+  substitute: >-
+    Not a dry run, but the closest published equivalent: the `public:sandbox` strategy on the sandbox
+    environment runs the full conversation flow end to end without performing a real verification, and
+    lets the caller choose the outcome. See sandbox/authologic-sandbox.yml.
+field_expansion:
+  supported: false
+metadata_fields:
+  supported: partial
+  note: >-
+    `userKey` on conversation creation is a free-form integrator reference echoed back in results and
+    callbacks. There is no general key/value metadata bag.
+cross_links:
+  errors: errors/authologic-problem-types.yml
+  error_codes: errors/authologic-error-codes.yml
+  lifecycle: lifecycle/authologic-lifecycle.yml
+  authentication: authentication/authologic-authentication.yml
+  rate_limits: rate-limits/authologic-rate-limits.yml
+  sandbox: sandbox/authologic-sandbox.yml
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

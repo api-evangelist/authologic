@@ -38,7 +38,7 @@ tags:
 url: >-
   https://raw.githubusercontent.com/api-evangelist/authologic/refs/heads/main/apis.yml
 created: '2025-05-02'
-modified: '2026-04-19'
+modified: '2026-09-14'
 specificationVersion: '0.23'
 apis:
   - aid: authologic:authologic-identity-api
@@ -97,7 +97,40 @@ apis:
     properties:
     - type: Documentation
       url: https://developer.authologic.com/docs/developer-documentation/product-enquiry-api-integration
+  - aid: authologic:authologic-customer-api
+    name: Authologic Customer API
+    description: |
+      The Authologic Customer API is the single integration API for the Authologic Engine. It exposes the
+      "conversation" model that drives every Authologic product — identity verification, AML screening,
+      bank transactions, database verification, affordability assessment and enterprise headless
+      integration — through one set of REST operations. Published as OpenAPI 3.1.0 (API version 1.1) at
+      developer.authologic.com/openapi.json.
+    humanURL: https://developer.authologic.com/api
+    baseURL: https://api.authologic.com
+    tags:
+    - AML
+    - Identity Verification
+    - KYC
+    - Conversations
+    - Bank Transactions
+    properties:
+    - type: OpenAPI
+      url: openapi/authologic-customer-api-openapi.yml
+    - type: APIReference
+      url: https://developer.authologic.com/api
+    - type: Documentation
+      url: https://developer.authologic.com/docs/integration/overview
+    - type: GettingStarted
+      url: https://developer.authologic.com/docs/products/5-minutes-tutorial
+    - type: Examples
+      url: examples/authologic-customer-api-examples.yml
+    - type: Overlay
+      url: overlays/authologic-customer-api-overlay.yaml
+    - type: DataModel
+      url: data-model/authologic-data-model.yml
 common:
+  - type: AgenticAccess
+    url: agentic-access/authologic-agentic-access.yml
   - type: DomainSecurity
     url: security/authologic-domain-security.yml
   - type: LinkedIn
@@ -112,8 +145,8 @@ common:
     url: https://developer.authologic.com/docs/developer-documentation/integration-overview
   - type: Blog
     url: https://authologic.com/blog/
-  - type: Signup
-    url: https://authologic.com/
+  - type: SignUp
+    url: https://omnipanel.authologic.com/signup
   - type: PrivacyPolicy
     url: https://authologic.com/privacy-policy/
   - type: Features
@@ -156,6 +189,60 @@ common:
       description: Aggregate multiple ID verification methods via single API for flexible identity assurance across user populations.
   - type: Integrations
     url: https://authologic.com/integrations
+  - type: Authentication
+    url: authentication/authologic-authentication.yml
+  - type: OAuthScopes
+    url: scopes/authologic-scopes.yml
+  - type: Conventions
+    url: conventions/authologic-conventions.yml
+  - type: Idempotency
+    url: conventions/authologic-conventions.yml
+  - type: ErrorCatalog
+    url: errors/authologic-problem-types.yml
+  - type: ErrorCodes
+    url: errors/authologic-error-codes.yml
+  - type: Lifecycle
+    url: lifecycle/authologic-lifecycle.yml
+  - type: Deprecation
+    url: https://developer.authologic.com/docs/integration/deprecations
+  - type: Conformance
+    url: conformance/authologic-conformance.yml
+  - type: Compliance
+    url: conformance/authologic-conformance.yml
+  - type: TrustCenter
+    url: security/authologic-trust-center.yml
+  - type: Packages
+    url: packages/authologic-packages.yml
+  - type: SDKs
+    url: packages/authologic-packages.yml
+  - type: Components
+    url: components/authologic-components.yml
+  - type: Sandbox
+    url: sandbox/authologic-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/authologic-callbacks-webhooks.yml
+  - type: WellKnown
+    url: well-known/authologic-well-known.yml
+  - type: MCPServer
+    url: mcp/authologic-mcp.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: LLMsTxt
+    url: llms/authologic-llms.txt
+  - type: Plans
+    url: plans/authologic-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/authologic-rate-limits.yml
+  - type: FinOps
+    url: finops/authologic-finops.yml
+  - type: APIReference
+    url: https://developer.authologic.com/api
+  - type: DeveloperPortal
+    url: https://developer.authologic.com/
+  - type: Support
+    url: mailto:tech-support@authologic.com
+  - type: TermsOfService
+    url: https://authologic.com/terms-of-use/
 integrations:
   - name: Available in Croatia
   - name: Available in Czechia
@@ -179,3 +266,9 @@ integrations:
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
+
+x-enrichment:
+  date: '2026-09-14'
+  status: enriched
+  artifacts_added: 25
+  pass: local-v3

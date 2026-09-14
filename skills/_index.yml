@@ -1,0 +1,66 @@
+generated: '2026-09-14'
+method: generated
+source: >-
+  Authored from openapi/authologic-customer-api-openapi.yml and the Authologic developer documentation at
+  developer.authologic.com. Every operationId referenced was verified against the published spec.
+  Authologic publishes no skills, AGENTS.md or agent instructions of its own — probed 2026-09-14.
+specification: Agent Skills
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+description: >-
+  Packaged operating instructions for the three marquee flows of the Authologic Customer API. Each skill
+  is grounded in real operationIds and carries the runtime rules an agent has to know and cannot read off
+  the contract: the media-type version headers, the absence of idempotency on a billable write, the
+  callback signature and the id-vs-callback-id trap, the 200-with-FAILED-result pattern, and the 410
+  retention cliff.
+provider_published_skills:
+  found: false
+  probed:
+    - url: https://developer.authologic.com/llms.txt
+      status: 200
+      note: A real llms.txt, but a documentation index — no tool or skill definitions.
+    - url: https://developer.authologic.com/sitemap.xml
+      status: 200
+      note: 95 URLs, none a skill or AGENTS.md.
+    - url: https://github.com/authologic
+      status: 200
+      note: Org exists but publishes zero public repositories.
+skills:
+  - name: authologic-run-identity-verification
+    file: authologic-run-identity-verification.md
+    summary: >-
+      End-to-end KYC verification — create the conversation, redirect, verify the signed callback, read
+      the result and act on the failure reason codes.
+    operations:
+      - createConversation
+      - getConversation
+      - deleteConversation
+  - name: authologic-screen-aml-lists
+    file: authologic-screen-aml-lists.md
+    summary: >-
+      AML screening with or without an attached identity verification, reading paginated list hits, and
+      cancelling ongoing monitoring.
+    operations:
+      - createConversation
+      - getConversation
+      - getAMLList
+      - cancelAMLSubscription
+  - name: authologic-retrieve-bank-transactions
+    file: authologic-retrieve-bank-transactions.md
+    summary: >-
+      PSD2-backed retrieval of accounts, transactions and statistics, plus the affordability
+      (source of funds/wealth) assessment.
+    operations:
+      - createConversation
+      - getConversation
+      - getBankTransactionsAccounts
+      - getBankTransactions
+      - getBankTransactionsStats
+      - getAffordability
+not_covered:
+  - >-
+    The Enterprise Integration (headless) surface — currentStep / nextStep — is deliberately not packaged
+    as a skill. It drives a server-held step machine whose page shapes are provider- and
+    country-specific (MobileID, SmartID, mObywatel, SPID each have their own documented flow), and a
+    generic skill would have to guess at them.

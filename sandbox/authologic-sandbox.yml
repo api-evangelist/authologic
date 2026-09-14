@@ -1,0 +1,106 @@
+generated: '2026-09-14'
+method: searched
+source: https://developer.authologic.com/docs/integration/testing,
+  https://developer.authologic.com/docs/products/5-minutes-tutorial,
+  https://developer.authologic.com/docs/integration/going-live,
+  https://developer.authologic.com/docs/websdk/js
+specification: API Commons Sandbox
+specificationVersion: '0.1'
+provider: Authologic
+providerId: authologic
+description: >-
+  Authologic ships a full separate test environment, not a mock. sandbox.authologic.com is the only host
+  in the OpenAPI servers[] block, and the documented onboarding path is to build the entire integration
+  against it before asking Authologic to copy the configuration to production.
+environments:
+  - name: sandbox
+    base_url: https://sandbox.authologic.com
+    hosted_flow: https://id.sandbox.authologic.com
+    token_url: https://sandbox.authologic.com/api/oauth2/token
+    role: test
+    note: >-
+      Stays available after go-live for continued testing. Verified reachable 2026-09-14: an
+      unauthenticated POST to /api/conversations returns 401 with WWW-Authenticate: Basic realm="Realm".
+  - name: production
+    base_url: https://api.authologic.com
+    role: live
+    note: IP-allowlisted; the address is issued to the customer at go-live.
+credentials:
+  model: environment-scoped API keys
+  issuance: Generated in the API Keys section of OmniPanel (https://omnipanel.authologic.com).
+  note: >-
+    The API key is NOT the OmniPanel account password — the docs call this out as a common confusion. A
+    sandbox key does not work against production.
+  test_values_published: false
+  detail: >-
+    Authologic publishes no shared demo credentials; a tester needs their own OmniPanel account. No test
+    key, token or account number appears anywhere in the public docs.
+test_strategy:
+  name: 'public:sandbox'
+  description: >-
+    The primary simulation mechanism. Passed as `strategy` on conversation creation, it runs the whole
+    conversation flow — redirect, hosted page, callback — without performing a real verification, and
+    lets the tester choose the result of the verification. The docs call it the best practice during
+    development and the effective baseline other simulators are measured against.
+  docs: https://developer.authologic.com/docs/integration/testing
+websdk_test_value:
+  parameter: widgetId
+  value: development_only
+  scope: sandbox environment only
+  description: >-
+    A published placeholder widget ID that disables WebSDK security so the widget can be embedded during
+    development. It works only in sandbox. The production widgetId is issued during onboarding after the
+    integrator supplies the website address it will be bound to.
+  docs: https://developer.authologic.com/docs/websdk/js
+vendor_testability:
+  note: >-
+    Authologic aggregates many upstream identity providers, and testability varies by vendor. The
+    provider publishes the exceptions rather than implying uniform coverage.
+  limitations:
+    - vendor: eDO App
+      limitation: >-
+        Closed for testing due to technical limitations — verification requires a test application and a
+        physical test document in plastic-card form.
+    - vendor: Contacts (phone/email)
+      limitation: >-
+        The test version sends no SMS or email; the confirmation code is fixed.
+    - vendor: MojeID
+      limitation: >-
+        Closed for testing. The provider offers only a low-level simulator requiring protocol knowledge,
+        which in practice delivers a subset of what public:sandbox already covers.
+  psd2_test_accounts:
+    - vendor: Kontomatik
+      instruction: >-
+        Select 'Konto Bank' and use Kontomatik's published test accounts at
+        https://developer.kontomatik.com/coverage?resource=test-accounts
+callback_testing:
+  recommended_tool: https://webhook.site/
+  note: >-
+    Named in both the callbacks reference and the 5-minute tutorial as the way to capture callbacks
+    before a real receiver exists. A working receiver is required — the docs stress that the process
+    depends on the callback being received.
+  forward_compatibility_test: >-
+    Authologic's integration verification simulates a callback carrying random additional fields; the
+    receiver must accept it without error.
+  signature_test_vector:
+    note: A published worked example for validating an HMAC implementation.
+    signature_key: dey6TaePhiogi7ohgiek0pho
+    timestamp: '1641046369772'
+    body: '{ "test": true }'
+    signed_string: '1641046369772:{ "test": true }'
+    expected_signature: fb96c41afe39c6b1cb9377a63405f9f072c1ccf2f04b85fcaeda2c081dcabba6
+    caveat: >-
+      A documentation test vector only — not a live credential, and not usable against any Authologic
+      environment.
+interactive_console:
+  url: https://developer.authologic.com/api
+  description: >-
+    Browser API reference with a try-it console over the published OpenAPI, plus a per-operation page for
+    each of the 14 operations. The tutorial also names Postman and Insomnia as alternatives, though no
+    Postman collection is published.
+time_simulation:
+  supported: false
+  note: No test clocks or time-travel fixtures are documented.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

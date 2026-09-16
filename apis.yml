@@ -41,94 +41,246 @@ created: '2025-05-02'
 modified: '2026-09-14'
 specificationVersion: '0.23'
 apis:
-  - aid: authologic:authologic-identity-api
-    name: Authologic Identity API
-    description: |
-      The Authologic Identity API enables businesses to initiate identity verification processes and receive results programmatically. Supports document verification, eID, Bank ID, and biometric liveness check methods via a single integration.
-    humanURL: https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
-    baseURL: https://api.authologic.com
-    tags:
-    - eID
-    - Identity Verification
-    - KYC
-    - Liveness
-    properties:
-    - type: Documentation
-      url: https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
-    - type: GettingStarted
-      url: https://developer.authologic.com/docs/developer-documentation/integration-overview
-  - aid: authologic:authologic-aml-api
-    name: Authologic AML API
-    description: |
-      The Authologic AML API enables Anti-Money Laundering screening combined with identity verification in a single integrated flow for KYC/AML compliance.
-    humanURL: https://developer.authologic.com/docs/developer-documentation/product-aml-api-integration-with-identity
-    baseURL: https://api.authologic.com
-    tags:
-    - AML
-    - Compliance
-    - Identity Verification
-    - KYC
-    properties:
-    - type: Documentation
-      url: https://developer.authologic.com/docs/developer-documentation/product-aml-api-integration-with-identity
-  - aid: authologic:authologic-data-verification-api
-    name: Authologic Data Verification API
-    description: |
-      The Authologic Data Verification API enables verification of personal data against authoritative sources including government databases and credit bureaus.
-    humanURL: https://developer.authologic.com/docs/developer-documentation/product-data-verification-api-integration
-    baseURL: https://api.authologic.com
-    tags:
-    - Data Verification
-    - Identity
-    - KYC
-    properties:
-    - type: Documentation
-      url: https://developer.authologic.com/docs/developer-documentation/product-data-verification-api-integration
-  - aid: authologic:authologic-enquiry-api
-    name: Authologic Enquiry API
-    description: |
-      The Authologic Enquiry API enables background checks and identity enquiries against national and international data sources for enhanced due diligence.
-    humanURL: https://developer.authologic.com/docs/developer-documentation/product-enquiry-api-integration
-    baseURL: https://api.authologic.com
-    tags:
-    - Background Check
-    - Identity
-    - KYB
-    properties:
-    - type: Documentation
-      url: https://developer.authologic.com/docs/developer-documentation/product-enquiry-api-integration
-  - aid: authologic:authologic-customer-api
-    name: Authologic Customer API
-    description: |
-      The Authologic Customer API is the single integration API for the Authologic Engine. It exposes the
-      "conversation" model that drives every Authologic product — identity verification, AML screening,
-      bank transactions, database verification, affordability assessment and enterprise headless
-      integration — through one set of REST operations. Published as OpenAPI 3.1.0 (API version 1.1) at
-      developer.authologic.com/openapi.json.
-    humanURL: https://developer.authologic.com/api
-    baseURL: https://api.authologic.com
-    tags:
-    - AML
-    - Identity Verification
-    - KYC
-    - Conversations
-    - Bank Transactions
-    properties:
-    - type: OpenAPI
-      url: openapi/authologic-customer-api-openapi.yml
-    - type: APIReference
-      url: https://developer.authologic.com/api
-    - type: Documentation
-      url: https://developer.authologic.com/docs/integration/overview
-    - type: GettingStarted
-      url: https://developer.authologic.com/docs/products/5-minutes-tutorial
-    - type: Examples
-      url: examples/authologic-customer-api-examples.yml
-    - type: Overlay
-      url: overlays/authologic-customer-api-overlay.yaml
-    - type: DataModel
-      url: data-model/authologic-data-model.yml
+- aid: authologic:authologic-identity-api
+  name: Authologic Identity API
+  description: >
+    The Authologic Identity API enables businesses to initiate identity verification processes and receive
+    results programmatically. Supports document verification, eID, Bank ID, and biometric liveness check
+    methods via a single integration.
+  humanURL: >-
+    https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
+  baseURL: https://api.authologic.com
+  tags:
+  - eID
+  - Identity Verification
+  - KYC
+  - Liveness
+  properties:
+  - type: Documentation
+    url: >-
+      https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
+  - type: GettingStarted
+    url: https://developer.authologic.com/docs/developer-documentation/integration-overview
+- aid: authologic:authologic-aml-api
+  name: Authologic AML API
+  description: >
+    The Authologic AML API enables Anti-Money Laundering screening combined with identity verification
+    in a single integrated flow for KYC/AML compliance.
+  humanURL: >-
+    https://developer.authologic.com/docs/developer-documentation/product-aml-api-integration-with-identity
+  baseURL: https://api.authologic.com
+  tags:
+  - AML
+  - Compliance
+  - Identity Verification
+  - KYC
+  properties:
+  - type: Documentation
+    url: >-
+      https://developer.authologic.com/docs/developer-documentation/product-aml-api-integration-with-identity
+- aid: authologic:authologic-data-verification-api
+  name: Authologic Data Verification API
+  description: >
+    The Authologic Data Verification API enables verification of personal data against authoritative sources
+    including government databases and credit bureaus.
+  humanURL: >-
+    https://developer.authologic.com/docs/developer-documentation/product-data-verification-api-integration
+  baseURL: https://api.authologic.com
+  tags:
+  - Data Verification
+  - Identity
+  - KYC
+  properties:
+  - type: Documentation
+    url: >-
+      https://developer.authologic.com/docs/developer-documentation/product-data-verification-api-integration
+- aid: authologic:authologic-enquiry-api
+  name: Authologic Enquiry API
+  description: >
+    The Authologic Enquiry API enables background checks and identity enquiries against national and international
+    data sources for enhanced due diligence.
+  humanURL: >-
+    https://developer.authologic.com/docs/developer-documentation/product-enquiry-api-integration
+  baseURL: https://api.authologic.com
+  tags:
+  - Background Check
+  - Identity
+  - KYB
+  properties:
+  - type: Documentation
+    url: >-
+      https://developer.authologic.com/docs/developer-documentation/product-enquiry-api-integration
+- aid: authologic:authologic-advanced-api
+  name: Authologic Advanced API
+  description: 4. Advanced methods.
+  humanURL: >-
+    https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
+  baseURL: https://api.authologic.com
+  tags:
+  - Advanced
+  properties:
+  - type: OpenAPI
+    url: openapi/authologic-advanced-api-openapi.yml
+  - type: APIReference
+    url: https://developer.authologic.com/api
+  - type: Documentation
+    url: https://developer.authologic.com/docs/integration/overview
+  - type: GettingStarted
+    url: https://developer.authologic.com/docs/products/5-minutes-tutorial
+  - type: Examples
+    url: examples/authologic-customer-api-examples.yml
+  - type: DataModel
+    url: data-model/authologic-data-model.yml
+- aid: authologic:authologic-affordability-assessment-api
+  name: Authologic Affordability assessment API
+  description: '7. Product: Affordability assessment'
+  humanURL: >-
+    https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
+  baseURL: https://api.authologic.com
+  tags:
+  - Affordability assessment
+  properties:
+  - type: OpenAPI
+    url: openapi/authologic-affordability-assessment-api-openapi.yml
+  - type: APIReference
+    url: https://developer.authologic.com/api
+  - type: Documentation
+    url: https://developer.authologic.com/docs/integration/overview
+  - type: GettingStarted
+    url: https://developer.authologic.com/docs/products/5-minutes-tutorial
+  - type: Examples
+    url: examples/authologic-customer-api-examples.yml
+  - type: DataModel
+    url: data-model/authologic-data-model.yml
+- aid: authologic:authologic-aml-api
+  name: Authologic AML API
+  description: '3. Product: AML'
+  humanURL: >-
+    https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
+  baseURL: https://api.authologic.com
+  tags:
+  - AML
+  properties:
+  - type: OpenAPI
+    url: openapi/authologic-aml-api-openapi.yml
+  - type: APIReference
+    url: https://developer.authologic.com/api
+  - type: Documentation
+    url: https://developer.authologic.com/docs/integration/overview
+  - type: GettingStarted
+    url: https://developer.authologic.com/docs/products/5-minutes-tutorial
+  - type: Examples
+    url: examples/authologic-customer-api-examples.yml
+  - type: DataModel
+    url: data-model/authologic-data-model.yml
+- aid: authologic:authologic-bank-api
+  name: Authologic Bank API
+  description: '2. Product: Bank Transactions'
+  humanURL: >-
+    https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
+  baseURL: https://api.authologic.com
+  tags:
+  - Bank
+  properties:
+  - type: OpenAPI
+    url: openapi/authologic-bank-api-openapi.yml
+  - type: APIReference
+    url: https://developer.authologic.com/api
+  - type: Documentation
+    url: https://developer.authologic.com/docs/integration/overview
+  - type: GettingStarted
+    url: https://developer.authologic.com/docs/products/5-minutes-tutorial
+  - type: Examples
+    url: examples/authologic-customer-api-examples.yml
+  - type: DataModel
+    url: data-model/authologic-data-model.yml
+- aid: authologic:authologic-conversation-api
+  name: Authologic Conversation API
+  description: 1. Base Methods needed for the verification process.
+  humanURL: >-
+    https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
+  baseURL: https://api.authologic.com
+  tags:
+  - Conversation
+  properties:
+  - type: OpenAPI
+    url: openapi/authologic-conversation-api-openapi.yml
+  - type: APIReference
+    url: https://developer.authologic.com/api
+  - type: Documentation
+    url: https://developer.authologic.com/docs/integration/overview
+  - type: GettingStarted
+    url: https://developer.authologic.com/docs/products/5-minutes-tutorial
+  - type: Examples
+    url: examples/authologic-customer-api-examples.yml
+  - type: DataModel
+    url: data-model/authologic-data-model.yml
+- aid: authologic:authologic-database-verification-api
+  name: Authologic Database Verification API
+  description: '8. Product: Database Verification'
+  humanURL: >-
+    https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
+  baseURL: https://api.authologic.com
+  tags:
+  - Database Verification
+  properties:
+  - type: OpenAPI
+    url: openapi/authologic-database-verification-api-openapi.yml
+  - type: APIReference
+    url: https://developer.authologic.com/api
+  - type: Documentation
+    url: https://developer.authologic.com/docs/integration/overview
+  - type: GettingStarted
+    url: https://developer.authologic.com/docs/products/5-minutes-tutorial
+  - type: Examples
+    url: examples/authologic-customer-api-examples.yml
+  - type: DataModel
+    url: data-model/authologic-data-model.yml
+- aid: authologic:authologic-enterprise-integration-api
+  name: Authologic Enterprise Integration API
+  description: 6. Enterprise Integration
+  humanURL: >-
+    https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
+  baseURL: https://api.authologic.com
+  tags:
+  - Enterprise Integration
+  properties:
+  - type: OpenAPI
+    url: openapi/authologic-enterprise-integration-api-openapi.yml
+  - type: APIReference
+    url: https://developer.authologic.com/api
+  - type: Documentation
+    url: https://developer.authologic.com/docs/integration/overview
+  - type: GettingStarted
+    url: https://developer.authologic.com/docs/products/5-minutes-tutorial
+  - type: Examples
+    url: examples/authologic-customer-api-examples.yml
+  - type: DataModel
+    url: data-model/authologic-data-model.yml
+- aid: authologic:authologic-metadata-api
+  name: Authologic Metadata API
+  description: '5. Advanced: Metadata'
+  humanURL: >-
+    https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
+  baseURL: https://api.authologic.com
+  tags:
+  - Metadata
+  properties:
+  - type: OpenAPI
+    url: openapi/authologic-metadata-api-openapi.yml
+  - type: APIReference
+    url: https://developer.authologic.com/api
+  - type: Documentation
+    url: https://developer.authologic.com/docs/integration/overview
+  - type: GettingStarted
+    url: https://developer.authologic.com/docs/products/5-minutes-tutorial
+  - type: Examples
+    url: examples/authologic-customer-api-examples.yml
+  - type: DataModel
+    url: data-model/authologic-data-model.yml
 common:
+  - type: Overlay
+    url: overlays/authologic-customer-api-overlay.yaml
   - type: AgenticAccess
     url: agentic-access/authologic-agentic-access.yml
   - type: DomainSecurity

@@ -2,30 +2,36 @@
 kin_checks:
   slug: authologic
   schema_version: 0.22.0
-  scored_at: '2026-09-14'
-  run_ts: 2026-09-14T064754
+  scored_at: '2026-09-15'
+  run_ts: 2026-09-15T230249
   note: Actionable checks only (missed + partial). earned/na are every other check
     in rubric/scoring-0.22.0.yml; counts below let you verify that.
   counts:
     total: 136
-    earned: 18
-    partial: 5
-    missed: 69
-    na: 44
+    earned: 57
+    partial: 7
+    missed: 47
+    na: 25
   checks:
-  - id: well_known_published
+  - id: multiple_apis
     status: missed
-  - id: llms_txt_published
+  - id: well_known_published
     status: missed
   - id: apis_json_self_hosted
     status: missed
-  - id: contract_present
+  - id: openapi_3_2
     status: missed
-  - id: servers_resolvable
+    detail: 0 of 1 openapi documents pass
+  - id: openapi_3_0
     status: missed
-  - id: examples_present
+    detail: 0 of 1 openapi documents pass
+  - id: oauth_scopes_enumerated
     status: missed
-  - id: asyncapi_present
+    detail: 0 of 1 openapi documents pass
+  - id: webhooks_or_callbacks
+    status: missed
+    detail: 0 of 1 openapi documents pass
+  - id: inbound_contract_published
     status: missed
   - id: json_schema_present
     status: missed
@@ -49,63 +55,35 @@ kin_checks:
     status: missed
   - id: vocabulary_published
     status: missed
-  - id: conformance_declared
-    status: missed
   - id: overlay_published
     status: missed
   - id: change_log_present
     status: missed
   - id: status_page_present
     status: missed
-  - id: deprecation_policy
+  - id: rate_limits_documented
+    status: missed
+  - id: rate_limits_rich
     status: missed
   - id: security_disclosure
-    status: missed
-  - id: webhooks_advertised
     status: missed
   - id: github_org_present
     status: missed
   - id: roadmap_present
     status: missed
-  - id: examples_published
-    status: missed
-  - id: api_reference_present
-    status: missed
-  - id: authentication_documented
-    status: missed
-  - id: sdk_count_1
-    status: missed
   - id: sdk_count_3
     status: missed
   - id: cli_present
     status: missed
-  - id: console_or_sandbox
-    status: missed
   - id: postman_present
     status: missed
-  - id: agent_skill_present
+  - id: plans_present
     status: missed
-  - id: support_channel
+  - id: plans_multiple
     status: missed
   - id: pricing_link
     status: missed
-  - id: terms_of_service
-    status: missed
-  - id: compliance_published
-    status: missed
-  - id: trust_center
-    status: missed
-  - id: reg_oauth_scopes
-    status: missed
-  - id: reg_authentication_documented
-    status: missed
   - id: reg_vulnerability_disclosure
-    status: missed
-  - id: reg_terms_of_service
-    status: missed
-  - id: reg_compliance_published
-    status: missed
-  - id: reg_standards_conformance
     status: missed
   - id: upsert_outcome_discriminator
     status: missed
@@ -115,25 +93,7 @@ kin_checks:
     status: missed
   - id: upsert_declared_conflict
     status: missed
-  - id: spec_presence
-    status: missed
-  - id: agentic_access
-    status: missed
-  - id: reversibility_documented
-    status: missed
   - id: mcp_server
-    status: missed
-  - id: auth_clarity
-    status: missed
-  - id: idempotency
-    status: missed
-  - id: error_semantics
-    status: missed
-  - id: openapi_examples
-    status: missed
-  - id: event_surface_described
-    status: missed
-  - id: agent_skills
     status: missed
   - id: well_known_catalog
     status: missed
@@ -151,19 +111,30 @@ kin_checks:
     status: missed
   - id: agentic_commerce
     status: missed
-  - id: rate_limits_documented
+  - id: agent_skill_present
     status: partial
-    earned: 2.0
-  - id: rate_limits_rich
+    earned: 0.75
+  - id: agentic_access
     status: partial
-    earned: 1.0
-  - id: plans_present
+    earned: 2.5
+    detail: 'authorship: derived'
+  - id: reversibility_documented
     status: partial
-    earned: 2.0
-  - id: plans_multiple
+    earned: 2.4
+    detail: 'grade: documented'
+  - id: auth_clarity
     status: partial
-    earned: 1.0
+    earned: 7.5
+    detail: 'grade: negotiable'
+  - id: idempotency
+    status: partial
+    earned: 4.5
+    detail: 'grade: documented'
   - id: rate_limit_signal
     status: partial
     earned: 3.5
     detail: 'grade: documented'
+  - id: agent_skills
+    status: partial
+    earned: 1.25
+    detail: 'authorship: derived'

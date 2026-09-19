@@ -103,6 +103,10 @@ apis:
     https://developer.authologic.com/docs/developer-documentation/product-enquiry-api-integration
   baseURL: https://api.authologic.com
   tags:
+  - Background Checks
+  - Identity
+  - KYB
+  tags_raw:
   - Background Check
   - Identity
   - KYB
@@ -201,6 +205,8 @@ apis:
     https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
   baseURL: https://api.authologic.com
   tags:
+  - Conversations
+  tags_raw:
   - Conversation
   properties:
   - type: OpenAPI

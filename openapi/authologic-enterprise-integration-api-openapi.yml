@@ -1,0 +1,427 @@
+openapi: 3.2.0
+info:
+  title: Authologic Customer Enterprise Integration API
+  description: 'The integration API for using with Authlogic Engine.
+
+
+    Authologic allows for simple and effective checking of the user''s identity, and the use of API enables initiation by an external system
+
+    the verification process and the receipt of its results.'
+  contact:
+    name: API support
+    email: tech-support@authologic.com
+  version: '1.1'
+servers:
+- url: https://sandbox.authologic.com
+  description: Testing environment
+security:
+- apiKey: []
+- oauth2: []
+tags:
+- name: Enterprise Integration
+  description: 6. Enterprise Integration
+  externalDocs:
+    description: Usage
+    url: https://developer.authologic.com/docs/developer-documentation/additional-headless-integration
+paths:
+  /api/conversations/{conversationId}/headless/{next}:
+    post:
+      tags:
+      - Enterprise Integration
+      summary: Send the information obtained from the user during the identity verification…
+      description: 'Takes the information from the user and calculates the next step that should be rendered to the user.
+
+
+        Detailed description of returned attributes:
+
+
+        | Parameter | Example | Description |
+
+        | --------- | ------- | ----------- |
+
+        | component | `GLOBAL/ACCEPTED` | Name of method related with current step and expected action related to UI in verification process. |
+
+        | next | `fd78cf43-12a7...` | Id of the page to which the user information should be submitted. Information is sent via the method `POST /api/conversations/{conversationId}/headless/{next}`. |
+
+        | args | parameter name list | List of parameters that should be displayed to the user. |
+
+        | errors | map with field name and error description | A map specifying incorrectly entered form fields and a description of the associated error. |
+
+        | errors.field | parameter name sent in `body` attribute, validated and marked as incorrect | Value specifying incorrectly entered form field. |
+
+        | errors.code | error code related to the field described in `errors.field` attribute | Value describing the error associated to the form field. |'
+      operationId: nextStep
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation ID
+        required: true
+        schema:
+          type: string
+      - name: next
+        in: path
+        description: Next step ID
+        required: true
+        schema:
+          type: string
+      - name: X-User-IP
+        in: header
+        description: User IP Address
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HeadlessNextPageRequest'
+        required: true
+      responses:
+        '200':
+          description: Information available
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/HeadlessPage'
+        '400':
+          description: Bad Request
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                type: string
+                oneOf:
+                - $ref: '#/components/schemas/BadRequestApiError'
+                - $ref: '#/components/schemas/MethodArgumentNotValidError'
+                - $ref: '#/components/schemas/MethodArgumentTypeMismatchError'
+                - $ref: '#/components/schemas/ConstraintViolationError'
+                - $ref: '#/components/schemas/CustomValidationApiError'
+                - $ref: '#/components/schemas/OperationNotSupportedApiFieldError'
+                - $ref: '#/components/schemas/MissingHeaderApiError'
+              example:
+                status: BAD_REQUEST
+                message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was expecting Array entries.'
+                violations: []
+        '402':
+          description: Exhaustion of the plan or limitations related to non-payment
+        '403':
+          description: Permission denied
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: FORBIDDEN
+                message: 'Permission denied for strategy: `public:global`.'
+                violations: []
+        '404':
+          description: Conversation not found
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: NOT_FOUND
+                message: Item not found
+                violations: []
+        '500':
+          description: Server side error
+  /api/conversations/{conversationId}/headless:
+    get:
+      tags:
+      - Enterprise Integration
+      summary: Obtaining the information needed to show the user the current page of the…
+      description: 'Returns information about the values that should be rendered on page and displayed to the user.
+
+
+        Detailed description of the returned attributes:
+
+
+        | Parameter | Example | Description |
+
+        | --------- | ------- | ----------- |
+
+        | component | `SMART_ID/SHOW_CODE` | Name of method related with current step and expected action related to UI in verification process. |
+
+        | next | `fd78cf43-12a7...` | Id of the page to which the user information should be submitted. Information is sent via the method `POST /api/conversations/{conversationId}/headless/{next}`. |
+
+        | args | parameter name list | List of parameters that should be displayed to the user. |'
+      operationId: currentStep
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation ID
+        required: true
+        schema:
+          type: string
+      - name: X-User-IP
+        in: header
+        description: User IP Address
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Information available
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/HeadlessPage'
+        '402':
+          description: Exhaustion of the plan or limitations related to non-payment
+        '403':
+          description: Permission denied
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: FORBIDDEN
+                message: 'Permission denied for strategy: `public:global`.'
+                violations: []
+        '404':
+          description: Conversation not found
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: NOT_FOUND
+                message: Item not found
+                violations: []
+        '500':
+          description: Server side error
+components:
+  schemas:
+    CustomValidationApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    HeadlessPageArgError:
+      type: object
+      properties:
+        field:
+          type: string
+        code:
+          type: string
+      required:
+      - code
+      - field
+    MethodArgumentTypeMismatchError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    OperationNotSupportedApiFieldError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MethodArgumentNotValidError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    ApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Descriptive error message
+      required:
+      - field
+      - message
+    HeadlessNextPageRequest:
+      type: object
+      description: Map of parameters sent by the user
+      properties:
+        args:
+          type: object
+          additionalProperties:
+            type: string
+    BadRequestApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    HeadlessPage:
+      type: object
+      description: Page definition which should be rendered to the user
+      properties:
+        component:
+          type: string
+          description: Information needed to render the page
+        next:
+          type: string
+          description: Id of the page to which the user information should be submitted
+        args:
+          type: object
+          additionalProperties: {}
+          description: Option parameters which can be used by the user
+        errors:
+          type: array
+          description: Information about errors occurred when processing the data from the page
+          items:
+            $ref: '#/components/schemas/HeadlessPageArgError'
+    ConstraintViolationError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MissingHeaderApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+  securitySchemes:
+    apiKey:
+      type: http
+      description: To log in, use the user's login and password. The password is the API key obtained for a specific environment. You can generate a new key in the API Keys section of the OmniPanel.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      description: " To log in, use the user's login and password for client_id and client_secret, respectively. The password is the API key obtained for a specific environment. You can generate a new key in the API Keys section of the OmniPanel.\n \n Here is an example curl command for getting an access token:\n\n```bash\ncurl -i -X POST 'https://ENVIRONMENT_URL/api/oauth2/token' --header 'Authorization: Basic base64(user:pass)' --header 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials'\n```\n\n**Note the following:**\n- use HTTP POST method while making the call\n- set the Content-Type header to application/x-www-form-urlencoded\n- pass in OAuth flow information: grant_type=client_credentials\n    Once the token has been received, it should be stored somewhere and can be used while making regular api calls.\n The OAuth calls should set the Authorization header as follows:\n \n ```http\nAuthorization: Bearer <token>\n```\n "
+      scheme: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://sandbox.authologic.com/api/oauth2/token
+          scopes: {}
+externalDocs:
+  description: API Documentation
+  url: https://developer.authologic.com

@@ -1,0 +1,27 @@
+# Front Door AI Index — authologic — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: authologic
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: authologic.com
+  final_host: authologic.com
+  ownership: own
+  owner: authologic
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 6
+  host_score: 6
+  density: 7.99
+  words: 751
+  tiers:
+    agentic: 2
+    core: 4
+    model: 0
+  ambiguous: 2
+  top_terms:
+    AI: 4
+    AI agent: 2
+    agent: 2

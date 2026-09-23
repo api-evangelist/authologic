@@ -1,0 +1,481 @@
+openapi: 3.2.0
+info:
+  title: Authologic Customer Metadata API
+  description: 'The integration API for using with Authlogic Engine.
+
+
+    Authologic allows for simple and effective checking of the user''s identity, and the use of API enables initiation by an external system
+
+    the verification process and the receipt of its results.'
+  contact:
+    name: API support
+    email: tech-support@authologic.com
+  version: '1.1'
+servers:
+- url: https://sandbox.authologic.com
+  description: Testing environment
+security:
+- apiKey: []
+- oauth2: []
+tags:
+- name: Metadata
+  description: '5. Advanced: Metadata'
+  externalDocs:
+    description: Usage
+    url: https://developer.authologic.com/docs/developer-documentation/additional-information-metadata
+paths:
+  /api/conversations/{conversationId}/identity/metadata:
+    get:
+      tags:
+      - Metadata
+      summary: Retrieving information about the metadata collected during the identification…
+      description: 'Returns information about the available metadata that was collected during the identification process.
+
+
+        Detailed description of returned fields:
+
+
+        | Parameter | Example | Description |
+
+        | --------- | ------- | ----------- |
+
+        | id | `9db8a804-4570-403e-9da6-162e608585e8` | Conversation ID. |
+
+        | letter | - | A structure representing the set of metadata collected from the identity validation process. |
+
+        | list.media | - | List of information about available multimedia files. |
+
+        | list.media.id | `7a4d1a9f-bdac-4d2c-96a6-bb51fb4ec7c5` | The ID of the media file. |
+
+        | list.media.type | `DOCUMENT` | Media file type. Possible values: `DOCUMENT` - document of the authenticated person, `FACE` - face of the authenticated person, `REPORT` - report on the verification process |
+
+        | list.media.subtype | `ID_CARD` | The sub-type of the media file, such as the type of document. The value is blank if `type` = `FACE`. `ID_CARD` - identity card of the authenticated person, `DRIVER_LICENSE` - driving license of the authenticated person, `PASSPORT` - passport of the authenticated person, `RESIDENCE_PERMIT` - residence card of the authenticated person, `UTILITY_BILL` - proof of address of the authenticated person |
+
+        | list.media.variant | `FRONT` | Variant of the media file, e.g. document page. The value is blank if `type` = `FACE`. `FRONT` - front side of the document, `BACK` - back side of the document |
+
+        | list.media.contentType | `image/png` | The type of media file content. Example values: `image/png`, `video/mp4` |'
+      operationId: getMetadata
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Information available
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/IdentityMetadata'
+        '400':
+          description: Bad Request
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                type: string
+                oneOf:
+                - $ref: '#/components/schemas/BadRequestApiError'
+                - $ref: '#/components/schemas/MethodArgumentNotValidError'
+                - $ref: '#/components/schemas/MethodArgumentTypeMismatchError'
+                - $ref: '#/components/schemas/ConstraintViolationError'
+                - $ref: '#/components/schemas/CustomValidationApiError'
+                - $ref: '#/components/schemas/OperationNotSupportedApiFieldError'
+                - $ref: '#/components/schemas/MissingHeaderApiError'
+              example:
+                status: BAD_REQUEST
+                message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was expecting Array entries.'
+                violations: []
+        '402':
+          description: Exhaustion of the plan or limitations related to non-payment
+        '403':
+          description: Permission denied
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: FORBIDDEN
+                message: 'Permission denied for strategy: `public:b`.'
+                violations: []
+        '404':
+          description: Conversation not found
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: NOT_FOUND
+                message: Item not found
+                violations: []
+        '410':
+          description: Conversation is unavailable
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: GONE
+                message: Conversation is unavailable due to retention policy.
+                violations: []
+        '500':
+          description: Server side error
+  /api/conversations/{conversationId}/identity/metadata/media/{id}:
+    get:
+      tags:
+      - Metadata
+      summary: Retrieving media file that was collected during the identification process
+      description: 'Returns stream of media file (images, videos, pdf reports etc.) collected during identification process.
+
+
+        If the answer is successful, the data stream will be provided along with the following key HTTP headers:
+
+
+        | Header | Example | Description |
+
+        | ------ | ------- | ----------- |
+
+        | content-disposition | attachment; filename = 9db8a804-4570-403e-9da6-162e608585e8_idi_ID_CARD_BACK.png | The file name is generated based on information about the media file. |
+
+        | content-type | image / png | The type of multimedia file content, similar to the one presented in the information about the given file. |
+
+        | status | 200 | Response status. |
+
+
+        In case of a wrong answer, the error information will be passed in the format `application/vnd.authologic.v1.1+json`.'
+      operationId: getMedia
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation ID
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: Media ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Information available
+          content:
+            application/octet-stream: {}
+        '400':
+          description: Bad Request
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                type: string
+                oneOf:
+                - $ref: '#/components/schemas/BadRequestApiError'
+                - $ref: '#/components/schemas/MethodArgumentNotValidError'
+                - $ref: '#/components/schemas/MethodArgumentTypeMismatchError'
+                - $ref: '#/components/schemas/ConstraintViolationError'
+                - $ref: '#/components/schemas/CustomValidationApiError'
+                - $ref: '#/components/schemas/OperationNotSupportedApiFieldError'
+                - $ref: '#/components/schemas/MissingHeaderApiError'
+              example:
+                status: BAD_REQUEST
+                message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was expecting Array entries.'
+                violations: []
+        '402':
+          description: Exhaustion of the plan or limitations related to non-payment
+        '403':
+          description: Permission denied
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: FORBIDDEN
+                message: 'Permission denied for strategy: `public:b`.'
+                violations: []
+        '404':
+          description: Conversation not found
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: NOT_FOUND
+                message: Item not found
+                violations: []
+        '410':
+          description: Conversation is unavailable
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: GONE
+                message: Conversation is unavailable due to retention policy.
+                violations: []
+        '500':
+          description: Server side error
+components:
+  schemas:
+    CustomValidationApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    IdentityMetadata:
+      type: object
+      description: Information about the metadata collected during the identification process
+      properties:
+        id:
+          type: string
+          description: Conversation Id
+          example: e0c0b3cc-8238-414f-9940-9f14bd1b8693b
+        list:
+          $ref: '#/components/schemas/MetadataInfo'
+          description: Metadata list, collected during the identification process
+      required:
+      - id
+      - list
+    MethodArgumentTypeMismatchError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    OperationNotSupportedApiFieldError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MethodArgumentNotValidError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    ApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    Media:
+      type: object
+      description: Information about media file
+      properties:
+        id:
+          type: string
+          description: Media id
+          example: c9c73416-6f77-11eb-b60f-0240214a8d4b
+        type:
+          type: string
+          description: "Media type:\n* DOCUMENT - identified person's document\n* FACE - identified person's face\n* REPORT - verification process report\n    "
+          enum:
+          - DOCUMENT
+          - FACE
+          - REPORT
+          example: DOCUMENT
+        subtype:
+          type: string
+          description: "Media subtype, for example type of the document. Subtype is empty, if the type is FACE.:\n* ID_CARD - identified person's id card\n* DRIVER_LICENSE - identified person's driver license\n* PASSPORT - identified person's passport\n* RESIDENCE_PERMIT - identified person's residence permit\n* UTILITY_BILL - identified person's proof of address\n    "
+          enum:
+          - ID_CARD
+          - DRIVER_LICENSE
+          - PASSPORT
+          - RESIDENCE_PERMIT
+          - UTILITY_BILL
+          example: ID_CARD
+        variant:
+          type: string
+          description: "Media variant, for example side of the document. Variant is empty, if the type is FACE.:\n* FRONT - front side of the document\n* BACK - back side of the document\n    "
+          enum:
+          - FRONT
+          - BACK
+          example: BACK
+        contentType:
+          type: string
+          description: Media content type
+          example: image/png
+      required:
+      - contentType
+      - id
+      - type
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Descriptive error message
+      required:
+      - field
+      - message
+    MetadataInfo:
+      type: object
+      description: Information about the list of available metadata collected during the identification process
+      properties:
+        media:
+          type: array
+          description: List of available media files
+          items:
+            $ref: '#/components/schemas/Media'
+      required:
+      - media
+    BadRequestApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    ConstraintViolationError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MissingHeaderApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+  securitySchemes:
+    apiKey:
+      type: http
+      description: To log in, use the user's login and password. The password is the API key obtained for a specific environment. You can generate a new key in the API Keys section of the OmniPanel.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      description: " To log in, use the user's login and password for client_id and client_secret, respectively. The password is the API key obtained for a specific environment. You can generate a new key in the API Keys section of the OmniPanel.\n \n Here is an example curl command for getting an access token:\n\n```bash\ncurl -i -X POST 'https://ENVIRONMENT_URL/api/oauth2/token' --header 'Authorization: Basic base64(user:pass)' --header 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials'\n```\n\n**Note the following:**\n- use HTTP POST method while making the call\n- set the Content-Type header to application/x-www-form-urlencoded\n- pass in OAuth flow information: grant_type=client_credentials\n    Once the token has been received, it should be stored somewhere and can be used while making regular api calls.\n The OAuth calls should set the Authorization header as follows:\n \n ```http\nAuthorization: Bearer <token>\n```\n "
+      scheme: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://sandbox.authologic.com/api/oauth2/token
+          scopes: {}
+externalDocs:
+  description: API Documentation
+  url: https://developer.authologic.com

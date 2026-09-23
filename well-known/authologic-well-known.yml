@@ -6,124 +6,121 @@ specification: API Commons Well-Known
 specificationVersion: '0.1'
 provider: Authologic
 providerId: authologic
-description: >-
-  Named-path /.well-known probe across every Authologic host. One real document was found: an RFC 8414
-  OAuth 2.0 Authorization Server Metadata document served by the API environment at
-  sandbox.authologic.com. No security.txt, no api-catalog, no ai-plugin, no agent card.
+description: 'Named-path /.well-known probe across every Authologic host. One real document was found:
+  an RFC 8414 OAuth 2.0 Authorization Server Metadata document served by the API environment at sandbox.authologic.com.
+  No security.txt, no api-catalog, no ai-plugin, no agent card.'
 notes:
-  - api.authologic.com is the production API host and is IP-allowlisted — every path returns 403 with an
-    nginx "IP not allowed" page, so nothing there could be read from our network. That is a gated host,
-    not an absent document.
-  - id.authologic.com is a single-page app whose catch-all answers HTTP 200 with the same 568-byte HTML
-    shell for every /.well-known/* path. Those 200s are NOT documents and are recorded as misses.
+- api.authologic.com is the production API host and is IP-allowlisted — every path returns 403 with an
+  nginx "IP not allowed" page, so nothing there could be read from our network. That is a gated host,
+  not an absent document.
+- id.authologic.com is a single-page app whose catch-all answers HTTP 200 with the same 568-byte HTML
+  shell for every /.well-known/* path. Those 200s are NOT documents and are recorded as misses.
 hosts:
-  - host: sandbox.authologic.com
-    note: OpenAPI servers[0] host; the Authologic test environment.
-    documents:
-      - path: /.well-known/oauth-authorization-server
-        status: 200
-        content_type: application/json
-        file: well-known/authologic-sandbox-oauth-authorization-server.json
-        note: >-
-          Real RFC 8414 document. issuer https://sandbox.authologic.com, token endpoint
-          /api/oauth2/token, jwks_uri /api/oauth2/jwks, client_credentials + authorization_code +
-          refresh_token + device_code + token-exchange grants, PKCE S256, mTLS-bound tokens and DPoP.
-      - path: /.well-known/openid-configuration
-        status: 404
-      - path: /.well-known/oauth-protected-resource
-        status: 404
-      - path: /.well-known/security.txt
-        status: 404
-      - path: /.well-known/api-catalog
-        status: 404
-      - path: /.well-known/ai-plugin.json
-        status: 404
-      - path: /.well-known/agent-card.json
-        status: 404
-      - path: /.well-known/agent.json
-        status: 404
-      - path: /.well-known/aauth-resource.json
-        status: 404
-  - host: authologic.com
-    note: Registrable domain / marketing site. www.authologic.com 308-redirects here.
-    documents:
-      - path: /.well-known/security.txt
-        status: 404
-      - path: /.well-known/openid-configuration
-        status: 404
-      - path: /.well-known/oauth-authorization-server
-        status: 404
-      - path: /.well-known/api-catalog
-        status: 404
-      - path: /.well-known/ai-plugin.json
-        status: 404
-      - path: /.well-known/agent-card.json
-        status: 404
-      - path: /.well-known/agent.json
-        status: 404
-  - host: developer.authologic.com
-    note: Documentation host; also serves /openapi.json and /llms.txt.
-    documents:
-      - path: /.well-known/security.txt
-        status: 404
-      - path: /.well-known/openid-configuration
-        status: 404
-      - path: /.well-known/oauth-authorization-server
-        status: 404
-      - path: /.well-known/api-catalog
-        status: 404
-      - path: /.well-known/ai-plugin.json
-        status: 404
-      - path: /.well-known/agent-card.json
-        status: 404
-      - path: /.well-known/agent.json
-        status: 404
-  - host: api.authologic.com
-    note: apis.yml baseURL host — production API, IP-allowlisted. All paths 403 "IP not allowed" (nginx).
-    documents:
-      - path: /.well-known/security.txt
-        status: 403
-      - path: /.well-known/openid-configuration
-        status: 403
-      - path: /.well-known/oauth-authorization-server
-        status: 403
-      - path: /.well-known/api-catalog
-        status: 403
-      - path: /.well-known/ai-plugin.json
-        status: 403
-      - path: /.well-known/agent-card.json
-        status: 403
-      - path: /.well-known/agent.json
-        status: 403
-  - host: id.authologic.com
-    note: >-
-      Hosted verification widget / WebSDK asset host. SPA catch-all returns 200 with an HTML shell for
-      every path probed — recorded as misses, not hits.
-    documents:
-      - path: /.well-known/security.txt
-        status: 200
-        content_type: text/html
-        note: SPA shell, not a document — treated as a miss.
-      - path: /.well-known/openid-configuration
-        status: 200
-        content_type: text/html
-        note: SPA shell, not a document — treated as a miss.
-      - path: /.well-known/oauth-authorization-server
-        status: 200
-        content_type: text/html
-        note: SPA shell, not a document — treated as a miss.
-      - path: /.well-known/agent-card.json
-        status: 200
-        content_type: text/html
-        note: SPA shell, not a document — treated as a miss.
-      - path: /.well-known/agent.json
-        status: 200
-        content_type: text/html
-        note: SPA shell, not a document — treated as a miss.
-      - path: /.well-known/api-catalog
-        status: 200
-        content_type: text/html
-        note: SPA shell, not a document — treated as a miss.
+- host: sandbox.authologic.com
+  note: OpenAPI servers[0] host; the Authologic test environment.
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: authologic-sandbox-oauth-authorization-server.json
+    note: Real RFC 8414 document. issuer https://sandbox.authologic.com, token endpoint /api/oauth2/token,
+      jwks_uri /api/oauth2/jwks, client_credentials + authorization_code + refresh_token + device_code
+      + token-exchange grants, PKCE S256, mTLS-bound tokens and DPoP.
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+- host: authologic.com
+  note: Registrable domain / marketing site. www.authologic.com 308-redirects here.
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: developer.authologic.com
+  note: Documentation host; also serves /openapi.json and /llms.txt.
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: api.authologic.com
+  note: apis.yml baseURL host — production API, IP-allowlisted. All paths 403 "IP not allowed" (nginx).
+  documents:
+  - path: /.well-known/security.txt
+    status: 403
+  - path: /.well-known/openid-configuration
+    status: 403
+  - path: /.well-known/oauth-authorization-server
+    status: 403
+  - path: /.well-known/api-catalog
+    status: 403
+  - path: /.well-known/ai-plugin.json
+    status: 403
+  - path: /.well-known/agent-card.json
+    status: 403
+  - path: /.well-known/agent.json
+    status: 403
+- host: id.authologic.com
+  note: Hosted verification widget / WebSDK asset host. SPA catch-all returns 200 with an HTML shell for
+    every path probed — recorded as misses, not hits.
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/html
+    note: SPA shell, not a document — treated as a miss.
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: text/html
+    note: SPA shell, not a document — treated as a miss.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: text/html
+    note: SPA shell, not a document — treated as a miss.
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: text/html
+    note: SPA shell, not a document — treated as a miss.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: text/html
+    note: SPA shell, not a document — treated as a miss.
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: text/html
+    note: SPA shell, not a document — treated as a miss.
 maintainers:
-  - FN: Kin Lane
-    email: kin@apievangelist.com
+- FN: Kin Lane
+  email: kin@apievangelist.com

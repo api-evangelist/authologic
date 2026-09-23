@@ -1,0 +1,34 @@
+{
+  "provider": "authologic",
+  "sources": [
+    "_original/authologic-customer-api.json"
+  ],
+  "outputs": [
+    "authologic-aml-api-openapi.yml",
+    "authologic-advanced-api-openapi.yml",
+    "authologic-affordability-assessment-api-openapi.yml",
+    "authologic-bank-api-openapi.yml",
+    "authologic-conversation-api-openapi.yml",
+    "authologic-database-verification-api-openapi.yml",
+    "authologic-enterprise-integration-api-openapi.yml",
+    "authologic-metadata-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "authologic-customer-api.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "authologic-advanced-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authologic-affordability-assessment-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authologic-aml-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authologic-bank-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authologic-conversation-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authologic-database-verification-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authologic-enterprise-integration-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authologic-metadata-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

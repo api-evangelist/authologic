@@ -1,0 +1,547 @@
+openapi: 3.2.0
+info:
+  title: Authologic Customer Affordability assessment API
+  description: 'The integration API for using with Authlogic Engine.
+
+
+    Authologic allows for simple and effective checking of the user''s identity, and the use of API enables initiation by an external system
+
+    the verification process and the receipt of its results.'
+  contact:
+    name: API support
+    email: tech-support@authologic.com
+  version: '1.1'
+servers:
+- url: https://sandbox.authologic.com
+  description: Testing environment
+security:
+- apiKey: []
+- oauth2: []
+tags:
+- name: Affordability assessment
+  description: '7. Product: Affordability assessment'
+  externalDocs:
+    description: Usage
+    url: https://developer.authologic.com/docs/developer-documentation/product-affordability-index
+paths:
+  /api/conversations/{conversationId}/affordability/info:
+    get:
+      tags:
+      - Affordability assessment
+      summary: Retrieving the affordability assessment product information relating to the…
+      description: Returns information about how the affordability assessment validation process is performed for the given conversation ID.
+      operationId: getAffordability
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Transaction list available
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/Affordability'
+        '400':
+          description: Bad Request
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                type: string
+                oneOf:
+                - $ref: '#/components/schemas/BadRequestApiError'
+                - $ref: '#/components/schemas/MethodArgumentNotValidError'
+                - $ref: '#/components/schemas/MethodArgumentTypeMismatchError'
+                - $ref: '#/components/schemas/ConstraintViolationError'
+                - $ref: '#/components/schemas/CustomValidationApiError'
+                - $ref: '#/components/schemas/OperationNotSupportedApiFieldError'
+                - $ref: '#/components/schemas/MissingHeaderApiError'
+              example:
+                status: BAD_REQUEST
+                message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was expecting Array entries.'
+                violations: []
+        '402':
+          description: Exhaustion of the plan or limitations related to non-payment
+        '403':
+          description: Forbidden
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: FORBIDDEN
+                message: 'Permission denied for strategy: `public:b`.'
+                violations: []
+        '404':
+          description: Conversation not found
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: NOT_FOUND
+                message: Item not found
+                violations: []
+        '410':
+          description: Conversation is unavailable
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: GONE
+                message: Conversation is unavailable due to retention policy.
+                violations: []
+        '500':
+          description: Server side error
+components:
+  schemas:
+    Affordability:
+      type: object
+      properties:
+        items:
+          type: array
+          description: List of affordability assessment results
+          items:
+            $ref: '#/components/schemas/AffordabilityResultDetails'
+      required:
+      - items
+      title: Affordability
+    AffordabilityResultDetails:
+      type: object
+      properties:
+        personalInformation:
+          $ref: '#/components/schemas/AffordabilityPersonalInformation'
+          description: Representation of the personal data collected in affordability assessment validation process
+        accountInformation:
+          $ref: '#/components/schemas/AffordabilityAccountInformation'
+          description: Representation of the data related with account collected in affordability assessment validation process
+        sourceOfFundsInformation:
+          $ref: '#/components/schemas/AffordabilitySourceOfFundsInformation'
+          description: Representation of the data related with source of funds information collected in affordability assessment validation process
+        documentInformation:
+          $ref: '#/components/schemas/AffordabilityDocumentInformation'
+          description: Representation of the data related with document collected in affordability assessment validation process
+        financialAnalysis:
+          $ref: '#/components/schemas/AffordabilityFinancialAnalysisInformation'
+          description: Summary of affordability assessment validation
+      title: AffordabilityResult
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Descriptive error message
+      required:
+      - field
+      - message
+    BadRequestApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    AffordabilityAccountInformation:
+      type: object
+      properties:
+        account:
+          type: array
+          description: List of account information
+          items:
+            $ref: '#/components/schemas/AffordabilityAccount'
+      required:
+      - account
+      title: AffordabilityAccountInformation
+    ConstraintViolationError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    OperationNotSupportedApiFieldError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    AffordabilityCurrencyConversion:
+      type: object
+      properties:
+        convertedAmount:
+          type: number
+          format: double
+          description: Net income after conversion to target currency
+          example: 4766.9472
+        targetCurrency:
+          type: string
+          description: Target currency
+          example: USD
+        exchangeRate:
+          type: number
+          format: double
+          description: Exchange rate applied by provider
+          example: 1.177024
+      title: AffordabilityCurrencyConversion
+    AffordabilityAccount:
+      type: object
+      properties:
+        accountNumber:
+          type: string
+          description: Account number
+          example: PL12345678901234567890123456
+        bankName:
+          type: string
+          description: Account issueDate
+          example: Bank Millennium
+        accountType:
+          type: string
+          description: Account type/name
+          example: Current
+        balance:
+          type: number
+          format: double
+          description: Balance
+          example: 15450.75
+        overdraft:
+          type: string
+          description: Account has an overdraft
+          example: false
+        openingDate:
+          type: string
+          format: date
+          description: Account opening date
+          example: '2010-11-09'
+        currency:
+          type: string
+          description: Currency
+          example: EUR
+      title: AffordabilityAccount
+    AffordabilityDocumentInformation:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of the collected document
+          example: EmploymentContract
+        number:
+          type: string
+          description: Number of the collected document
+          example: TS/KOW/2022/11
+        issueDate:
+          type: string
+          format: date
+          description: Document issue date
+          example: '2022-11-01'
+        confidenceScore:
+          type: string
+          description: Level of trust of the analysed document
+          example: 0.95
+        trustScore:
+          type: number
+          format: double
+          description: Document Trust Index score (0-1, one decimal)
+          example: 0.7
+        periodStart:
+          type: string
+          format: date
+          description: Period start date that analysed document refers to
+          example: '2023-01-01'
+        periodEnd:
+          type: string
+          format: date
+          description: Period end date that analysed document refers to
+          example: '2023-12-31'
+      title: AffordabilityDocumentInformation
+    AffordabilityFinancialAnalysisInformation:
+      type: object
+      properties:
+        income:
+          type: number
+          format: double
+          description: Summary income
+        expenditure:
+          type: number
+          format: double
+          description: Summary expenditure
+        currency:
+          type: string
+          description: Currency
+          example: EUR
+      title: AffordabilityFinancialAnalysisInformation
+    AffordabilitySourceOfFunds:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Source type
+          example: Employment
+        name:
+          type: string
+          description: Name of the institution being the source of funds
+          example: Tech Solutions sp. z o.o.
+        grossAmount:
+          type: number
+          format: double
+          description: Contract gross amount
+          example: 8500
+        netAmount:
+          type: number
+          format: double
+          description: Contract net amount
+          example: 6120.5
+        currencyConversion:
+          $ref: '#/components/schemas/AffordabilityCurrencyConversion'
+          description: Net income conversion metadata
+        currency:
+          type: string
+          description: Currency
+          example: EUR
+        frequency:
+          type: string
+          description: Payment frequency
+          example: Monthly
+        contractType:
+          type: string
+          description: Type of the contract
+          example: Permanent
+        contractEndDate:
+          type: string
+          format: date
+          description: Contract end date
+          example: '2099-12-31'
+        partTimePercentage:
+          type: number
+          format: double
+          description: Part of a full-time position covered by the agreement
+          example: 1
+      title: AffordabilitySourceOfFunds
+    CustomValidationApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MethodArgumentNotValidError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    AffordabilityPersonalInformation:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: User name
+          example: Jan
+        lastName:
+          type: string
+          description: User surname
+          example: Kowalski
+        fullName:
+          type: string
+          description: Full surname
+          example: Jan Kowalski
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth
+        address:
+          $ref: '#/components/schemas/AffordabilityAddress'
+          description: Representation of address collected in affordability assessment validation process
+      title: AffordabilityPersonalInformation
+    ApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    AffordabilitySourceOfFundsInformation:
+      type: object
+      properties:
+        sourceOfFunds:
+          type: array
+          description: List of sources of funds related to affordability results
+          items:
+            $ref: '#/components/schemas/AffordabilitySourceOfFunds'
+      required:
+      - sourceOfFunds
+      title: AffordabilitySourceOfFundsInformation
+    MethodArgumentTypeMismatchError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    AffordabilityAddress:
+      type: object
+      properties:
+        text:
+          type: string
+          description: User's full address, not broken down into components. **Note:** This field has no format defined
+          example: ul. Wolna 133/20 00-950 Warszawa
+        addressLine:
+          type: string
+          description: User address
+          example: ul. Wolna 133/20
+        postalCode:
+          type: string
+          description: Postcode
+          example: 00-950
+        city:
+          type: string
+          description: City
+          example: Warszawa
+        country:
+          type: string
+          description: Country
+          example: PL
+      title: AffordabilityAddressInfo
+    MissingHeaderApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+  securitySchemes:
+    apiKey:
+      type: http
+      description: To log in, use the user's login and password. The password is the API key obtained for a specific environment. You can generate a new key in the API Keys section of the OmniPanel.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      description: " To log in, use the user's login and password for client_id and client_secret, respectively. The password is the API key obtained for a specific environment. You can generate a new key in the API Keys section of the OmniPanel.\n \n Here is an example curl command for getting an access token:\n\n```bash\ncurl -i -X POST 'https://ENVIRONMENT_URL/api/oauth2/token' --header 'Authorization: Basic base64(user:pass)' --header 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials'\n```\n\n**Note the following:**\n- use HTTP POST method while making the call\n- set the Content-Type header to application/x-www-form-urlencoded\n- pass in OAuth flow information: grant_type=client_credentials\n    Once the token has been received, it should be stored somewhere and can be used while making regular api calls.\n The OAuth calls should set the Authorization header as follows:\n \n ```http\nAuthorization: Bearer <token>\n```\n "
+      scheme: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://sandbox.authologic.com/api/oauth2/token
+          scopes: {}
+externalDocs:
+  description: API Documentation
+  url: https://developer.authologic.com

@@ -1,0 +1,179 @@
+openapi: 3.2.0
+info:
+  title: Authologic Customer Advanced API
+  description: 'The integration API for using with Authlogic Engine.
+
+
+    Authologic allows for simple and effective checking of the user''s identity, and the use of API enables initiation by an external system
+
+    the verification process and the receipt of its results.'
+  contact:
+    name: API support
+    email: tech-support@authologic.com
+  version: '1.1'
+servers:
+- url: https://sandbox.authologic.com
+  description: Testing environment
+security:
+- apiKey: []
+- oauth2: []
+tags:
+- name: Advanced
+  description: 4. Advanced methods.
+  externalDocs:
+    description: Usage
+    url: https://developer.authologic.com/docs/developer-documentation/home
+paths:
+  /api/conversations/{conversationId}:
+    delete:
+      tags:
+      - Advanced
+      summary: Block access or delete data of the verification process
+      description: 'Creates the conversation deletion order in two available modes:
+
+        * EXPIRE (default) - triggers the process of expiration of active conversation.
+
+        After completing such an order, the conversation will be switched to the ''EXPIRED'' status.
+
+        The verification process will be blocked.
+
+        This means that the user entering such a verification process will be automatically redirected to the ''returnUrl'' address.
+
+        * DELETE_DATA - triggers the process of data deletion from finished conversation.
+
+        This mode should be used with caution, when you are sure that you do not expect any callbacks associated with the conversation
+
+        as they may not be delivered.'
+      operationId: deleteConversation
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation ID
+        required: true
+        schema:
+          type: string
+      - name: mode
+        in: query
+        description: Deletion mode
+        required: false
+        schema:
+          type: string
+          enum:
+          - EXPIRE
+          - DELETE_DATA
+      responses:
+        '202':
+          description: Accepted
+        '402':
+          description: Exhaustion of the plan or limitations related to non-payment
+        '403':
+          description: Forbidden
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: FORBIDDEN
+                message: Permission denied.
+                violations: []
+        '404':
+          description: Conversation not found
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: NOT_FOUND
+                message: Item not found
+                violations: []
+        '409':
+          description: Conflict
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              examples:
+                Conversation cannot be expired as it is already finished.:
+                  description: Conversation cannot be expired as it is already finished.
+                  value:
+                    status: CONFLICT
+                    message: Conversation cannot be expired as it is already finished.
+                    violations: []
+                    statusDetail: ConversationAlreadyFinished
+                Conversation cannot be deleted because it is not yet finished.:
+                  description: Conversation cannot be deleted because it is not yet finished.
+                  value:
+                    status: CONFLICT
+                    message: Conversation cannot be deleted because it is not yet finished.
+                    violations: []
+                    statusDetail: ConversationNotYetFinished
+                Conversation cannot be deleted because it has an active subscription.:
+                  description: Conversation cannot be deleted because it has an active subscription.
+                  value:
+                    status: CONFLICT
+                    message: Conversation cannot be deleted because it has an active subscription.
+                    violations: []
+                    statusDetail: ActiveSubscriptionExists
+        '410':
+          description: Conversation is unavailable
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: GONE
+                message: Conversation is unavailable due to retention policy.
+                violations: []
+        '500':
+          description: Server side error
+components:
+  schemas:
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Descriptive error message
+      required:
+      - field
+      - message
+    ApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+  securitySchemes:
+    apiKey:
+      type: http
+      description: To log in, use the user's login and password. The password is the API key obtained for a specific environment. You can generate a new key in the API Keys section of the OmniPanel.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      description: " To log in, use the user's login and password for client_id and client_secret, respectively. The password is the API key obtained for a specific environment. You can generate a new key in the API Keys section of the OmniPanel.\n \n Here is an example curl command for getting an access token:\n\n```bash\ncurl -i -X POST 'https://ENVIRONMENT_URL/api/oauth2/token' --header 'Authorization: Basic base64(user:pass)' --header 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials'\n```\n\n**Note the following:**\n- use HTTP POST method while making the call\n- set the Content-Type header to application/x-www-form-urlencoded\n- pass in OAuth flow information: grant_type=client_credentials\n    Once the token has been received, it should be stored somewhere and can be used while making regular api calls.\n The OAuth calls should set the Authorization header as follows:\n \n ```http\nAuthorization: Bearer <token>\n```\n "
+      scheme: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://sandbox.authologic.com/api/oauth2/token
+          scopes: {}
+externalDocs:
+  description: API Documentation
+  url: https://developer.authologic.com

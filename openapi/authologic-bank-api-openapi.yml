@@ -1,0 +1,872 @@
+openapi: 3.2.0
+info:
+  title: Authologic Customer Bank API
+  description: 'The integration API for using with Authlogic Engine.
+
+
+    Authologic allows for simple and effective checking of the user''s identity, and the use of API enables initiation by an external system
+
+    the verification process and the receipt of its results.'
+  contact:
+    name: API support
+    email: tech-support@authologic.com
+  version: '1.1'
+servers:
+- url: https://sandbox.authologic.com
+  description: Testing environment
+security:
+- apiKey: []
+- oauth2: []
+tags:
+- name: Bank
+  description: '2. Product: Bank Transactions'
+  externalDocs:
+    description: Usage
+    url: https://developer.authologic.com/docs/developer-documentation/product-bank-transactions-index
+paths:
+  /api/conversations/{conversationId}/bankTransactions:
+    get:
+      tags:
+      - Bank
+      summary: Retrieving a list of banking transactions related to the conversation
+      description: 'The method allows you to get user transactions, if the conversation contains them. By default, it downloads transactions for a maximum of 90 full days,
+
+        that is: today + 90 previous days. If you need a larger scope - please contact us. Transactions are returned as defined when creating the conversation.
+
+        By default, this means both crediting and debiting the account, and only transactions that have already been made (posted or pending).
+
+        Transactions are available when the appropriate callback is received, or when the _bankTransactions_ status reaches _FINISHED_.
+
+
+        ## Query Parameters Description
+
+        The method supports the following query parameters:
+
+
+        | Parameter | Example | Description |
+
+        | ------- | ------- | ------- |
+
+        | page | `10` | Page number. Paging starts on page 0 (default). |
+
+        | pageSize | `10` | Number of transactions on the results page. Currently, values above 200 are treated as 200. |
+
+
+        ## Response Content
+
+
+        Detailed description of returned fields:
+
+
+        | Parameter | Example | Description |
+
+        |---------------------------------------| ------- | ----------- |
+
+        | id | `34df2bd6-b790-4560-9fc9-f86c86d87990` | Unique transaction identifier |
+
+        | date | `2020-08-27T10:40:28.348Z` | Date of operation in UTC time |
+
+        | status | `PENDING` | Status of a given transaction at the time of downloading information from the bank. Allowed values: `BOOKED` - posted transaction, `PENDING` - transaction in progress, `SCHEDULED` - future transaction. Scheduled transactions appear when the `flags` field with the value` INCLUDE_SCHEDULED` was specified when creating the conversation. |
+
+        | bank | `BREXPLPW` | Bank where the transaction was performed. The value identifies the bank as the SWIFT / BIC code. |
+
+        | accountId | `PL68249000050000400075212326` | Account number where transaction was registered. |
+
+        | type | `DEBIT` | Type of transaction. Available values: `DEBIT` (account debit) and `CREDIT` (account credit) |
+
+        | amount | `1000` | Value of the transaction in a currency unit, e.g. in grosze. |
+
+        | currency | `PLN` | type of currency |
+
+        | title | `Account top-up` | Transaction title |
+
+        | sender | `Jan Kowalski` | Transaction sender |
+
+        | senderAccountId | `PL68249000050000400075212326` | Account number of the sender |
+
+        | recipient | `Jan Kowalski` | Recipient of the transaction |
+
+        | recipientAccountId | `PL32114020040000320250132522` | Account number of the receiver |
+
+        | tags | `["transfer:bank:commission", "income:crypto"]` | Transaction categories |'
+      operationId: getBankTransactions
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation ID
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page number
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+      - name: pageSize
+        in: query
+        description: The number of items on the page
+        required: false
+        schema:
+          type: integer
+          format: int32
+          maximum: 200
+          minimum: 0
+      responses:
+        '200':
+          description: Transaction list available
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/Transactions'
+        '400':
+          description: Bad Request
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                type: string
+                oneOf:
+                - $ref: '#/components/schemas/BadRequestApiError'
+                - $ref: '#/components/schemas/MethodArgumentNotValidError'
+                - $ref: '#/components/schemas/MethodArgumentTypeMismatchError'
+                - $ref: '#/components/schemas/ConstraintViolationError'
+                - $ref: '#/components/schemas/CustomValidationApiError'
+                - $ref: '#/components/schemas/OperationNotSupportedApiFieldError'
+                - $ref: '#/components/schemas/MissingHeaderApiError'
+              example:
+                status: BAD_REQUEST
+                message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was expecting Array entries.'
+                violations: []
+        '402':
+          description: Exhaustion of the plan or limitations related to non-payment
+        '403':
+          description: Forbidden
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: FORBIDDEN
+                message: 'Permission denied for strategy: `public:b`.'
+                violations: []
+        '404':
+          description: Conversation not found
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: NOT_FOUND
+                message: Item not found
+                violations: []
+        '410':
+          description: Conversation is unavailable
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: GONE
+                message: Conversation is unavailable due to retention policy.
+                violations: []
+        '500':
+          description: Server side error
+  /api/conversations/{conversationId}/bankTransactions/stats:
+    get:
+      tags:
+      - Bank
+      summary: Retrieving statistics of downloaded banking transactions related to the…
+      description: 'Returns statistics related to downloaded transactions. These statistics are returned for each account that has been shared as part of the conversation.
+
+        This information only occurs when the _bankTransactions_ section is defined when creating a conversation.
+
+        and are available when the appropriate callback is received, or when the _bankTransactions_ status reaches _FINISHED_.
+
+
+        ## Query Parameter Description
+
+        The method supports the following query parameters:
+
+
+        | Parameter | Example | Description |
+
+        | --------- | ------- | ----------- |
+
+        | dateFrom | 2020-09-17T11: 18: 21.999Z | The starting date for the scope of analyzed transactions in the format https://tools.ietf.org/html/rfc3339. The default value is the oldest available transaction. You can enter an earlier date, but only transactions that the user has shared will be included. |
+
+        | dateTo | 2020-09-17T11: 18: 21.999Z | The end date for the range of analyzed transactions in the format https://tools.ietf.org/html/rfc3339. The default value is the latest available transaction. You can enter a later date, but only transactions that the user has shared will be included. |
+
+
+        ## Response Content Description
+
+
+        ::note
+
+        Returned fields may be missing some information. For example, if only the account credits were
+
+        selected when creating a conversation, the statistics do not contain information about the charges.
+
+        ::
+
+
+        Detailed description of returned fields:
+
+
+        | Parameter | Example | Description |
+
+        |-----------------------------------------|------------------------------| ----------- |
+
+        | dateFrom | 2020-09-16T10: 44: 51.544Z | The starting date of the search criteria, or the date of the first transaction for all bank accounts, if the criteria was empty. The field will not be presented if the starting date criterion is not specified and there are no transactions in the given search criteria. |
+
+        | dateTo | 2020-09-16T10: 44: 51.544Z | End date of the search criteria, or the date of the last transaction for all bank accounts, if the criteria was empty. The field will not be presented if the end date criterion is not specified and there are no transactions in the given search criteria. |
+
+        | items | - | A structure containing information about transaction statistics. Each element of this structure represents statistics from a separate bank account. |
+
+        | items.dateFirst | 2020-06-16T00: 00: 00.000Z | Date of the first transaction in the range. |
+
+        | items.dateLast | 2020-09-16T00: 00: 00.000Z | Date of the last transaction in the range. |
+
+        | items.numberOfCreditTransactions | 12 | Number of bank account discretionary transactions. |
+
+        | items.numberOfDebitTransactions | 12 | Number of debit transactions on the bank account. |
+
+        | items.avgCreditPerMonth | 300,000 | Average value of credit transactions per month, presented in basic units - e.g. in grosze. The value will be available if the analyzed period is greater than 60 days. |
+
+        | items.avgDebitPerMonth | 258000 | Average value of debit transactions per month, presented in basic units - e.g. in grosze. The value will be available if the analyzed period is greater than 60 days. |
+
+        | items.avgCredit | 30,000 | Average value of bank account discretionary transactions, presented in basic units - e.g. in grosze. |
+
+        | items.avgDebit | 40,000 | Average value of bank account debit transactions, presented in basic units - e.g. in grosze. |
+
+        | items.maxCredit | 110000 | Maximum value of a bank account discretionary transaction, presented in basic units - e.g. in grosze. |
+
+        | items.maxDebit | 132000 | The maximum value of the debit transaction from the bank account, presented in basic units - e.g. in grosze. |
+
+        | items.accountId | PL68249000050000400075212326 | Account number. |
+
+        | items.currency | PLN | Currency code for a given bank account. |'
+      operationId: getBankTransactionsStats
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation ID
+        required: true
+        schema:
+          type: string
+      - name: dateFrom
+        in: query
+        description: Starting date
+        required: false
+        schema:
+          type: string
+          format: date-time
+        example: '2020-07-24T08:00:00Z'
+      - name: dateTo
+        in: query
+        description: End date
+        required: false
+        schema:
+          type: string
+          format: date-time
+        example: '2020-08-24T00:00:00Z'
+      responses:
+        '200':
+          description: Information available
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/TransactionsStatistics'
+        '400':
+          description: Bad Request
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                type: string
+                oneOf:
+                - $ref: '#/components/schemas/BadRequestApiError'
+                - $ref: '#/components/schemas/MethodArgumentNotValidError'
+                - $ref: '#/components/schemas/MethodArgumentTypeMismatchError'
+                - $ref: '#/components/schemas/ConstraintViolationError'
+                - $ref: '#/components/schemas/CustomValidationApiError'
+                - $ref: '#/components/schemas/OperationNotSupportedApiFieldError'
+                - $ref: '#/components/schemas/MissingHeaderApiError'
+              example:
+                status: BAD_REQUEST
+                message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was expecting Array entries.'
+                violations: []
+        '402':
+          description: Exhaustion of the plan or limitations related to non-payment
+        '403':
+          description: Forbidden
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: FORBIDDEN
+                message: 'Permission denied for strategy: `public:b`.'
+                violations: []
+        '404':
+          description: Conversation not found
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: NOT_FOUND
+                message: Item not found
+                violations: []
+        '410':
+          description: Conversation is unavailable
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: GONE
+                message: Conversation is unavailable due to retention policy.
+                violations: []
+        '500':
+          description: Server side error
+  /api/conversations/{conversationId}/bankTransactions/accounts:
+    get:
+      tags:
+      - Bank
+      summary: Retrieving information on bank accounts related to the conversation
+      description: 'Returns information about the accounts from which transactions have been downloaded.
+
+        This information occurs only when the _bankTransactions_ section was defined when creating a conversation.
+
+        and are available when the appropriate callback is received, or when the _bankTransactions_ status reaches _FINISHED_.
+
+
+        ## Description of the Response Content
+
+
+        Detailed description of returned fields:
+
+
+        | Parameter | Example | Description |
+
+        | --------- | ------- | ----------- |
+
+        | date | 2020-09-17T11: 18: 21.999Z | Date on which the information was collected.|
+
+        | balance | 10030 | Account balance in a currency unit, e.g. in pennies. The value determines the balance of funds available on the account or, if there is no such information, the balance of funds booked. It may not occur if the bank does not provide the balance. |
+
+        | bank | BREXPLPW | Bank where the transaction was performed. The value identifies the bank as the SWIFT / BIC code. |
+
+        | accountId | PL68249000050000400075212326 | Account number. |
+
+        | currency | PLN | currency type |
+
+        | activationDate | 2014-11-19 | The date when the account was opened or the date of the oldest transaction found. |'
+      operationId: getBankTransactionsAccounts
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Account information available
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/Accounts'
+        '400':
+          description: Bad Request
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                type: string
+                oneOf:
+                - $ref: '#/components/schemas/BadRequestApiError'
+                - $ref: '#/components/schemas/MethodArgumentNotValidError'
+                - $ref: '#/components/schemas/MethodArgumentTypeMismatchError'
+                - $ref: '#/components/schemas/ConstraintViolationError'
+                - $ref: '#/components/schemas/CustomValidationApiError'
+                - $ref: '#/components/schemas/OperationNotSupportedApiFieldError'
+                - $ref: '#/components/schemas/MissingHeaderApiError'
+              example:
+                status: BAD_REQUEST
+                message: 'JSON body has an illegal format [Line: 10, Column: 12]: Unexpected character (''"'' (code 34)): was expecting Array entries.'
+                violations: []
+        '402':
+          description: Exhaustion of the plan or limitations related to non-payment
+        '403':
+          description: Forbidden
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: FORBIDDEN
+                message: 'Permission denied for strategy: `public:b`.'
+                violations: []
+        '404':
+          description: Conversation not found
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: NOT_FOUND
+                message: Item not found
+                violations: []
+        '410':
+          description: Conversation is unavailable
+          content:
+            application/vnd.authologic.v1.1+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                status: GONE
+                message: Conversation is unavailable due to retention policy.
+                violations: []
+        '500':
+          description: Server side error
+components:
+  schemas:
+    CustomValidationApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    Transaction:
+      type: object
+      description: Information about the transaction
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the transaction
+          example: 34df2bd6-b790-4560-9fc9-f86c86d87990
+        date:
+          type: string
+          format: date-time
+          description: Transaction date
+          example: '2020-09-24T08:27:14.515Z'
+        bank:
+          type: string
+          description: Bank's SWIFT / BIC code
+          example: BREXPLPW
+        accountId:
+          type: string
+          description: Account number where transaction was registered.
+          example: PL68249000050000400075212326
+        type:
+          type: string
+          description: "Transaction Type / Direction:\n* CREDIT - account crediting\n* DEBIT - debiting the account\n    "
+          enum:
+          - CREDIT
+          - DEBIT
+          example: CREDIT
+        status:
+          type: string
+          description: "Transaction status:\n* BOOKED - transaction booked\n* PENDING - transaction in progress\n* SCHEDULED - Transaction scheduled in the future\n    "
+          enum:
+          - BOOKED
+          - PENDING
+          - SCHEDULED
+          example: BOOKED
+        amount:
+          type: integer
+          format: int32
+          description: Transaction value in basic units - e.g. in cents
+          example: 10030
+        currency:
+          type: string
+          description: Currency code in which the transaction took place
+          example: PLN
+        title:
+          type: string
+          description: Transaction title
+          example: Zasilenie konta
+        sender:
+          type: string
+          description: Information about the sender
+          example: Jan Kowalski
+        recipient:
+          type: string
+          description: Information about the recipient
+          example: Jan Kowalski
+        senderAccountId:
+          type: string
+          description: Account number of the sender
+          example: PL68249000050000400075212326
+        recipientAccountId:
+          type: string
+          description: Account number of the receiver
+          example: PL32114020040000320250132522
+        tags:
+          type: array
+          description: Transaction categories
+          example:
+          - income:salary
+          - income:bonus
+          - income:freelance:contract
+          - income:freelance:b2b
+          - income:rental
+          - income:invoicing
+          - income:pension
+          - gambling
+          - income:bond
+          items:
+            type: string
+          uniqueItems: true
+      required:
+      - accountId
+      - amount
+      - bank
+      - currency
+      - date
+      - id
+      - status
+      - type
+    Account:
+      type: object
+      description: Information about transactions for a given account
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: The date for which the data is valid
+          example: '2020-09-24T08:27:14.515Z'
+        balance:
+          type: integer
+          format: int32
+          description: Account balance in basic units - e.g. in cents
+          example: 10030
+        bank:
+          type: string
+          description: Bank's SWIFT / BIC code
+          example: BREXPLPW
+        accountId:
+          type: string
+          description: Unique account identifier. All transactions from one account have the same ID
+          example: PL68249000050000400075212326
+        currency:
+          type: string
+          description: Currency code for the account
+          example: PLN
+        activationDate:
+          type: string
+          format: date
+          description: The date when the account was opened or the date of the oldest transaction found
+          example: '2020-09-24'
+      required:
+      - accountId
+      - bank
+      - currency
+      - date
+    MethodArgumentTypeMismatchError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    TransactionsStatistics:
+      type: object
+      properties:
+        dateFrom:
+          type: string
+          format: date-time
+          description: The starting date of the search criteria or the date of the first transaction for all accounts if the criteria was empty
+          example: '2020-07-24T08:00:00Z'
+        dateTo:
+          type: string
+          format: date-time
+          description: End date of the search criteria or the last transaction date for all accounts if the criteria was empty
+          example: '2020-08-24T00:00:00Z'
+        items:
+          type: array
+          description: List of transaction statistics for each account separately
+          items:
+            $ref: '#/components/schemas/TransactionStatistics'
+      required:
+      - items
+      title: TransactionsStatistics
+    OperationNotSupportedApiFieldError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    TransactionStatistics:
+      type: object
+      description: Information about transaction statistics for a given account
+      properties:
+        dateFirst:
+          type: string
+          format: date-time
+          description: Date of the first transaction in the range
+          example: '2020-07-24T08:00:00Z'
+        dateLast:
+          type: string
+          format: date-time
+          description: Date of the last transaction in the range
+          example: '2020-08-30T00:00:00Z'
+        numberOfCreditTransactions:
+          type: integer
+          format: int32
+          description: The number of credit transactions of the account. The value will be available if you selected all transactions or credit transactions.
+          example: 12
+        numberOfDebitTransactions:
+          type: integer
+          format: int32
+          description: Number of account debit transactions. The value will be available if you selected all transactions or debit transactions.
+          example: 2
+        avgCreditPerMonth:
+          type: integer
+          format: int32
+          description: Average value of credit transactions per month, presented in basic units - e.g. in cents. The value will be available if the analyzed period is greater than 60 days and if credit transactions or all of them were selected when creating the conversation.
+          example: 300000
+        avgDebitPerMonth:
+          type: integer
+          format: int32
+          description: Average value of credit transactions per month, presented in basic units - e.g. in cents. The value will be available if the analyzed period is greater than 60 days and if credit transactions or all of them were selected when creating the conversation.
+          example: 258000
+        avgCredit:
+          type: integer
+          format: int32
+          description: Average value of the account's credit transactions, presented in basic units - e.g. in cents. The value will be available if you selected all transactions or credit transactions.
+          example: 30000
+        avgDebit:
+          type: integer
+          format: int32
+          description: Average value of the account's debit transactions, presented in basic units - e.g. in cents. The value will be available if you selected all transactions or debit transactions.
+          example: 40000
+        maxCredit:
+          type: integer
+          format: int32
+          description: Maximum value of the account credit transaction, presented in basic units - e.g. in cents. The value will be available if you selected or all credit transactions when creating the conversation.
+          example: 110000
+        maxDebit:
+          type: integer
+          format: int32
+          description: Maximum value of the account debit transaction, presented in basic units - e.g. in cents. The value will be available if you selected all transactions or debit transactions.
+          example: 132000
+        accountId:
+          type: string
+          description: Account number.
+          example: PL68249000050000400075212326
+        currency:
+          type: string
+          description: Currency code for the account
+          example: PLN
+      required:
+      - accountId
+      - currency
+      - dateFirst
+      - dateLast
+    MethodArgumentNotValidError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    ApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Descriptive error message
+      required:
+      - field
+      - message
+    BadRequestApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    Accounts:
+      type: object
+      properties:
+        items:
+          type: array
+          description: List of transaction information for each account
+          items:
+            $ref: '#/components/schemas/Account'
+      required:
+      - items
+      title: TransactionsInfo
+    Transactions:
+      type: object
+      properties:
+        more:
+          type: boolean
+          description: Information whether there are more pages available
+          example: true
+        items:
+          type: array
+          description: List of transactions
+          items:
+            $ref: '#/components/schemas/Transaction'
+      required:
+      - items
+      - more
+      title: Transactions
+    ConstraintViolationError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MissingHeaderApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+  securitySchemes:
+    apiKey:
+      type: http
+      description: To log in, use the user's login and password. The password is the API key obtained for a specific environment. You can generate a new key in the API Keys section of the OmniPanel.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      description: " To log in, use the user's login and password for client_id and client_secret, respectively. The password is the API key obtained for a specific environment. You can generate a new key in the API Keys section of the OmniPanel.\n \n Here is an example curl command for getting an access token:\n\n```bash\ncurl -i -X POST 'https://ENVIRONMENT_URL/api/oauth2/token' --header 'Authorization: Basic base64(user:pass)' --header 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials'\n```\n\n**Note the following:**\n- use HTTP POST method while making the call\n- set the Content-Type header to application/x-www-form-urlencoded\n- pass in OAuth flow information: grant_type=client_credentials\n    Once the token has been received, it should be stored somewhere and can be used while making regular api calls.\n The OAuth calls should set the Authorization header as follows:\n \n ```http\nAuthorization: Bearer <token>\n```\n "
+      scheme: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://sandbox.authologic.com/api/oauth2/token
+          scopes: {}
+externalDocs:
+  description: API Documentation
+  url: https://developer.authologic.com

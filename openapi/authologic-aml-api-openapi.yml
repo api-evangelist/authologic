@@ -189,7 +189,101 @@ paths:
           description: Server side error
 components:
   schemas:
-    AMLSanctionsPersonName:
+    AMLPepPersonRole:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Position held
+          example: Former Acting President
+        country:
+          type: string
+          description: The country in which the position was held
+          example: Poland
+        fromDate:
+          type: string
+          description: Start date of tenure
+          example: 2000-05
+        tillDate:
+          type: string
+          description: End date of tenure
+          example: 2005
+      required:
+      - country
+      - title
+    AMLInfo:
+      type: object
+      properties:
+        more:
+          type: boolean
+          description: Information whether there are more pages available
+          example: true
+        items:
+          type: array
+          description: List of information collected during AML verification
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/AMLMediaInfo'
+            - $ref: '#/components/schemas/AMLOtherInfo'
+            - $ref: '#/components/schemas/AMLPepInfo'
+            - $ref: '#/components/schemas/AMLSanctionsInfo'
+            - $ref: '#/components/schemas/AMLSipInfo'
+      required:
+      - items
+      - more
+      title: AMLInfo
+    AMLSipUserInfo:
+      type: object
+      properties:
+        person:
+          $ref: '#/components/schemas/AMLSipPersonUserInfo'
+          description: Contains user-related data asociating user as Special Interest Person
+    AmlPepAlsoKnowAs:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: Alias user name
+          example: Jan
+        lastName:
+          type: string
+          description: User surname
+          example: Kowalski
+        title:
+          type: string
+          description: User alias
+          example: Known As
+    MethodArgumentTypeMismatchError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    AMLSipPersonUserInfo:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/AMLSipPersonName'
+          description: Personal data of a person under verification
+        info:
+          $ref: '#/components/schemas/AMLSipPersonInfo'
+          description: Additional information about the person under verification
+    AMLSipPersonName:
       type: object
       properties:
         firstName:
@@ -214,31 +308,269 @@ components:
           type: array
           description: Alias names of person under verification
           items:
-            $ref: '#/components/schemas/AmlSanctionsAlsoKnowAs'
+            $ref: '#/components/schemas/AmlSipAlsoKnowAs'
       required:
       - alsoKnownAs
       - spellings
-    AMLInfo:
+    AMLPepPersonName:
       type: object
       properties:
-        more:
-          type: boolean
-          description: Information whether there are more pages available
-          example: true
-        items:
+        firstName:
+          type: string
+          description: User name
+          example: Jan
+        lastName:
+          type: string
+          description: User surname
+          example: Kowalski
+        middleName:
+          type: string
+          description: Second name
+          example: Stanisław
+        spellings:
           type: array
-          description: List of information collected during AML verification
+          description: Correct spelling of name and surname (including national language)
+          example: []
           items:
-            oneOf:
-            - $ref: '#/components/schemas/AMLMediaInfo'
-            - $ref: '#/components/schemas/AMLOtherInfo'
-            - $ref: '#/components/schemas/AMLPepInfo'
-            - $ref: '#/components/schemas/AMLSanctionsInfo'
-            - $ref: '#/components/schemas/AMLSipInfo'
+            type: string
+        alsoKnownAs:
+          type: array
+          description: Alias names of person under verification
+          items:
+            $ref: '#/components/schemas/AmlPepAlsoKnowAs'
       required:
-      - items
-      - more
-      title: AMLInfo
+      - alsoKnownAs
+      - spellings
+    AMLPepAddressInfo:
+      type: object
+      properties:
+        country:
+          type: string
+          description: Country name for person
+          example: Poland
+      required:
+      - country
+    AMLOtherUserInfo:
+      type: object
+      properties:
+        person:
+          $ref: '#/components/schemas/AMLOtherPersonUserInfo'
+          description: Contains user-related data asociating user as Special Interest Person
+    MissingHeaderApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    AMLInfoEntry:
+      description: Provides AML information types
+      discriminator:
+        propertyName: entryType
+      properties:
+        entryType:
+          type: string
+      required:
+      - entryType
+    AmlOtherAlsoKnowAs:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: User name
+          example: Jan
+        lastName:
+          type: string
+          description: User surname
+          example: Kowalski
+        title:
+          type: string
+          description: User alias
+          example: Known As
+    AMLSanctionsPersonInfo:
+      type: object
+      properties:
+        gender:
+          type: string
+          description: The gender of the user (MALE/FEMALE/OTHER)
+          enum:
+          - MALE
+          - FEMALE
+          - OTHER
+          example: MALE
+        nationality:
+          type: string
+          description: User's nationality
+          example: Poland
+        birthDate:
+          type: string
+          description: Date of birth
+          example: 1972
+        deceased:
+          type: boolean
+          description: Information if person is dead
+          example: true
+        deceaseDate:
+          type: string
+          description: Date of death
+          example: 2012
+        image:
+          type: string
+          description: URL to person's picture
+          example: http://.....
+        roles:
+          type: array
+          description: Information about the position held by the person
+          items:
+            $ref: '#/components/schemas/AMLSanctionsPersonRole'
+    AMLOtherPersonInfo:
+      type: object
+      properties:
+        gender:
+          type: string
+          description: The gender of the user (MALE/FEMALE/OTHER)
+          enum:
+          - MALE
+          - FEMALE
+          - OTHER
+          example: MALE
+        nationality:
+          type: string
+          description: User's nationality
+          example: Poland
+        birthDate:
+          type: string
+          description: Date of birth
+          example: 1972
+        deceased:
+          type: boolean
+          description: Information if person is dead
+          example: true
+        deceaseDate:
+          type: string
+          description: Date of death
+          example: 2012
+        image:
+          type: string
+          description: URL to person's picture
+          example: http://.....
+        roles:
+          type: array
+          description: Information about the position held by the person
+          items:
+            $ref: '#/components/schemas/AMLOtherPersonRole'
+    AMLSipInfo:
+      allOf:
+      - $ref: '#/components/schemas/AMLInfoEntry'
+      - type: object
+        properties:
+          type:
+            type: string
+            description: "Informs if entry describes person or person's relative:\n* PERSON - person\n* RCA - person's relative\n    "
+            enum:
+            - PERSON
+            - RCA
+            example: PERSON
+          score:
+            type: number
+            format: double
+            description: Percent compliance of provided personal data with results (0-1 if provided or null)
+            example: 0.98
+          reason:
+            type: string
+            description: Reason why person is on the list
+            example: EO14024 PROGRAM
+          user:
+            $ref: '#/components/schemas/AMLSipUserInfo'
+            description: Data found on AML lists for provided person
+      description: Special Interest Person information type
+      required:
+      - type
+      - user
+    AmlSipAlsoKnowAs:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: User name
+          example: Jan
+        lastName:
+          type: string
+          description: User surname
+          example: Kowalski
+        title:
+          type: string
+          description: User alias
+          example: Known As
+    BadRequestApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Descriptive error message
+      required:
+      - field
+      - message
+    AMLSipPersonRole:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Position held
+          example: Former Acting President
+        country:
+          type: string
+          description: The country in which the position was held
+          example: Poland
+        fromDate:
+          type: string
+          description: Start date of tenure
+          example: 2000-05
+        tillDate:
+          type: string
+          description: End date of tenure
+          example: 2005
+      required:
+      - country
+      - title
     AMLSanctionsInfo:
       allOf:
       - $ref: '#/components/schemas/AMLInfoEntry'
@@ -276,90 +608,6 @@ components:
       - sources
       - type
       - user
-    AMLPepPersonName:
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: User name
-          example: Jan
-        lastName:
-          type: string
-          description: User surname
-          example: Kowalski
-        middleName:
-          type: string
-          description: Second name
-          example: Stanisław
-        spellings:
-          type: array
-          description: Correct spelling of name and surname (including national language)
-          example: []
-          items:
-            type: string
-        alsoKnownAs:
-          type: array
-          description: Alias names of person under verification
-          items:
-            $ref: '#/components/schemas/AmlPepAlsoKnowAs'
-      required:
-      - alsoKnownAs
-      - spellings
-    Violation:
-      type: object
-      properties:
-        field:
-          type: string
-          description: Field name
-        message:
-          type: string
-          description: Descriptive error message
-      required:
-      - field
-      - message
-    AMLSanctionsPersonRole:
-      type: object
-      properties:
-        title:
-          type: string
-          description: Position held
-          example: Former Acting President
-        country:
-          type: string
-          description: The country in which the position was held
-          example: Poland
-        fromDate:
-          type: string
-          description: Start date of tenure
-          example: 2000-05
-        tillDate:
-          type: string
-          description: End date of tenure
-          example: 2005
-      required:
-      - country
-      - title
-    BadRequestApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
     AMLSipPersonInfo:
       type: object
       properties:
@@ -396,450 +644,6 @@ components:
           description: Information about the position held by the person
           items:
             $ref: '#/components/schemas/AMLSipPersonRole'
-    AMLMediaInfo:
-      allOf:
-      - $ref: '#/components/schemas/AMLInfoEntry'
-      - type: object
-        properties:
-          originalUrl:
-            type: string
-            description: Link to adverse article
-            example: https://secure.c6-intelligence.com/c6images/ari0202017/A7JElyvSi.pdf
-          date:
-            type: string
-            format: date
-            description: Adverse Media publication date or capture date
-            example: '2014-03-27'
-          url:
-            type: string
-            description: Link to PDF with original adverse media publication
-            example: http://kremlin.ru/structure/security-council/members
-          categories:
-            type: array
-            description: Media categorization
-            example:
-            - PEP
-            items:
-              type: string
-      description: Adverse Media information type
-    AMLSanctionsPersonInfo:
-      type: object
-      properties:
-        gender:
-          type: string
-          description: The gender of the user (MALE/FEMALE/OTHER)
-          enum:
-          - MALE
-          - FEMALE
-          - OTHER
-          example: MALE
-        nationality:
-          type: string
-          description: User's nationality
-          example: Poland
-        birthDate:
-          type: string
-          description: Date of birth
-          example: 1972
-        deceased:
-          type: boolean
-          description: Information if person is dead
-          example: true
-        deceaseDate:
-          type: string
-          description: Date of death
-          example: 2012
-        image:
-          type: string
-          description: URL to person's picture
-          example: http://.....
-        roles:
-          type: array
-          description: Information about the position held by the person
-          items:
-            $ref: '#/components/schemas/AMLSanctionsPersonRole'
-    AMLOtherPersonUserInfo:
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/AMLOtherPersonName'
-          description: Personal data of a person under verification
-        info:
-          $ref: '#/components/schemas/AMLOtherPersonInfo'
-          description: Additional information about the person under verification
-    AMLOtherPersonRole:
-      type: object
-      properties:
-        title:
-          type: string
-          description: Position held
-          example: Former Acting President
-        country:
-          type: string
-          description: The country in which the position was held
-          example: Poland
-        fromDate:
-          type: string
-          description: Start date of tenure
-          example: 2000-05
-        tillDate:
-          type: string
-          description: End date of tenure
-          example: 2005
-      required:
-      - country
-      - title
-    ConstraintViolationError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    AMLOtherPersonName:
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: User name
-          example: Jan
-        lastName:
-          type: string
-          description: User surname
-          example: Kowalski
-        middleName:
-          type: string
-          description: Second name
-          example: Stanisław
-        spellings:
-          type: array
-          description: Correct spelling of name and surname, including in national language
-          example: []
-          items:
-            type: string
-        alsoKnownAs:
-          type: array
-          description: Alias names of person under verification
-          items:
-            $ref: '#/components/schemas/AmlOtherAlsoKnowAs'
-      required:
-      - alsoKnownAs
-      - spellings
-    OperationNotSupportedApiFieldError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    AMLSanctionsUserInfo:
-      type: object
-      properties:
-        person:
-          $ref: '#/components/schemas/AMLSanctionsPersonUserInfo'
-          description: Contains user-related data found on AML SANCTIONS verification list
-    AMLSanctionsAddressInfo:
-      type: object
-      properties:
-        country:
-          type: string
-          description: Country name for person
-          example: Poland
-      required:
-      - country
-    AmlOtherAlsoKnowAs:
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: User name
-          example: Jan
-        lastName:
-          type: string
-          description: User surname
-          example: Kowalski
-        title:
-          type: string
-          description: User alias
-          example: Known As
-    AmlPepAlsoKnowAs:
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: Alias user name
-          example: Jan
-        lastName:
-          type: string
-          description: User surname
-          example: Kowalski
-        title:
-          type: string
-          description: User alias
-          example: Known As
-    AMLOtherInfo:
-      allOf:
-      - $ref: '#/components/schemas/AMLInfoEntry'
-      - type: object
-        properties:
-          type:
-            type: string
-            description: "Informs if entry describes person or person's relative:\n* PERSON - person\n* RCA - person's relative\n    "
-            enum:
-            - PERSON
-            - RCA
-            example: PERSON
-          score:
-            type: number
-            format: double
-            description: Percent compliance of provided personal data with results (0-1 if provided or null)
-            example: 0.98
-          reason:
-            type: string
-            description: Reason why person is on the list
-            example: EO14024 PROGRAM
-          user:
-            $ref: '#/components/schemas/AMLOtherUserInfo'
-            description: Data found on AML lists for provided person
-      description: Individuals with other AML categories implemented e.g. POI, TER, etc.
-      required:
-      - type
-      - user
-    CustomValidationApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    AMLSipPersonName:
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: User name
-          example: Jan
-        lastName:
-          type: string
-          description: User surname
-          example: Kowalski
-        middleName:
-          type: string
-          description: Second name
-          example: Stanisław
-        spellings:
-          type: array
-          description: Correct spelling of name and surname, including in national language
-          example: []
-          items:
-            type: string
-        alsoKnownAs:
-          type: array
-          description: Alias names of person under verification
-          items:
-            $ref: '#/components/schemas/AmlSipAlsoKnowAs'
-      required:
-      - alsoKnownAs
-      - spellings
-    AMLOtherUserInfo:
-      type: object
-      properties:
-        person:
-          $ref: '#/components/schemas/AMLOtherPersonUserInfo'
-          description: Contains user-related data asociating user as Special Interest Person
-    MethodArgumentNotValidError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    ApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    AMLPepPersonRole:
-      type: object
-      properties:
-        title:
-          type: string
-          description: Position held
-          example: Former Acting President
-        country:
-          type: string
-          description: The country in which the position was held
-          example: Poland
-        fromDate:
-          type: string
-          description: Start date of tenure
-          example: 2000-05
-        tillDate:
-          type: string
-          description: End date of tenure
-          example: 2005
-      required:
-      - country
-      - title
-    AmlSanctionsAlsoKnowAs:
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: User name
-          example: Jan
-        lastName:
-          type: string
-          description: User surname
-          example: Kowalski
-        title:
-          type: string
-          description: User alias
-          example: Known As
-    AMLPepPersonUserInfo:
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/AMLPepPersonName'
-          description: Personal data of a person under verification
-        info:
-          $ref: '#/components/schemas/AMLPepPersonInfo'
-          description: Additional information about the person under verification
-        address:
-          $ref: '#/components/schemas/AMLPepAddressInfo'
-          description: Address information of the person under verification
-    AMLInfoEntry:
-      description: Provides AML information types
-      discriminator:
-        propertyName: entryType
-      properties:
-        entryType:
-          type: string
-      required:
-      - entryType
-    AMLOtherPersonInfo:
-      type: object
-      properties:
-        gender:
-          type: string
-          description: The gender of the user (MALE/FEMALE/OTHER)
-          enum:
-          - MALE
-          - FEMALE
-          - OTHER
-          example: MALE
-        nationality:
-          type: string
-          description: User's nationality
-          example: Poland
-        birthDate:
-          type: string
-          description: Date of birth
-          example: 1972
-        deceased:
-          type: boolean
-          description: Information if person is dead
-          example: true
-        deceaseDate:
-          type: string
-          description: Date of death
-          example: 2012
-        image:
-          type: string
-          description: URL to person's picture
-          example: http://.....
-        roles:
-          type: array
-          description: Information about the position held by the person
-          items:
-            $ref: '#/components/schemas/AMLOtherPersonRole'
-    AmlSipAlsoKnowAs:
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: User name
-          example: Jan
-        lastName:
-          type: string
-          description: User surname
-          example: Kowalski
-        title:
-          type: string
-          description: User alias
-          example: Known As
     AMLPepPersonInfo:
       type: object
       properties:
@@ -888,7 +692,65 @@ components:
         address:
           $ref: '#/components/schemas/AMLSanctionsAddressInfo'
           description: Address information of the person under verification
-    MethodArgumentTypeMismatchError:
+    AMLOtherPersonName:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: User name
+          example: Jan
+        lastName:
+          type: string
+          description: User surname
+          example: Kowalski
+        middleName:
+          type: string
+          description: Second name
+          example: Stanisław
+        spellings:
+          type: array
+          description: Correct spelling of name and surname, including in national language
+          example: []
+          items:
+            type: string
+        alsoKnownAs:
+          type: array
+          description: Alias names of person under verification
+          items:
+            $ref: '#/components/schemas/AmlOtherAlsoKnowAs'
+      required:
+      - alsoKnownAs
+      - spellings
+    AMLSanctionsPersonName:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: User name
+          example: Jan
+        lastName:
+          type: string
+          description: User surname
+          example: Kowalski
+        middleName:
+          type: string
+          description: Second name
+          example: Stanisław
+        spellings:
+          type: array
+          description: Correct spelling of name and surname, including in national language
+          example: []
+          items:
+            type: string
+        alsoKnownAs:
+          type: array
+          description: Alias names of person under verification
+          items:
+            $ref: '#/components/schemas/AmlSanctionsAlsoKnowAs'
+      required:
+      - alsoKnownAs
+      - spellings
+    ConstraintViolationError:
       type: object
       properties:
         status:
@@ -909,47 +771,33 @@ components:
       - message
       - status
       - violations
-    AMLSipPersonUserInfo:
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/AMLSipPersonName'
-          description: Personal data of a person under verification
-        info:
-          $ref: '#/components/schemas/AMLSipPersonInfo'
-          description: Additional information about the person under verification
-    AMLPepAddressInfo:
-      type: object
-      properties:
-        country:
-          type: string
-          description: Country name for person
-          example: Poland
-      required:
-      - country
-    AMLSipPersonRole:
-      type: object
-      properties:
-        title:
-          type: string
-          description: Position held
-          example: Former Acting President
-        country:
-          type: string
-          description: The country in which the position was held
-          example: Poland
-        fromDate:
-          type: string
-          description: Start date of tenure
-          example: 2000-05
-        tillDate:
-          type: string
-          description: End date of tenure
-          example: 2005
-      required:
-      - country
-      - title
-    AMLSipInfo:
+    AMLMediaInfo:
+      allOf:
+      - $ref: '#/components/schemas/AMLInfoEntry'
+      - type: object
+        properties:
+          originalUrl:
+            type: string
+            description: Link to adverse article
+            example: https://secure.c6-intelligence.com/c6images/ari0202017/A7JElyvSi.pdf
+          date:
+            type: string
+            format: date
+            description: Adverse Media publication date or capture date
+            example: '2014-03-27'
+          url:
+            type: string
+            description: Link to PDF with original adverse media publication
+            example: http://kremlin.ru/structure/security-council/members
+          categories:
+            type: array
+            description: Media categorization
+            example:
+            - PEP
+            items:
+              type: string
+      description: Adverse Media information type
+    AMLOtherInfo:
       allOf:
       - $ref: '#/components/schemas/AMLInfoEntry'
       - type: object
@@ -971,12 +819,83 @@ components:
             description: Reason why person is on the list
             example: EO14024 PROGRAM
           user:
-            $ref: '#/components/schemas/AMLSipUserInfo'
+            $ref: '#/components/schemas/AMLOtherUserInfo'
             description: Data found on AML lists for provided person
-      description: Special Interest Person information type
+      description: Individuals with other AML categories implemented e.g. POI, TER, etc.
       required:
       - type
       - user
+    AMLPepPersonUserInfo:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/AMLPepPersonName'
+          description: Personal data of a person under verification
+        info:
+          $ref: '#/components/schemas/AMLPepPersonInfo'
+          description: Additional information about the person under verification
+        address:
+          $ref: '#/components/schemas/AMLPepAddressInfo'
+          description: Address information of the person under verification
+    AmlSanctionsAlsoKnowAs:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: User name
+          example: Jan
+        lastName:
+          type: string
+          description: User surname
+          example: Kowalski
+        title:
+          type: string
+          description: User alias
+          example: Known As
+    AMLSanctionsPersonRole:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Position held
+          example: Former Acting President
+        country:
+          type: string
+          description: The country in which the position was held
+          example: Poland
+        fromDate:
+          type: string
+          description: Start date of tenure
+          example: 2000-05
+        tillDate:
+          type: string
+          description: End date of tenure
+          example: 2005
+      required:
+      - country
+      - title
+    AMLOtherPersonRole:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Position held
+          example: Former Acting President
+        country:
+          type: string
+          description: The country in which the position was held
+          example: Poland
+        fromDate:
+          type: string
+          description: Start date of tenure
+          example: 2000-05
+        tillDate:
+          type: string
+          description: End date of tenure
+          example: 2005
+      required:
+      - country
+      - title
     AMLPepInfo:
       allOf:
       - $ref: '#/components/schemas/AMLInfoEntry'
@@ -1005,19 +924,7 @@ components:
       required:
       - type
       - user
-    AMLSipUserInfo:
-      type: object
-      properties:
-        person:
-          $ref: '#/components/schemas/AMLSipPersonUserInfo'
-          description: Contains user-related data asociating user as Special Interest Person
-    AMLPepUserInfo:
-      type: object
-      properties:
-        person:
-          $ref: '#/components/schemas/AMLPepPersonUserInfo'
-          description: User-related data found on AML PEP verification list
-    MissingHeaderApiError:
+    OperationNotSupportedApiFieldError:
       type: object
       properties:
         status:
@@ -1038,6 +945,99 @@ components:
       - message
       - status
       - violations
+    AMLSanctionsAddressInfo:
+      type: object
+      properties:
+        country:
+          type: string
+          description: Country name for person
+          example: Poland
+      required:
+      - country
+    CustomValidationApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MethodArgumentNotValidError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    AMLSanctionsUserInfo:
+      type: object
+      properties:
+        person:
+          $ref: '#/components/schemas/AMLSanctionsPersonUserInfo'
+          description: Contains user-related data found on AML SANCTIONS verification list
+    AMLPepUserInfo:
+      type: object
+      properties:
+        person:
+          $ref: '#/components/schemas/AMLPepPersonUserInfo'
+          description: User-related data found on AML PEP verification list
+    ApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    AMLOtherPersonUserInfo:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/AMLOtherPersonName'
+          description: Personal data of a person under verification
+        info:
+          $ref: '#/components/schemas/AMLOtherPersonInfo'
+          description: Additional information about the person under verification
   securitySchemes:
     apiKey:
       type: http

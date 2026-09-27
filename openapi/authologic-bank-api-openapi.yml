@@ -433,6 +433,117 @@ paths:
           description: Server side error
 components:
   schemas:
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Descriptive error message
+      required:
+      - field
+      - message
+    Accounts:
+      type: object
+      properties:
+        items:
+          type: array
+          description: List of transaction information for each account
+          items:
+            $ref: '#/components/schemas/Account'
+      required:
+      - items
+      title: TransactionsInfo
+    ConstraintViolationError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    TransactionStatistics:
+      type: object
+      description: Information about transaction statistics for a given account
+      properties:
+        dateFirst:
+          type: string
+          format: date-time
+          description: Date of the first transaction in the range
+          example: '2020-07-24T08:00:00Z'
+        dateLast:
+          type: string
+          format: date-time
+          description: Date of the last transaction in the range
+          example: '2020-08-30T00:00:00Z'
+        numberOfCreditTransactions:
+          type: integer
+          format: int32
+          description: The number of credit transactions of the account. The value will be available if you selected all transactions or credit transactions.
+          example: 12
+        numberOfDebitTransactions:
+          type: integer
+          format: int32
+          description: Number of account debit transactions. The value will be available if you selected all transactions or debit transactions.
+          example: 2
+        avgCreditPerMonth:
+          type: integer
+          format: int32
+          description: Average value of credit transactions per month, presented in basic units - e.g. in cents. The value will be available if the analyzed period is greater than 60 days and if credit transactions or all of them were selected when creating the conversation.
+          example: 300000
+        avgDebitPerMonth:
+          type: integer
+          format: int32
+          description: Average value of credit transactions per month, presented in basic units - e.g. in cents. The value will be available if the analyzed period is greater than 60 days and if credit transactions or all of them were selected when creating the conversation.
+          example: 258000
+        avgCredit:
+          type: integer
+          format: int32
+          description: Average value of the account's credit transactions, presented in basic units - e.g. in cents. The value will be available if you selected all transactions or credit transactions.
+          example: 30000
+        avgDebit:
+          type: integer
+          format: int32
+          description: Average value of the account's debit transactions, presented in basic units - e.g. in cents. The value will be available if you selected all transactions or debit transactions.
+          example: 40000
+        maxCredit:
+          type: integer
+          format: int32
+          description: Maximum value of the account credit transaction, presented in basic units - e.g. in cents. The value will be available if you selected or all credit transactions when creating the conversation.
+          example: 110000
+        maxDebit:
+          type: integer
+          format: int32
+          description: Maximum value of the account debit transaction, presented in basic units - e.g. in cents. The value will be available if you selected all transactions or debit transactions.
+          example: 132000
+        accountId:
+          type: string
+          description: Account number.
+          example: PL68249000050000400075212326
+        currency:
+          type: string
+          description: Currency code for the account
+          example: PLN
+      required:
+      - accountId
+      - currency
+      - dateFirst
+      - dateLast
     CustomValidationApiError:
       type: object
       properties:
@@ -454,6 +565,64 @@ components:
       - message
       - status
       - violations
+    MethodArgumentTypeMismatchError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MethodArgumentNotValidError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    Transactions:
+      type: object
+      properties:
+        more:
+          type: boolean
+          description: Information whether there are more pages available
+          example: true
+        items:
+          type: array
+          description: List of transactions
+          items:
+            $ref: '#/components/schemas/Transaction'
+      required:
+      - items
+      - more
+      title: Transactions
     Transaction:
       type: object
       description: Information about the transaction
@@ -580,7 +749,7 @@ components:
       - bank
       - currency
       - date
-    MethodArgumentTypeMismatchError:
+    MissingHeaderApiError:
       type: object
       properties:
         status:
@@ -622,115 +791,6 @@ components:
       required:
       - items
       title: TransactionsStatistics
-    OperationNotSupportedApiFieldError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    TransactionStatistics:
-      type: object
-      description: Information about transaction statistics for a given account
-      properties:
-        dateFirst:
-          type: string
-          format: date-time
-          description: Date of the first transaction in the range
-          example: '2020-07-24T08:00:00Z'
-        dateLast:
-          type: string
-          format: date-time
-          description: Date of the last transaction in the range
-          example: '2020-08-30T00:00:00Z'
-        numberOfCreditTransactions:
-          type: integer
-          format: int32
-          description: The number of credit transactions of the account. The value will be available if you selected all transactions or credit transactions.
-          example: 12
-        numberOfDebitTransactions:
-          type: integer
-          format: int32
-          description: Number of account debit transactions. The value will be available if you selected all transactions or debit transactions.
-          example: 2
-        avgCreditPerMonth:
-          type: integer
-          format: int32
-          description: Average value of credit transactions per month, presented in basic units - e.g. in cents. The value will be available if the analyzed period is greater than 60 days and if credit transactions or all of them were selected when creating the conversation.
-          example: 300000
-        avgDebitPerMonth:
-          type: integer
-          format: int32
-          description: Average value of credit transactions per month, presented in basic units - e.g. in cents. The value will be available if the analyzed period is greater than 60 days and if credit transactions or all of them were selected when creating the conversation.
-          example: 258000
-        avgCredit:
-          type: integer
-          format: int32
-          description: Average value of the account's credit transactions, presented in basic units - e.g. in cents. The value will be available if you selected all transactions or credit transactions.
-          example: 30000
-        avgDebit:
-          type: integer
-          format: int32
-          description: Average value of the account's debit transactions, presented in basic units - e.g. in cents. The value will be available if you selected all transactions or debit transactions.
-          example: 40000
-        maxCredit:
-          type: integer
-          format: int32
-          description: Maximum value of the account credit transaction, presented in basic units - e.g. in cents. The value will be available if you selected or all credit transactions when creating the conversation.
-          example: 110000
-        maxDebit:
-          type: integer
-          format: int32
-          description: Maximum value of the account debit transaction, presented in basic units - e.g. in cents. The value will be available if you selected all transactions or debit transactions.
-          example: 132000
-        accountId:
-          type: string
-          description: Account number.
-          example: PL68249000050000400075212326
-        currency:
-          type: string
-          description: Currency code for the account
-          example: PLN
-      required:
-      - accountId
-      - currency
-      - dateFirst
-      - dateLast
-    MethodArgumentNotValidError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
     ApiError:
       type: object
       properties:
@@ -752,88 +812,28 @@ components:
       - message
       - status
       - violations
-    Violation:
+    OperationNotSupportedApiFieldError:
       type: object
       properties:
-        field:
+        status:
           type: string
-          description: Field name
+          description: Response status
         message:
           type: string
           description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
       required:
-      - field
       - message
+      - status
+      - violations
     BadRequestApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    Accounts:
-      type: object
-      properties:
-        items:
-          type: array
-          description: List of transaction information for each account
-          items:
-            $ref: '#/components/schemas/Account'
-      required:
-      - items
-      title: TransactionsInfo
-    Transactions:
-      type: object
-      properties:
-        more:
-          type: boolean
-          description: Information whether there are more pages available
-          example: true
-        items:
-          type: array
-          description: List of transactions
-          items:
-            $ref: '#/components/schemas/Transaction'
-      required:
-      - items
-      - more
-      title: Transactions
-    ConstraintViolationError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    MissingHeaderApiError:
       type: object
       properties:
         status:

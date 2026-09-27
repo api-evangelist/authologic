@@ -126,48 +126,18 @@ paths:
           description: Server side error
 components:
   schemas:
-    CustomValidationApiError:
+    Violation:
       type: object
       properties:
-        status:
+        field:
           type: string
-          description: Response status
+          description: Field name
         message:
           type: string
           description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
       required:
+      - field
       - message
-      - status
-      - violations
-    MethodArgumentTypeMismatchError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
     DatabaseVerificationSource:
       type: object
       properties:
@@ -210,7 +180,60 @@ components:
           items:
             type: string
       title: DatabaseVerificationSource
-    OperationNotSupportedApiFieldError:
+    ConstraintViolationError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    DatabaseVerification:
+      type: object
+      properties:
+        source:
+          type: array
+          description: List of database verification source results
+          items:
+            $ref: '#/components/schemas/DatabaseVerificationSource'
+      required:
+      - source
+      title: DatabaseVerification
+    CustomValidationApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MethodArgumentTypeMismatchError:
       type: object
       properties:
         status:
@@ -252,6 +275,27 @@ components:
       - message
       - status
       - violations
+    MissingHeaderApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
     ApiError:
       type: object
       properties:
@@ -273,72 +317,28 @@ components:
       - message
       - status
       - violations
-    Violation:
+    OperationNotSupportedApiFieldError:
       type: object
       properties:
-        field:
+        status:
           type: string
-          description: Field name
+          description: Response status
         message:
           type: string
           description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
       required:
-      - field
       - message
+      - status
+      - violations
     BadRequestApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    DatabaseVerification:
-      type: object
-      properties:
-        source:
-          type: array
-          description: List of database verification source results
-          items:
-            $ref: '#/components/schemas/DatabaseVerificationSource'
-      required:
-      - source
-      title: DatabaseVerification
-    ConstraintViolationError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    MissingHeaderApiError:
       type: object
       properties:
         status:

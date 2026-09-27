@@ -217,125 +217,18 @@ paths:
           description: Server side error
 components:
   schemas:
-    CustomValidationApiError:
+    Violation:
       type: object
       properties:
-        status:
+        field:
           type: string
-          description: Response status
+          description: Field name
         message:
           type: string
           description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
       required:
+      - field
       - message
-      - status
-      - violations
-    IdentityMetadata:
-      type: object
-      description: Information about the metadata collected during the identification process
-      properties:
-        id:
-          type: string
-          description: Conversation Id
-          example: e0c0b3cc-8238-414f-9940-9f14bd1b8693b
-        list:
-          $ref: '#/components/schemas/MetadataInfo'
-          description: Metadata list, collected during the identification process
-      required:
-      - id
-      - list
-    MethodArgumentTypeMismatchError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    OperationNotSupportedApiFieldError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    MethodArgumentNotValidError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    ApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
     Media:
       type: object
       description: Information about media file
@@ -377,50 +270,6 @@ components:
       - contentType
       - id
       - type
-    Violation:
-      type: object
-      properties:
-        field:
-          type: string
-          description: Field name
-        message:
-          type: string
-          description: Descriptive error message
-      required:
-      - field
-      - message
-    MetadataInfo:
-      type: object
-      description: Information about the list of available metadata collected during the identification process
-      properties:
-        media:
-          type: array
-          description: List of available media files
-          items:
-            $ref: '#/components/schemas/Media'
-      required:
-      - media
-    BadRequestApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
     ConstraintViolationError:
       type: object
       properties:
@@ -442,7 +291,158 @@ components:
       - message
       - status
       - violations
+    IdentityMetadata:
+      type: object
+      description: Information about the metadata collected during the identification process
+      properties:
+        id:
+          type: string
+          description: Conversation Id
+          example: e0c0b3cc-8238-414f-9940-9f14bd1b8693b
+        list:
+          $ref: '#/components/schemas/MetadataInfo'
+          description: Metadata list, collected during the identification process
+      required:
+      - id
+      - list
+    CustomValidationApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MethodArgumentTypeMismatchError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MethodArgumentNotValidError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MetadataInfo:
+      type: object
+      description: Information about the list of available metadata collected during the identification process
+      properties:
+        media:
+          type: array
+          description: List of available media files
+          items:
+            $ref: '#/components/schemas/Media'
+      required:
+      - media
     MissingHeaderApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    ApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    OperationNotSupportedApiFieldError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    BadRequestApiError:
       type: object
       properties:
         status:

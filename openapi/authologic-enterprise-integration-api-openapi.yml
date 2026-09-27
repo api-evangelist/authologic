@@ -192,6 +192,68 @@ paths:
           description: Server side error
 components:
   schemas:
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Descriptive error message
+      required:
+      - field
+      - message
+    HeadlessPageArgError:
+      type: object
+      properties:
+        field:
+          type: string
+        code:
+          type: string
+      required:
+      - code
+      - field
+    ConstraintViolationError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    HeadlessPage:
+      type: object
+      description: Page definition which should be rendered to the user
+      properties:
+        component:
+          type: string
+          description: Information needed to render the page
+        next:
+          type: string
+          description: Id of the page to which the user information should be submitted
+        args:
+          type: object
+          additionalProperties: {}
+          description: Option parameters which can be used by the user
+        errors:
+          type: array
+          description: Information about errors occurred when processing the data from the page
+          items:
+            $ref: '#/components/schemas/HeadlessPageArgError'
     CustomValidationApiError:
       type: object
       properties:
@@ -213,38 +275,7 @@ components:
       - message
       - status
       - violations
-    HeadlessPageArgError:
-      type: object
-      properties:
-        field:
-          type: string
-        code:
-          type: string
-      required:
-      - code
-      - field
     MethodArgumentTypeMismatchError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    OperationNotSupportedApiFieldError:
       type: object
       properties:
         status:
@@ -286,6 +317,35 @@ components:
       - message
       - status
       - violations
+    HeadlessNextPageRequest:
+      type: object
+      description: Map of parameters sent by the user
+      properties:
+        args:
+          type: object
+          additionalProperties:
+            type: string
+    MissingHeaderApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
     ApiError:
       type: object
       properties:
@@ -307,88 +367,28 @@ components:
       - message
       - status
       - violations
-    Violation:
+    OperationNotSupportedApiFieldError:
       type: object
       properties:
-        field:
+        status:
           type: string
-          description: Field name
+          description: Response status
         message:
           type: string
           description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
       required:
-      - field
       - message
-    HeadlessNextPageRequest:
-      type: object
-      description: Map of parameters sent by the user
-      properties:
-        args:
-          type: object
-          additionalProperties:
-            type: string
+      - status
+      - violations
     BadRequestApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    HeadlessPage:
-      type: object
-      description: Page definition which should be rendered to the user
-      properties:
-        component:
-          type: string
-          description: Information needed to render the page
-        next:
-          type: string
-          description: Id of the page to which the user information should be submitted
-        args:
-          type: object
-          additionalProperties: {}
-          description: Option parameters which can be used by the user
-        errors:
-          type: array
-          description: Information about errors occurred when processing the data from the page
-          items:
-            $ref: '#/components/schemas/HeadlessPageArgError'
-    ConstraintViolationError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    MissingHeaderApiError:
       type: object
       properties:
         status:

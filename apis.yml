@@ -61,23 +61,6 @@ apis:
       https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
   - type: GettingStarted
     url: https://developer.authologic.com/docs/developer-documentation/integration-overview
-- aid: authologic:authologic-aml-api
-  name: Authologic AML API
-  description: >
-    The Authologic AML API enables Anti-Money Laundering screening combined with identity verification
-    in a single integrated flow for KYC/AML compliance.
-  humanURL: >-
-    https://developer.authologic.com/docs/developer-documentation/product-aml-api-integration-with-identity
-  baseURL: https://api.authologic.com
-  tags:
-  - AML
-  - Compliance
-  - Identity Verification
-  - KYC
-  properties:
-  - type: Documentation
-    url: >-
-      https://developer.authologic.com/docs/developer-documentation/product-aml-api-integration-with-identity
 - aid: authologic:authologic-data-verification-api
   name: Authologic Data Verification API
   description: >
@@ -158,12 +141,17 @@ apis:
     url: data-model/authologic-data-model.yml
 - aid: authologic:authologic-aml-api
   name: Authologic AML API
-  description: '3. Product: AML'
-  humanURL: >-
-    https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration
+  description: 'The Authologic AML API enables Anti-Money Laundering screening combined with identity verification
+    in a single integrated flow for KYC/AML compliance.
+
+    '
+  humanURL: https://developer.authologic.com/docs/developer-documentation/product-aml-api-integration-with-identity
   baseURL: https://api.authologic.com
   tags:
   - AML
+  - Compliance
+  - Identity Verification
+  - KYC
   properties:
   - type: OpenAPI
     url: openapi/authologic-aml-api-openapi.yml
@@ -177,6 +165,8 @@ apis:
     url: examples/authologic-customer-api-examples.yml
   - type: DataModel
     url: data-model/authologic-data-model.yml
+  - type: Documentation
+    url: https://developer.authologic.com/docs/developer-documentation/product-aml-api-integration-with-identity
 - aid: authologic:authologic-bank-api
   name: Authologic Bank API
   description: '2. Product: Bank Transactions'

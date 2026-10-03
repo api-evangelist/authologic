@@ -126,60 +126,6 @@ paths:
           description: Server side error
 components:
   schemas:
-    Violation:
-      type: object
-      properties:
-        field:
-          type: string
-          description: Field name
-        message:
-          type: string
-          description: Descriptive error message
-      required:
-      - field
-      - message
-    DatabaseVerificationSource:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Type of the database verification use case
-          enum:
-          - MATCHING
-          example: MATCHING
-        status:
-          type: string
-          description: Processing status of the source
-          enum:
-          - FINISHED
-          - FAILED
-          example: FINISHED
-        sourceName:
-          type: string
-          description: Name of the source/database
-          example: Australia Residential
-        sourceType:
-          type: string
-          description: Type of the source/database
-          enum:
-          - MARKETING
-          - GOVERNMENT
-          example: MARKETING
-        sourceMatchResult:
-          type: string
-          description: Overall match result for the source
-          enum:
-          - FULL_MATCH
-          - PARTIAL_MATCH
-          - NO_MATCH
-          example: FULL_MATCH
-        errors:
-          type: array
-          description: Information about errors occurred when processing the request to the source database
-          example: SERVICE_UNAVAILABLE
-          items:
-            type: string
-      title: DatabaseVerificationSource
     ConstraintViolationError:
       type: object
       properties:
@@ -212,6 +158,48 @@ components:
       required:
       - source
       title: DatabaseVerification
+    BadRequestApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    ApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
     CustomValidationApiError:
       type: object
       properties:
@@ -254,69 +242,6 @@ components:
       - message
       - status
       - violations
-    MethodArgumentNotValidError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    MissingHeaderApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    ApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
     OperationNotSupportedApiFieldError:
       type: object
       properties:
@@ -338,7 +263,82 @@ components:
       - message
       - status
       - violations
-    BadRequestApiError:
+    MethodArgumentNotValidError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    DatabaseVerificationSource:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Type of the database verification use case
+          enum:
+          - MATCHING
+          example: MATCHING
+        status:
+          type: string
+          description: Processing status of the source
+          enum:
+          - FINISHED
+          - FAILED
+          example: FINISHED
+        sourceName:
+          type: string
+          description: Name of the source/database
+          example: Australia Residential
+        sourceType:
+          type: string
+          description: Type of the source/database
+          enum:
+          - MARKETING
+          - GOVERNMENT
+          example: MARKETING
+        sourceMatchResult:
+          type: string
+          description: Overall match result for the source
+          enum:
+          - FULL_MATCH
+          - PARTIAL_MATCH
+          - NO_MATCH
+          example: FULL_MATCH
+        errors:
+          type: array
+          description: Information about errors occurred when processing the request to the source database
+          example: SERVICE_UNAVAILABLE
+          items:
+            type: string
+      title: DatabaseVerificationSource
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Descriptive error message
+      required:
+      - field
+      - message
+    MissingHeaderApiError:
       type: object
       properties:
         status:

@@ -433,30 +433,91 @@ paths:
           description: Server side error
 components:
   schemas:
-    Violation:
+    ConstraintViolationError:
       type: object
       properties:
-        field:
+        status:
           type: string
-          description: Field name
+          description: Response status
         message:
           type: string
           description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
       required:
-      - field
       - message
-    Accounts:
+      - status
+      - violations
+    BadRequestApiError:
       type: object
       properties:
-        items:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
           type: array
-          description: List of transaction information for each account
+          description: Validation error list
           items:
-            $ref: '#/components/schemas/Account'
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
       required:
-      - items
-      title: TransactionsInfo
-    ConstraintViolationError:
+      - message
+      - status
+      - violations
+    ApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    CustomValidationApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MethodArgumentTypeMismatchError:
       type: object
       properties:
         status:
@@ -544,28 +605,64 @@ components:
       - currency
       - dateFirst
       - dateLast
-    CustomValidationApiError:
+    Account:
+      type: object
+      description: Information about transactions for a given account
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: The date for which the data is valid
+          example: '2020-09-24T08:27:14.515Z'
+        balance:
+          type: integer
+          format: int32
+          description: Account balance in basic units - e.g. in cents
+          example: 10030
+        bank:
+          type: string
+          description: Bank's SWIFT / BIC code
+          example: BREXPLPW
+        accountId:
+          type: string
+          description: Unique account identifier. All transactions from one account have the same ID
+          example: PL68249000050000400075212326
+        currency:
+          type: string
+          description: Currency code for the account
+          example: PLN
+        activationDate:
+          type: string
+          format: date
+          description: The date when the account was opened or the date of the oldest transaction found
+          example: '2020-09-24'
+      required:
+      - accountId
+      - bank
+      - currency
+      - date
+    TransactionsStatistics:
       type: object
       properties:
-        status:
+        dateFrom:
           type: string
-          description: Response status
-        message:
+          format: date-time
+          description: The starting date of the search criteria or the date of the first transaction for all accounts if the criteria was empty
+          example: '2020-07-24T08:00:00Z'
+        dateTo:
           type: string
-          description: Descriptive error message
-        violations:
+          format: date-time
+          description: End date of the search criteria or the last transaction date for all accounts if the criteria was empty
+          example: '2020-08-24T00:00:00Z'
+        items:
           type: array
-          description: Validation error list
+          description: List of transaction statistics for each account separately
           items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
+            $ref: '#/components/schemas/TransactionStatistics'
       required:
-      - message
-      - status
-      - violations
-    MethodArgumentTypeMismatchError:
+      - items
+      title: TransactionsStatistics
+    OperationNotSupportedApiFieldError:
       type: object
       properties:
         status:
@@ -623,6 +720,50 @@ components:
       - items
       - more
       title: Transactions
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Descriptive error message
+      required:
+      - field
+      - message
+    MissingHeaderApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    Accounts:
+      type: object
+      properties:
+        items:
+          type: array
+          description: List of transaction information for each account
+          items:
+            $ref: '#/components/schemas/Account'
+      required:
+      - items
+      title: TransactionsInfo
     Transaction:
       type: object
       description: Information about the transaction
@@ -713,147 +854,6 @@ components:
       - id
       - status
       - type
-    Account:
-      type: object
-      description: Information about transactions for a given account
-      properties:
-        date:
-          type: string
-          format: date-time
-          description: The date for which the data is valid
-          example: '2020-09-24T08:27:14.515Z'
-        balance:
-          type: integer
-          format: int32
-          description: Account balance in basic units - e.g. in cents
-          example: 10030
-        bank:
-          type: string
-          description: Bank's SWIFT / BIC code
-          example: BREXPLPW
-        accountId:
-          type: string
-          description: Unique account identifier. All transactions from one account have the same ID
-          example: PL68249000050000400075212326
-        currency:
-          type: string
-          description: Currency code for the account
-          example: PLN
-        activationDate:
-          type: string
-          format: date
-          description: The date when the account was opened or the date of the oldest transaction found
-          example: '2020-09-24'
-      required:
-      - accountId
-      - bank
-      - currency
-      - date
-    MissingHeaderApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    TransactionsStatistics:
-      type: object
-      properties:
-        dateFrom:
-          type: string
-          format: date-time
-          description: The starting date of the search criteria or the date of the first transaction for all accounts if the criteria was empty
-          example: '2020-07-24T08:00:00Z'
-        dateTo:
-          type: string
-          format: date-time
-          description: End date of the search criteria or the last transaction date for all accounts if the criteria was empty
-          example: '2020-08-24T00:00:00Z'
-        items:
-          type: array
-          description: List of transaction statistics for each account separately
-          items:
-            $ref: '#/components/schemas/TransactionStatistics'
-      required:
-      - items
-      title: TransactionsStatistics
-    ApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    OperationNotSupportedApiFieldError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    BadRequestApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
   securitySchemes:
     apiKey:
       type: http

@@ -339,178 +339,64 @@ paths:
           description: Server side error
 components:
   schemas:
-    PersonUserInfo:
+    AffordabilityProduct:
       type: object
       properties:
-        name:
-          $ref: '#/components/schemas/PersonName'
-          description: Contains information related to the identification of the user, if the current user is a natural person
-        ids:
-          $ref: '#/components/schemas/PersonIdsInfo'
-          description: Contains identifiers associated with the user if the current user is a natural person
-        info:
-          $ref: '#/components/schemas/PersonInfoInfo'
-          description: Contains additional information about the user
-        address:
-          $ref: '#/components/schemas/AddressInfo'
-          description: User address
-        contact:
-          $ref: '#/components/schemas/ContactInfo'
-          description: User contact details
-    CompanyIds:
+        user:
+          $ref: '#/components/schemas/AffordabilityUserInfo'
+          description: Individual's data in case of affordability assessment check without KYC verification.
+    PersonAccountInfo:
       type: object
+      description: User account information
       properties:
-        taxId:
+        swiftbic:
           type: string
-          description: 'Tax identification number (in Poland: NIP) of the company'
-          example: 1234567890
+          description: Bank's SWIFT / BIC code
+          example: BREXPLPW
           maxLength: 50
           minLength: 0
-        additionalId:
+        accountId:
           type: string
-          description: Additional identifier
-          example: A03015512
+          description: User account identification number
+          example: PL27114020040000300201355387
           maxLength: 50
           minLength: 0
-        accounts:
-          type: array
-          description: Company account list
-          items:
-            $ref: '#/components/schemas/CompanyAccountInfo'
-      required:
-      - accounts
-    ConversationInfoAgeVerificationProductResult:
-      type: object
-      properties:
-        status:
+        currency:
           type: string
-          description: 'Result status:
-
-            * IN_PROGRESS - checking in progress
-
-            * FINISHED - checking completed
-
-            * FAILED - checking completed but no data could be determined
-
-            '
-          enum:
-          - IN_PROGRESS
-          - FINISHED
-          - FAILED
-          - PARTIAL
-          example: FINISHED
-          readOnly: true
-        over:
-          type: integer
-          format: int32
-          description: Declared age to verify against.
-          readOnly: true
-        result:
-          type: boolean
-          description: Age verification result. True if the user's age meets the declared threshold.
-          readOnly: true
-      required:
-      - over
-      - status
-    IdentityProductOptionalField:
+          description: Account currency
+          example: PLN
+          maxLength: 3
+          minLength: 0
+    VerifyProduct:
       type: object
       properties:
-        list:
+        user:
+          $ref: '#/components/schemas/KnownUserInfo'
+          description: List of information about a user to verify
+      required:
+      - user
+    AMLProduct:
+      type: object
+      properties:
+        checks:
           type: array
+          description: List of AML checks to perform
           items:
             type: string
             enum:
-            - PERSON_NAME_FIRSTNAME
-            - PERSON_NAME_LASTNAME
-            - PERSON_NAME_MIDDLENAME
-            - PERSON_NAME_MIDDLE_INITIAL
-            - PERSON_NAME_FULLNAME
-            - PERSON_NAME_MOTHER_NAME
-            - PERSON_NAME_FATHER_NAME
-            - PERSON_NAME_SPELLING
-            - PERSON_IDS_NATIONAL_ID
-            - PERSON_IDS_ACCOUNTS
-            - PERSON_IDS_IDCARD_ID
-            - PERSON_IDS_IDCARD_TYPE
-            - PERSON_IDS_IDCARD_PHOTO
-            - PERSON_IDS_IDCARD_ISSUE_DATE
-            - PERSON_IDS_IDCARD_EXPIRY_DATE
-            - PERSON_IDS_IDCARD_ISSUE_COUNTRY
-            - PERSON_IDS_IDCARD_ISSUER
-            - PERSON_IDS_PASSPORT_ID
-            - PERSON_IDS_PASSPORT_ISSUE_DATE
-            - PERSON_IDS_PASSPORT_EXPIRY_DATE
-            - PERSON_IDS_PASSPORT_PHOTO
-            - PERSON_IDS_PASSPORT_ISSUE_COUNTRY
-            - PERSON_IDS_PASSPORT_ISSUER
-            - PERSON_IDS_RESIDENCE_PERMIT_ID
-            - PERSON_IDS_RESIDENCE_PERMIT_TYPE
-            - PERSON_IDS_RESIDENCE_PERMIT_ISSUE_DATE
-            - PERSON_IDS_RESIDENCE_PERMIT_EXPIRY_DATE
-            - PERSON_IDS_RESIDENCE_PERMIT_PHOTO
-            - PERSON_IDS_RESIDENCE_PERMIT_ISSUE_COUNTRY
-            - PERSON_IDS_RESIDENCE_PERMIT_ISSUER
-            - PERSON_IDS_DRIVER_LICENCE_ID
-            - PERSON_IDS_DRIVER_LICENCE_ISSUE_DATE
-            - PERSON_IDS_DRIVER_LICENCE_EXPIRY_DATE
-            - PERSON_IDS_DRIVER_LICENCE_PHOTO
-            - PERSON_IDS_DRIVER_LICENCE_ISSUE_COUNTRY
-            - PERSON_IDS_DRIVER_LICENCE_ISSUE_STATE
-            - PERSON_IDS_DRIVER_LICENCE_ISSUER
-            - PERSON_IDS_DRIVER_LICENCE_CATEGORIES
-            - PERSON_IDS_DRIVER_LICENCE_ADDITIONAL_ID
-            - PERSON_IDS_DRIVER_LICENCE_LIMITATIONS
-            - PERSON_IDS_DRIVER_LICENCE_DOCUMENT_STATUS
-            - PERSON_IDS_OTHER_DOCUMENT_ID
-            - PERSON_IDS_OTHER_DOCUMENT_DESCRIPTION
-            - PERSON_IDS_OTHER_DOCUMENT_ISSUE_DATE
-            - PERSON_IDS_OTHER_DOCUMENT_EXPIRY_DATE
-            - PERSON_IDS_OTHER_DOCUMENT_ISSUE_COUNTRY
-            - PERSON_IDS_OTHER_DOCUMENT_ISSUER
-            - PERSON_IDS_OTHER_DOCUMENT_PHOTO
-            - PERSON_INFO_GENDER
-            - PERSON_INFO_NATIONALITY
-            - PERSON_INFO_BIRTHDATE
-            - PERSON_INFO_BIRTH_CITY
-            - PERSON_INFO_BIRTH_COUNTRY
-            - PERSON_INFO_AGE
-            - PERSON_INFO_FOREIGNER_STATUS
-            - COMPANY_NAME_NAME
-            - COMPANY_IDS_TAX_ID
-            - PERSON_ADDRESS
-            - COMPANY_ADDRESS
-            - PERSON_CONTACT_EMAIL
-            - PERSON_CONTACT_PHONE
-            - PERSON_CONTACT_EMAIL_OTP
-            - PERSON_CONTACT_PHONE_OTP
-            - COMPANY_CONTACT_EMAIL
-            - COMPANY_CONTACT_PHONE
-            - COMPANY_IDS_ADDITIONAL_ID
-            - COMPANY_IDS_ACCOUNTS
-          uniqueItems: true
+            - PEP
+            - SANCTIONS
+            - ADVERSE_MEDIA
+            - SIP
+            - OTHER
+        subscription:
+          $ref: '#/components/schemas/AMLSubscription'
+          description: The presence of the object enables recurring AML lists checking.
+        user:
+          $ref: '#/components/schemas/AMLUserInfo'
+          description: Individual's data in case of AML list check without KYC verification.
       required:
-      - list
-    CompanyUserInfo:
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/CompanyName'
-          description: Contains information related to the identification of the company if the current user is a legal entity
-        ids:
-          $ref: '#/components/schemas/CompanyIds'
-          description: Contains company-related identifiers if the current user is a legal entity
-        address:
-          $ref: '#/components/schemas/AddressInfo'
-          description: User address
-        contact:
-          $ref: '#/components/schemas/ContactInfo'
-          description: User contact details
-    AuthProduct:
-      type: object
-      properties:
-        challenge:
-          type: string
-          description: Equivalent of a user's login in a given method.
+      - checks
     MethodArgumentTypeMismatchError:
       type: object
       properties:
@@ -532,74 +418,15 @@ components:
       - message
       - status
       - violations
-    IdCardInfo:
+    DriverLicenceInfo:
       type: object
-      description: User's ID card
-      properties:
-        id:
-          type: string
-          description: Number
-          example: ABC 12343
-          maxLength: 50
-          minLength: 0
-        type:
-          type: string
-          description: Type od ID card, as it may be different depending on country
-          example: Aadhaar
-          maxLength: 30
-          minLength: 0
-        issueDate:
-          type: string
-          format: date
-          description: Date of issue of the document
-        expiryDate:
-          type: string
-          format: date
-          description: Document expiry date
-        issueCountry:
-          type: string
-          description: Country of issue of the document
-          example: GB
-        issuer:
-          type: string
-          description: Authority issuing the document
-          example: Prezydent m.st. Warszawy
-    MissingHeaderApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    OtherDocumentInfo:
-      type: object
-      description: Other document (only applies to specific verification methods)
+      description: User's driver licence
       properties:
         id:
           type: string
           description: Number
           example: AA 12343454
-          maxLength: 1024
-          minLength: 0
-        description:
-          type: string
-          description: Description
-          example: Document ID
-          maxLength: 1024
+          maxLength: 50
           minLength: 0
         issueDate:
           type: string
@@ -613,10 +440,55 @@ components:
           type: string
           description: Country of issue of the document
           example: GB
+        issueState:
+          type: string
+          description: State/province of issue of the document
+          example: California
         issuer:
           type: string
           description: Authority issuing the document
           example: Prezydent m.st. Warszawy
+        additionalId:
+          type: string
+          description: Additional identifier
+          example: A03015512
+        limitations:
+          type: array
+          description: Limitations
+          example:
+          - '01.06'
+          - '61'
+          items:
+            type: string
+        documentStatus:
+          type: string
+          description: Document status
+          enum:
+          - RELEASED
+          - SUSPENDED
+          - DESTROYED
+          - LOST
+          - CANCELED
+          example: RELEASED
+        categories:
+          type: array
+          description: Available categories
+          items:
+            $ref: '#/components/schemas/DriverLicenceInfoCategory'
+    SubscribedProduct:
+      type: object
+      properties:
+        active:
+          type: boolean
+          description: Information whether the subscription is active.
+          readOnly: true
+        lastChanged:
+          type: string
+          format: date-time
+          description: Date of the last change in the subscribed data.
+          readOnly: true
+      required:
+      - active
     IdentityProduct:
       type: object
       properties:
@@ -701,70 +573,6 @@ components:
           items:
             $ref: '#/components/schemas/IdentityProductOptionalField'
           uniqueItems: true
-    BadRequestApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    ConversationInfoIdentityProductResult:
-      type: object
-      properties:
-        status:
-          type: string
-          description: 'Result status:
-
-            * IN_PROGRESS - checking in progress
-
-            * FINISHED - checking completed
-
-            * PARTIAL - checking completed but only some data could be identified
-
-            * FAILED - checking completed but no data could be determined
-
-            '
-          enum:
-          - IN_PROGRESS
-          - FINISHED
-          - FAILED
-          - PARTIAL
-          example: FINISHED
-          readOnly: true
-        errors:
-          type: array
-          description: Additional information on possible causes of verification failure
-          items:
-            type: string
-          readOnly: true
-          uniqueItems: true
-        user:
-          $ref: '#/components/schemas/DiscoveredUserInfo'
-          description: Data discovered during identity checks
-          readOnly: true
-        checks:
-          type: array
-          description: Additional information about the validations performed and their results
-          items:
-            $ref: '#/components/schemas/ConversationProductValidationResult'
-          readOnly: true
-      required:
-      - status
-      - user
     Violation:
       type: object
       properties:
@@ -777,458 +585,6 @@ components:
       required:
       - field
       - message
-    CompanyName:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Company name
-          example: ACME Inc.
-          maxLength: 200
-          minLength: 0
-    ConversationInfoAMLProductResult:
-      type: object
-      properties:
-        status:
-          type: string
-          description: 'Result status:
-
-            * IN_PROGRESS - checking in progress
-
-            * FINISHED - checking completed
-
-            * PARTIAL - checking completed but only some data could be identified
-
-            * FAILED - checking completed but no data could be determined
-
-            '
-          enum:
-          - IN_PROGRESS
-          - FINISHED
-          - FAILED
-          - PARTIAL
-          example: FINISHED
-          readOnly: true
-        found:
-          type: array
-          description: AML lists, where matching records were found
-          items:
-            type: string
-            enum:
-            - PEP
-            - SANCTIONS
-            - ADVERSE_MEDIA
-            - SIP
-            - OTHER
-          readOnly: true
-          uniqueItems: true
-        subscription:
-          $ref: '#/components/schemas/SubscribedProduct'
-          description: Information about the periodic checking of lists
-          readOnly: true
-      required:
-      - found
-      - status
-    PersonName:
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: User name
-          example: Jan
-          maxLength: 100
-          minLength: 0
-        lastName:
-          type: string
-          description: User surname
-          example: Kowalski
-          maxLength: 200
-          minLength: 0
-        middleName:
-          type: string
-          description: Second name
-          example: Stanisław
-          maxLength: 100
-          minLength: 0
-        middleInitial:
-          type: string
-          description: Middle initial
-          example: S
-          maxLength: 1
-          minLength: 0
-        fullName:
-          type: string
-          description: User full name
-          example: Jan Stanisław Kowalski
-          maxLength: 300
-          minLength: 0
-        motherName:
-          type: string
-          description: Mother's name
-          example: Anna
-          maxLength: 100
-          minLength: 0
-        fatherName:
-          type: string
-          description: Father's name
-          example: Tomasz
-          maxLength: 100
-          minLength: 0
-        spelling:
-          $ref: '#/components/schemas/Spelling'
-          description: Object containing alternative spelling variations, legally recognized aliases, and official transliterations or romanizations of the individual's name
-    ProductQuery:
-      type: object
-      properties:
-        identity:
-          $ref: '#/components/schemas/IdentityProduct'
-          description: Configures the required user information to be provided
-        verify:
-          $ref: '#/components/schemas/VerifyProduct'
-          description: Configures which user information should be compared and verified
-        bankTransactions:
-          $ref: '#/components/schemas/BankTransactionsProduct'
-          description: Configures the required information about the user's banking transactions.
-        aml:
-          $ref: '#/components/schemas/AMLProduct'
-          description: Configures the required information about the AML checks.
-        auth:
-          $ref: '#/components/schemas/AuthProduct'
-          description: Configures the required information about auth product.
-        enquiry:
-          $ref: '#/components/schemas/EnquiryProduct'
-          description: Configures the required information about enquiry product.
-        affordability:
-          $ref: '#/components/schemas/AffordabilityProduct'
-          description: Configures the required information about affordability product.
-        ageVerification:
-          $ref: '#/components/schemas/AgeVerificationProduct'
-          description: '[BETA] Configures the required information about age verification product.'
-        databaseVerification:
-          $ref: '#/components/schemas/DatabaseVerificationProduct'
-          description: Configures the required information about database verification product.
-    DriverLicenceInfoCategory:
-      type: object
-      properties:
-        category:
-          type: string
-          enum:
-          - LIGHT_MOPEDS_AND_QUADRICYCLES
-          - LIGHT_MOTORCYCLES
-          - MEDIUM_POWERED_MOTORCYCLES
-          - UNRESTRICTED_MOTORCYCLES
-          - LIGHT_VEHICLES
-          - CARS
-          - MEDIUM_SIZED_VEHICLES
-          - LARGE_VEHICLES
-          - MINIBUSES
-          - BUSES
-          - ARTICULATED_VEHICLES_OR_TRAILERS
-          - MOTORCYCLES_AND_CARS
-          - CAR_WITH_TRAILER
-          - LARGE_VEHICLE_WITH_TRAILER
-          - BUS_WITH_TRAILER
-        issueDate:
-          type: string
-          format: date
-        expiryDate:
-          type: string
-          format: date
-        limitations:
-          type: array
-          items:
-            type: string
-        status:
-          type: string
-          enum:
-          - ACTIVE
-          - REVOKE
-    PersonIdsInfo:
-      type: object
-      properties:
-        nationalId:
-          type: string
-          description: 'User ID (in Poland: PESEL)'
-          example: 73121243192
-          maxLength: 50
-          minLength: 0
-        idCard:
-          $ref: '#/components/schemas/IdCardInfo'
-          description: ID card
-        passport:
-          $ref: '#/components/schemas/PassportInfo'
-          description: Passport
-        driverLicence:
-          $ref: '#/components/schemas/DriverLicenceInfo'
-          description: Driver Licence
-        residencePermit:
-          $ref: '#/components/schemas/ResidencePermitInfo'
-          description: Residence permit
-        otherDocument:
-          $ref: '#/components/schemas/OtherDocumentInfo'
-          description: Other document (only applies to specific verification methods)
-        accounts:
-          type: array
-          description: User account list
-          items:
-            $ref: '#/components/schemas/PersonAccountInfo'
-      required:
-      - accounts
-    ConversationInfoAuthProductResult:
-      type: object
-      properties:
-        status:
-          type: string
-          description: 'Result status:
-
-            * IN_PROGRESS - checking in progress
-
-            * FINISHED - checking completed
-
-            * PARTIAL - checking completed but only some data could be identified
-
-            * FAILED - checking completed but no data could be determined
-
-            '
-          enum:
-          - IN_PROGRESS
-          - FINISHED
-          - FAILED
-          - PARTIAL
-          example: FINISHED
-          readOnly: true
-        token:
-          type: string
-          description: Authorization token.
-          readOnly: true
-        challenge:
-          type: string
-          description: Equivalent of a user's login in a given method.
-          readOnly: true
-      required:
-      - status
-    ConversationInfoAffordabilityProductResult:
-      type: object
-      properties:
-        status:
-          type: string
-          description: 'Result status:
-
-            * IN_PROGRESS - checking in progress
-
-            * FINISHED - checking completed
-
-            * FAILED - checking completed but no data could be determined
-
-            '
-          enum:
-          - IN_PROGRESS
-          - FINISHED
-          - FAILED
-          - PARTIAL
-          example: FINISHED
-          readOnly: true
-        errors:
-          type: array
-          description: Additional information on possible causes of verification failure
-          items:
-            type: string
-          readOnly: true
-          uniqueItems: true
-      required:
-      - status
-    ConversationProductEnquiryResult:
-      type: object
-      properties:
-        status:
-          type: string
-          description: 'Result status:
-
-            * IN_PROGRESS - enquiry in progress
-
-            * FINISHED - enquiry completed
-
-            * PARTIAL - enquiry completed but only some data was retrieved
-
-            * FAILED - enquiry completed but failed to retrieve required data
-
-            '
-          enum:
-          - IN_PROGRESS
-          - FINISHED
-          - FAILED
-          - PARTIAL
-          example: FINISHED
-          readOnly: true
-        formId:
-          type: string
-          description: Enquiry form identifier.
-          readOnly: true
-        formData:
-          type: object
-          additionalProperties: {}
-          description: Enquiry form data.
-          readOnly: true
-      required:
-      - status
-    AgeVerificationProduct:
-      type: object
-      properties:
-        over:
-          type: integer
-          format: int32
-          description: Age to verify against.
-          example: 18
-          maximum: 150
-          minimum: 1
-      required:
-      - over
-    ConversationInfoVerifyProductResult:
-      type: object
-      properties:
-        status:
-          type: string
-          description: 'Result status:
-
-            * IN_PROGRESS - checking in progress
-
-            * FINISHED - checking completed
-
-            * PARTIAL - checking completed but only some data could be identified
-
-            * FAILED - checking completed but no data could be determined
-
-            '
-          enum:
-          - IN_PROGRESS
-          - FINISHED
-          - FAILED
-          - PARTIAL
-          example: FINISHED
-          readOnly: true
-        reliability:
-          type: number
-          format: double
-          description: Information about how closely the output matches the input data
-          maximum: 1
-          minimum: 0
-          readOnly: true
-        details:
-          type: array
-          description: detailed information about how closely given fields matches the input data
-          items:
-            $ref: '#/components/schemas/VerifyProductResultDetailInfo'
-          readOnly: true
-      required:
-      - status
-    ResidencePermitInfo:
-      type: object
-      description: User's residence permit
-      properties:
-        id:
-          type: string
-          description: Number
-          example: AD 24243423
-          maxLength: 50
-          minLength: 0
-        issueDate:
-          type: string
-          format: date
-          description: Date of issue of the document
-        expiryDate:
-          type: string
-          format: date
-          description: Document expiry date
-        issueCountry:
-          type: string
-          description: Country of issue of the document
-          example: GB
-        issuer:
-          type: string
-          description: Authority issuing the document
-          example: Wojewoda Mazowiecki
-    CompanyAccountInfo:
-      type: object
-      description: Company account information
-      properties:
-        swiftbic:
-          type: string
-          description: Bank's SWIFT / BIC code
-          example: BREXPLPW
-          maxLength: 50
-          minLength: 0
-        accountId:
-          type: string
-          description: Company account identification number
-          example: PL27114020040000300201355387
-          maxLength: 50
-          minLength: 0
-        currency:
-          type: string
-          description: Account currency
-          example: PLN
-          maxLength: 3
-          minLength: 0
-    AddressInfo:
-      type: object
-      properties:
-        text:
-          type: string
-          description: User's full address, not broken down into components. **Note:** This field has no format defined
-          example: ul. Wiśniowa 133/20 00-950 Warszawa PL
-          maxLength: 200
-          minLength: 0
-        addressLine:
-          type: string
-          description: User address
-          example: ul. Wiśniowa 133/20
-          maxLength: 200
-          minLength: 0
-        postalCode:
-          type: string
-          description: Postcode
-          example: 00-950
-          maxLength: 10
-          minLength: 0
-        city:
-          type: string
-          description: City
-          example: Warszawa
-          maxLength: 100
-          minLength: 0
-        country:
-          type: string
-          description: Country
-          example: PL
-          maxLength: 100
-          minLength: 0
-        state:
-          type: string
-          description: State/province
-          example: California
-          maxLength: 200
-          minLength: 0
-    ConstraintViolationError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
     ConversationProductValidationResult:
       type: object
       properties:
@@ -1253,112 +609,65 @@ components:
       - details
       - name
       - result
-    PersonAccountInfo:
-      type: object
-      description: User account information
-      properties:
-        swiftbic:
-          type: string
-          description: Bank's SWIFT / BIC code
-          example: BREXPLPW
-          maxLength: 50
-          minLength: 0
-        accountId:
-          type: string
-          description: User account identification number
-          example: PL27114020040000300201355387
-          maxLength: 50
-          minLength: 0
-        currency:
-          type: string
-          description: Account currency
-          example: PLN
-          maxLength: 3
-          minLength: 0
-    ConversationStrategyInfo:
+    AgeVerificationProduct:
       type: object
       properties:
-        country:
-          type: string
-          description: Country used.
-          example: PL
-          readOnly: true
-        method:
-          type: string
-          description: "Verification method used.\n* PSD2,\n* TRANSFER,\n* MOBYWATEL,\n* MOJEID_PL,\n* EDO_APP\n\n* and many more\n    "
-          example: PSD2
-          readOnly: true
-        trace:
-          type: object
-          additionalProperties: {}
-          description: Additional information returned by the provider.
-          readOnly: true
-        methodDetails:
-          type: object
-          additionalProperties: {}
-          description: Additional information about verification method.
-          readOnly: true
-    PersonInfoInfo:
-      type: object
-      properties:
-        gender:
-          type: string
-          description: The gender of the user (MALE/FEMALE/OTHER)
-          enum:
-          - MALE
-          - FEMALE
-          - OTHER
-        nationality:
-          type: string
-          description: User's nationality
-          example: PL
-        birthDate:
-          type: string
-          format: date
-          description: Date of birth
-        birthCity:
-          type: string
-          description: Place of birth
-          example: Gdańsk
-          maxLength: 200
-          minLength: 0
-        birthCountry:
-          type: string
-          description: Country of birth
-          example: PL
-        age:
+        over:
           type: integer
           format: int32
-          description: Age
-          example: 25
-        foreignerStatus:
-          type: string
-          description: Foreigner status
-          example: UKR
-          maxLength: 50
-          minLength: 0
-    AMLProduct:
+          description: Age to verify against.
+          example: 18
+          maximum: 150
+          minimum: 1
+      required:
+      - over
+    DatabaseVerificationProduct: {}
+    ConversationInfoBankTransactionsProductResult:
       type: object
       properties:
-        checks:
-          type: array
-          description: List of AML checks to perform
-          items:
-            type: string
-            enum:
-            - PEP
-            - SANCTIONS
-            - ADVERSE_MEDIA
-            - SIP
-            - OTHER
-        subscription:
-          $ref: '#/components/schemas/AMLSubscription'
-          description: The presence of the object enables recurring AML lists checking.
-        user:
-          $ref: '#/components/schemas/AMLUserInfo'
-          description: Individual's data in case of AML list check without KYC verification.
+        status:
+          type: string
+          description: 'Result status:
+
+            * IN_PROGRESS - checking in progress
+
+            * FINISHED - checking completed
+
+            * PARTIAL - checking completed but only some data could be identified
+
+            * FAILED - checking completed but no data could be determined
+
+            '
+          enum:
+          - IN_PROGRESS
+          - FINISHED
+          - FAILED
+          - PARTIAL
+          example: FINISHED
+          readOnly: true
       required:
-      - checks
+      - status
+    BadRequestApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
     AffordabilityUserInfo:
       type: object
       properties:
@@ -1407,27 +716,573 @@ components:
         formId:
           type: string
           description: Form identifier.
-    ContactInfo:
+    ConversationInfoAMLProductResult:
       type: object
       properties:
-        email:
+        status:
           type: string
-          format: email
-          description: User's email address
-          example: jan.kowalski@email.com
-        phone:
+          description: 'Result status:
+
+            * IN_PROGRESS - checking in progress
+
+            * FINISHED - checking completed
+
+            * PARTIAL - checking completed but only some data could be identified
+
+            * FAILED - checking completed but no data could be determined
+
+            '
+          enum:
+          - IN_PROGRESS
+          - FINISHED
+          - FAILED
+          - PARTIAL
+          example: FINISHED
+          readOnly: true
+        found:
+          type: array
+          description: AML lists, where matching records were found
+          items:
+            type: string
+            enum:
+            - PEP
+            - SANCTIONS
+            - ADVERSE_MEDIA
+            - SIP
+            - OTHER
+          readOnly: true
+          uniqueItems: true
+        subscription:
+          $ref: '#/components/schemas/SubscribedProduct'
+          description: Information about the periodic checking of lists
+          readOnly: true
+      required:
+      - found
+      - status
+    ConversationInfoVerifyProductResult:
+      type: object
+      properties:
+        status:
           type: string
-          description: User's phone
-          example: '+48692887345'
-        emailOtp:
+          description: 'Result status:
+
+            * IN_PROGRESS - checking in progress
+
+            * FINISHED - checking completed
+
+            * PARTIAL - checking completed but only some data could be identified
+
+            * FAILED - checking completed but no data could be determined
+
+            '
+          enum:
+          - IN_PROGRESS
+          - FINISHED
+          - FAILED
+          - PARTIAL
+          example: FINISHED
+          readOnly: true
+        reliability:
+          type: number
+          format: double
+          description: Information about how closely the output matches the input data
+          maximum: 1
+          minimum: 0
+          readOnly: true
+        details:
+          type: array
+          description: detailed information about how closely given fields matches the input data
+          items:
+            $ref: '#/components/schemas/VerifyProductResultDetailInfo'
+          readOnly: true
+      required:
+      - status
+    PersonUserInfo:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/PersonName'
+          description: Contains information related to the identification of the user, if the current user is a natural person
+        ids:
+          $ref: '#/components/schemas/PersonIdsInfo'
+          description: Contains identifiers associated with the user if the current user is a natural person
+        info:
+          $ref: '#/components/schemas/PersonInfoInfo'
+          description: Contains additional information about the user
+        address:
+          $ref: '#/components/schemas/AddressInfo'
+          description: User address
+        contact:
+          $ref: '#/components/schemas/ContactInfo'
+          description: User contact details
+    IdCardInfo:
+      type: object
+      description: User's ID card
+      properties:
+        id:
           type: string
-          format: email
-          description: User's email address confirmed with one time password
-          example: jan.kowalski@email.com
-        phoneOtp:
+          description: Number
+          example: ABC 12343
+          maxLength: 50
+          minLength: 0
+        type:
           type: string
-          description: User's phone confirmed with one time password
-          example: '+48692887345'
+          description: Type od ID card, as it may be different depending on country
+          example: Aadhaar
+          maxLength: 30
+          minLength: 0
+        issueDate:
+          type: string
+          format: date
+          description: Date of issue of the document
+        expiryDate:
+          type: string
+          format: date
+          description: Document expiry date
+        issueCountry:
+          type: string
+          description: Country of issue of the document
+          example: GB
+        issuer:
+          type: string
+          description: Authority issuing the document
+          example: Prezydent m.st. Warszawy
+    CompanyIds:
+      type: object
+      properties:
+        taxId:
+          type: string
+          description: 'Tax identification number (in Poland: NIP) of the company'
+          example: 1234567890
+          maxLength: 50
+          minLength: 0
+        additionalId:
+          type: string
+          description: Additional identifier
+          example: A03015512
+          maxLength: 50
+          minLength: 0
+        accounts:
+          type: array
+          description: Company account list
+          items:
+            $ref: '#/components/schemas/CompanyAccountInfo'
+      required:
+      - accounts
+    DriverLicenceInfoCategory:
+      type: object
+      properties:
+        category:
+          type: string
+          enum:
+          - LIGHT_MOPEDS_AND_QUADRICYCLES
+          - LIGHT_MOTORCYCLES
+          - MEDIUM_POWERED_MOTORCYCLES
+          - UNRESTRICTED_MOTORCYCLES
+          - LIGHT_VEHICLES
+          - CARS
+          - MEDIUM_SIZED_VEHICLES
+          - LARGE_VEHICLES
+          - MINIBUSES
+          - BUSES
+          - ARTICULATED_VEHICLES_OR_TRAILERS
+          - MOTORCYCLES_AND_CARS
+          - CAR_WITH_TRAILER
+          - LARGE_VEHICLE_WITH_TRAILER
+          - BUS_WITH_TRAILER
+        issueDate:
+          type: string
+          format: date
+        expiryDate:
+          type: string
+          format: date
+        limitations:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - REVOKE
+    Spelling:
+      type: object
+      properties:
+        aliasName:
+          type: string
+          description: The legally recognized alternate name or pseudonym of the individual
+          example: Mark Twain
+          maxLength: 300
+          minLength: 0
+        translatedName:
+          type: string
+          description: The official translation or transliteration of the individual's core name from its original script/language into standard Latin characters
+          example: Samuel Clemens
+          maxLength: 300
+          minLength: 0
+        translatedAlias:
+          type: string
+          description: The legally recognized alternate name (alias) converted into its official translated or transliterated form using Latin characters
+          example: Mark Tven
+          maxLength: 300
+          minLength: 0
+    PassportInfo:
+      type: object
+      description: User's passport
+      properties:
+        id:
+          type: string
+          description: Number
+          example: AD 24243423
+          maxLength: 50
+          minLength: 0
+        issueDate:
+          type: string
+          format: date
+          description: Date of issue of the document
+        expiryDate:
+          type: string
+          format: date
+          description: Document expiry date
+        issueCountry:
+          type: string
+          description: Country of issue of the document
+          example: GB
+        issuer:
+          type: string
+          description: Authority issuing the document
+          example: Wojewoda Mazowiecki
+    PersonName:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: User name
+          example: Jan
+          maxLength: 100
+          minLength: 0
+        lastName:
+          type: string
+          description: User surname
+          example: Kowalski
+          maxLength: 200
+          minLength: 0
+        middleName:
+          type: string
+          description: Second name
+          example: Stanisław
+          maxLength: 100
+          minLength: 0
+        middleInitial:
+          type: string
+          description: Middle initial
+          example: S
+          maxLength: 1
+          minLength: 0
+        fullName:
+          type: string
+          description: User full name
+          example: Jan Stanisław Kowalski
+          maxLength: 300
+          minLength: 0
+        motherName:
+          type: string
+          description: Mother's name
+          example: Anna
+          maxLength: 100
+          minLength: 0
+        fatherName:
+          type: string
+          description: Father's name
+          example: Tomasz
+          maxLength: 100
+          minLength: 0
+        spelling:
+          $ref: '#/components/schemas/Spelling'
+          description: Object containing alternative spelling variations, legally recognized aliases, and official transliterations or romanizations of the individual's name
+    CompanyAccountInfo:
+      type: object
+      description: Company account information
+      properties:
+        swiftbic:
+          type: string
+          description: Bank's SWIFT / BIC code
+          example: BREXPLPW
+          maxLength: 50
+          minLength: 0
+        accountId:
+          type: string
+          description: Company account identification number
+          example: PL27114020040000300201355387
+          maxLength: 50
+          minLength: 0
+        currency:
+          type: string
+          description: Account currency
+          example: PLN
+          maxLength: 3
+          minLength: 0
+    ConstraintViolationError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    KnownUserInfo:
+      type: object
+      properties:
+        company:
+          $ref: '#/components/schemas/CompanyUserInfo'
+          description: Contains company-related information if the current user is a legal entity
+        person:
+          $ref: '#/components/schemas/PersonUserInfo'
+          description: Contains user-related information if the current user is a natural person
+    CompanyName:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Company name
+          example: ACME Inc.
+          maxLength: 200
+          minLength: 0
+    CustomValidationApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    IdentityProductOptionalField:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            type: string
+            enum:
+            - PERSON_NAME_FIRSTNAME
+            - PERSON_NAME_LASTNAME
+            - PERSON_NAME_MIDDLENAME
+            - PERSON_NAME_MIDDLE_INITIAL
+            - PERSON_NAME_FULLNAME
+            - PERSON_NAME_MOTHER_NAME
+            - PERSON_NAME_FATHER_NAME
+            - PERSON_NAME_SPELLING
+            - PERSON_IDS_NATIONAL_ID
+            - PERSON_IDS_ACCOUNTS
+            - PERSON_IDS_IDCARD_ID
+            - PERSON_IDS_IDCARD_TYPE
+            - PERSON_IDS_IDCARD_PHOTO
+            - PERSON_IDS_IDCARD_ISSUE_DATE
+            - PERSON_IDS_IDCARD_EXPIRY_DATE
+            - PERSON_IDS_IDCARD_ISSUE_COUNTRY
+            - PERSON_IDS_IDCARD_ISSUER
+            - PERSON_IDS_PASSPORT_ID
+            - PERSON_IDS_PASSPORT_ISSUE_DATE
+            - PERSON_IDS_PASSPORT_EXPIRY_DATE
+            - PERSON_IDS_PASSPORT_PHOTO
+            - PERSON_IDS_PASSPORT_ISSUE_COUNTRY
+            - PERSON_IDS_PASSPORT_ISSUER
+            - PERSON_IDS_RESIDENCE_PERMIT_ID
+            - PERSON_IDS_RESIDENCE_PERMIT_TYPE
+            - PERSON_IDS_RESIDENCE_PERMIT_ISSUE_DATE
+            - PERSON_IDS_RESIDENCE_PERMIT_EXPIRY_DATE
+            - PERSON_IDS_RESIDENCE_PERMIT_PHOTO
+            - PERSON_IDS_RESIDENCE_PERMIT_ISSUE_COUNTRY
+            - PERSON_IDS_RESIDENCE_PERMIT_ISSUER
+            - PERSON_IDS_DRIVER_LICENCE_ID
+            - PERSON_IDS_DRIVER_LICENCE_ISSUE_DATE
+            - PERSON_IDS_DRIVER_LICENCE_EXPIRY_DATE
+            - PERSON_IDS_DRIVER_LICENCE_PHOTO
+            - PERSON_IDS_DRIVER_LICENCE_ISSUE_COUNTRY
+            - PERSON_IDS_DRIVER_LICENCE_ISSUE_STATE
+            - PERSON_IDS_DRIVER_LICENCE_ISSUER
+            - PERSON_IDS_DRIVER_LICENCE_CATEGORIES
+            - PERSON_IDS_DRIVER_LICENCE_ADDITIONAL_ID
+            - PERSON_IDS_DRIVER_LICENCE_LIMITATIONS
+            - PERSON_IDS_DRIVER_LICENCE_DOCUMENT_STATUS
+            - PERSON_IDS_OTHER_DOCUMENT_ID
+            - PERSON_IDS_OTHER_DOCUMENT_DESCRIPTION
+            - PERSON_IDS_OTHER_DOCUMENT_ISSUE_DATE
+            - PERSON_IDS_OTHER_DOCUMENT_EXPIRY_DATE
+            - PERSON_IDS_OTHER_DOCUMENT_ISSUE_COUNTRY
+            - PERSON_IDS_OTHER_DOCUMENT_ISSUER
+            - PERSON_IDS_OTHER_DOCUMENT_PHOTO
+            - PERSON_INFO_GENDER
+            - PERSON_INFO_NATIONALITY
+            - PERSON_INFO_BIRTHDATE
+            - PERSON_INFO_BIRTH_CITY
+            - PERSON_INFO_BIRTH_COUNTRY
+            - PERSON_INFO_AGE
+            - PERSON_INFO_FOREIGNER_STATUS
+            - COMPANY_NAME_NAME
+            - COMPANY_IDS_TAX_ID
+            - PERSON_ADDRESS
+            - COMPANY_ADDRESS
+            - PERSON_CONTACT_EMAIL
+            - PERSON_CONTACT_PHONE
+            - PERSON_CONTACT_EMAIL_OTP
+            - PERSON_CONTACT_PHONE_OTP
+            - COMPANY_CONTACT_EMAIL
+            - COMPANY_CONTACT_PHONE
+            - COMPANY_IDS_ADDITIONAL_ID
+            - COMPANY_IDS_ACCOUNTS
+          uniqueItems: true
+      required:
+      - list
+    ConversationInfoDbVProductResult:
+      type: object
+      properties:
+        status:
+          type: string
+          description: 'Result status:
+
+            * IN_PROGRESS - checking in progress
+
+            * FINISHED - checking completed
+
+            * PARTIAL - checking completed but only data from some of requested databases was retrieved
+
+            * FAILED - checking completed but no data could be determined
+
+            '
+          enum:
+          - IN_PROGRESS
+          - FINISHED
+          - FAILED
+          - PARTIAL
+          example: FINISHED
+          readOnly: true
+      required:
+      - status
+    ConversationStrategyInfo:
+      type: object
+      properties:
+        country:
+          type: string
+          description: Country used.
+          example: PL
+          readOnly: true
+        method:
+          type: string
+          description: "Verification method used.\n* PSD2,\n* TRANSFER,\n* MOBYWATEL,\n* MOJEID_PL,\n* EDO_APP\n\n* and many more\n    "
+          example: PSD2
+          readOnly: true
+        trace:
+          type: object
+          additionalProperties: {}
+          description: Additional information returned by the provider.
+          readOnly: true
+        methodDetails:
+          type: object
+          additionalProperties: {}
+          description: Additional information about verification method.
+          readOnly: true
+    CreateConversation:
+      type: object
+      properties:
+        userKey:
+          type: string
+          description: 'User ID on your system. This property is not used by the Authologic and is returned with the conversation status. If not given will be generated automatically. '
+          example: 7dfb9ded-c38f-49ae-95e2-307283a0b1f6
+          maxLength: 200
+          minLength: 1
+          pattern: ^[a-zA-Z0-9-_+=#@.:]+$
+        returnUrl:
+          type: string
+          description: 'The address on your system where the user will be redirected after verifying his identity. If {conversationId} part was given,
+
+            it will be replaced with the conversation ID'
+          example: https://authologic.com/tests/return/?conversation={conversationId}
+        callbackUrl:
+          type: string
+          description: 'The address in your system to which information about the user will be sent. You can use placeholders: {conversationId}, {target} and {event}'
+          example: https://authologic.com/tests/callback/?conversation={conversationId}&target={target}&event={event}
+        layoutUrl:
+          type: string
+          description: "The address on your system where the user will be redirected when Authologic need contact with user. This allows to define process look on your side.\n            If {conversationId} part was given, it will be replaced with the conversation ID"
+          example: https://authologic.com/tests/layout/?conversation={conversationId}
+        strategy:
+          type: string
+          description: Additional information on the user identity verification strategy
+          example: public:default
+          pattern: ^[a-zA-Z]+:[a-zA-Z0-9-_+:]+$
+        query:
+          $ref: '#/components/schemas/ProductQuery'
+          description: Query definition - List of information to be obtained
+        settings:
+          type: object
+          additionalProperties:
+            type: string
+          description: Additional, optional settings depend on the selected strategy.
+          example:
+            countryCode: PL
+    OperationNotSupportedApiFieldError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    CompanyUserInfo:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/CompanyName'
+          description: Contains information related to the identification of the company if the current user is a legal entity
+        ids:
+          $ref: '#/components/schemas/CompanyIds'
+          description: Contains company-related identifiers if the current user is a legal entity
+        address:
+          $ref: '#/components/schemas/AddressInfo'
+          description: User address
+        contact:
+          $ref: '#/components/schemas/ContactInfo'
+          description: User contact details
     ConversationInfoResult:
       type: object
       properties:
@@ -1467,7 +1322,41 @@ components:
           $ref: '#/components/schemas/ConversationInfoDbVProductResult'
           description: The result of database verification
           title: ConversationDbVResult
-    ConversationInfoBankTransactionsProductResult:
+    ConversationProductEnquiryResult:
+      type: object
+      properties:
+        status:
+          type: string
+          description: 'Result status:
+
+            * IN_PROGRESS - enquiry in progress
+
+            * FINISHED - enquiry completed
+
+            * PARTIAL - enquiry completed but only some data was retrieved
+
+            * FAILED - enquiry completed but failed to retrieve required data
+
+            '
+          enum:
+          - IN_PROGRESS
+          - FINISHED
+          - FAILED
+          - PARTIAL
+          example: FINISHED
+          readOnly: true
+        formId:
+          type: string
+          description: Enquiry form identifier.
+          readOnly: true
+        formData:
+          type: object
+          additionalProperties: {}
+          description: Enquiry form data.
+          readOnly: true
+      required:
+      - status
+    ConversationInfoAgeVerificationProductResult:
       type: object
       properties:
         status:
@@ -1477,8 +1366,6 @@ components:
             * IN_PROGRESS - checking in progress
 
             * FINISHED - checking completed
-
-            * PARTIAL - checking completed but only some data could be identified
 
             * FAILED - checking completed but no data could be determined
 
@@ -1490,330 +1377,18 @@ components:
           - PARTIAL
           example: FINISHED
           readOnly: true
-      required:
-      - status
-    PassportInfo:
-      type: object
-      description: User's passport
-      properties:
-        id:
-          type: string
-          description: Number
-          example: AD 24243423
-          maxLength: 50
-          minLength: 0
-        issueDate:
-          type: string
-          format: date
-          description: Date of issue of the document
-        expiryDate:
-          type: string
-          format: date
-          description: Document expiry date
-        issueCountry:
-          type: string
-          description: Country of issue of the document
-          example: GB
-        issuer:
-          type: string
-          description: Authority issuing the document
-          example: Wojewoda Mazowiecki
-    SubscribedProduct:
-      type: object
-      properties:
-        active:
-          type: boolean
-          description: Information whether the subscription is active.
+        over:
+          type: integer
+          format: int32
+          description: Declared age to verify against.
           readOnly: true
-        lastChanged:
-          type: string
-          format: date-time
-          description: Date of the last change in the subscribed data.
-          readOnly: true
-      required:
-      - active
-    OperationNotSupportedApiFieldError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    ConversationInfo:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the conversation
-          example: e0c0b3cc-8238-414f-9940-9f14bd1b8693
-        userKey:
-          type: string
-          description: Unique user identifier in the Customer's system
-          example: d5dbb8e0-192e-4bc6-972c-f7948409d10c
-        url:
-          type: string
-          description: The address where user should be redirected to perform the verification
-          example: https://sandbox.authologic.com/c/022e8eaf-b06d-44b9-a68f-45eef1353dbe
-        status:
-          type: string
-          description: 'Conversation state
-
-            * CREATED - conversation ready to be run
-
-            * IN_PROGRESS - data is being determined from the query
-
-            * FINISHED - query checks have been completed
-
-            * CANCELED - checking interrupted by the user
-
-            * EXPIRED - conversation is expired
-
-            '
-          enum:
-          - CREATED
-          - IN_PROGRESS
-          - FINISHED
-          - CANCELED
-          - EXPIRED
-          example: CREATED
         result:
-          $ref: '#/components/schemas/ConversationInfoResult'
-          description: The result of checking individual elements
-          title: ConversationResult
-        info:
-          type: array
-          description: The information about activated strategy elements
-          items:
-            $ref: '#/components/schemas/ConversationStrategyInfo'
-          title: ConversationInfo
-      required:
-      - id
-      - result
-      - status
-      - url
-      - userKey
-      title: Conversation
-    KnownUserInfo:
-      type: object
-      properties:
-        company:
-          $ref: '#/components/schemas/CompanyUserInfo'
-          description: Contains company-related information if the current user is a legal entity
-        person:
-          $ref: '#/components/schemas/PersonUserInfo'
-          description: Contains user-related information if the current user is a natural person
-    AffordabilityProduct:
-      type: object
-      properties:
-        user:
-          $ref: '#/components/schemas/AffordabilityUserInfo'
-          description: Individual's data in case of affordability assessment check without KYC verification.
-    BankTransactionsProduct:
-      type: object
-      properties:
-        type:
-          type: string
-          description: 'Transaction type to be retrieved:
-
-            * CREDIT - credit
-
-            * DEBIT - debit
-
-            * ALL - all types
-
-            '
-          enum:
-          - CREDIT
-          - DEBIT
-          - ALL
-        flags:
-          type: array
-          items:
-            type: string
-            enum:
-            - INCLUDE_SCHEDULED
-            - INCLUDE_TAGS
-          uniqueItems: true
-      required:
-      - flags
-      - type
-    VerifyProduct:
-      type: object
-      properties:
-        user:
-          $ref: '#/components/schemas/KnownUserInfo'
-          description: List of information about a user to verify
-      required:
-      - user
-    ConversationInfoDbVProductResult:
-      type: object
-      properties:
-        status:
-          type: string
-          description: 'Result status:
-
-            * IN_PROGRESS - checking in progress
-
-            * FINISHED - checking completed
-
-            * PARTIAL - checking completed but only data from some of requested databases was retrieved
-
-            * FAILED - checking completed but no data could be determined
-
-            '
-          enum:
-          - IN_PROGRESS
-          - FINISHED
-          - FAILED
-          - PARTIAL
-          example: FINISHED
+          type: boolean
+          description: Age verification result. True if the user's age meets the declared threshold.
           readOnly: true
       required:
+      - over
       - status
-    CustomValidationApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    DriverLicenceInfo:
-      type: object
-      description: User's driver licence
-      properties:
-        id:
-          type: string
-          description: Number
-          example: AA 12343454
-          maxLength: 50
-          minLength: 0
-        issueDate:
-          type: string
-          format: date
-          description: Date of issue of the document
-        expiryDate:
-          type: string
-          format: date
-          description: Document expiry date
-        issueCountry:
-          type: string
-          description: Country of issue of the document
-          example: GB
-        issueState:
-          type: string
-          description: State/province of issue of the document
-          example: California
-        issuer:
-          type: string
-          description: Authority issuing the document
-          example: Prezydent m.st. Warszawy
-        additionalId:
-          type: string
-          description: Additional identifier
-          example: A03015512
-        limitations:
-          type: array
-          description: Limitations
-          example:
-          - '01.06'
-          - '61'
-          items:
-            type: string
-        documentStatus:
-          type: string
-          description: Document status
-          enum:
-          - RELEASED
-          - SUSPENDED
-          - DESTROYED
-          - LOST
-          - CANCELED
-          example: RELEASED
-        categories:
-          type: array
-          description: Available categories
-          items:
-            $ref: '#/components/schemas/DriverLicenceInfoCategory'
-    DiscoveredUserInfo:
-      type: object
-      properties:
-        person:
-          $ref: '#/components/schemas/PersonUserInfo'
-          description: Contains user-related information if the current user is a natural person
-        company:
-          $ref: '#/components/schemas/CompanyUserInfo'
-          description: Contains company-related information if the current user is a legal entity
-    DatabaseVerificationProduct: {}
-    MethodArgumentNotValidError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    Spelling:
-      type: object
-      properties:
-        aliasName:
-          type: string
-          description: The legally recognized alternate name or pseudonym of the individual
-          example: Mark Twain
-          maxLength: 300
-          minLength: 0
-        translatedName:
-          type: string
-          description: The official translation or transliteration of the individual's core name from its original script/language into standard Latin characters
-          example: Samuel Clemens
-          maxLength: 300
-          minLength: 0
-        translatedAlias:
-          type: string
-          description: The legally recognized alternate name (alias) converted into its official translated or transliterated form using Latin characters
-          example: Mark Tven
-          maxLength: 300
-          minLength: 0
     VerifyProductResultDetailInfo:
       type: object
       properties:
@@ -1899,45 +1474,328 @@ components:
       required:
       - field
       - reliability
-    CreateConversation:
+    OtherDocumentInfo:
+      type: object
+      description: Other document (only applies to specific verification methods)
+      properties:
+        id:
+          type: string
+          description: Number
+          example: AA 12343454
+          maxLength: 1024
+          minLength: 0
+        description:
+          type: string
+          description: Description
+          example: Document ID
+          maxLength: 1024
+          minLength: 0
+        issueDate:
+          type: string
+          format: date
+          description: Date of issue of the document
+        expiryDate:
+          type: string
+          format: date
+          description: Document expiry date
+        issueCountry:
+          type: string
+          description: Country of issue of the document
+          example: GB
+        issuer:
+          type: string
+          description: Authority issuing the document
+          example: Prezydent m.st. Warszawy
+    ConversationInfoAuthProductResult:
       type: object
       properties:
+        status:
+          type: string
+          description: 'Result status:
+
+            * IN_PROGRESS - checking in progress
+
+            * FINISHED - checking completed
+
+            * PARTIAL - checking completed but only some data could be identified
+
+            * FAILED - checking completed but no data could be determined
+
+            '
+          enum:
+          - IN_PROGRESS
+          - FINISHED
+          - FAILED
+          - PARTIAL
+          example: FINISHED
+          readOnly: true
+        token:
+          type: string
+          description: Authorization token.
+          readOnly: true
+        challenge:
+          type: string
+          description: Equivalent of a user's login in a given method.
+          readOnly: true
+      required:
+      - status
+    ContactInfo:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: jan.kowalski@email.com
+        phone:
+          type: string
+          description: User's phone
+          example: '+48692887345'
+        emailOtp:
+          type: string
+          format: email
+          description: User's email address confirmed with one time password
+          example: jan.kowalski@email.com
+        phoneOtp:
+          type: string
+          description: User's phone confirmed with one time password
+          example: '+48692887345'
+    PersonIdsInfo:
+      type: object
+      properties:
+        nationalId:
+          type: string
+          description: 'User ID (in Poland: PESEL)'
+          example: 73121243192
+          maxLength: 50
+          minLength: 0
+        idCard:
+          $ref: '#/components/schemas/IdCardInfo'
+          description: ID card
+        passport:
+          $ref: '#/components/schemas/PassportInfo'
+          description: Passport
+        driverLicence:
+          $ref: '#/components/schemas/DriverLicenceInfo'
+          description: Driver Licence
+        residencePermit:
+          $ref: '#/components/schemas/ResidencePermitInfo'
+          description: Residence permit
+        otherDocument:
+          $ref: '#/components/schemas/OtherDocumentInfo'
+          description: Other document (only applies to specific verification methods)
+        accounts:
+          type: array
+          description: User account list
+          items:
+            $ref: '#/components/schemas/PersonAccountInfo'
+      required:
+      - accounts
+    MissingHeaderApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    ConversationInfoIdentityProductResult:
+      type: object
+      properties:
+        status:
+          type: string
+          description: 'Result status:
+
+            * IN_PROGRESS - checking in progress
+
+            * FINISHED - checking completed
+
+            * PARTIAL - checking completed but only some data could be identified
+
+            * FAILED - checking completed but no data could be determined
+
+            '
+          enum:
+          - IN_PROGRESS
+          - FINISHED
+          - FAILED
+          - PARTIAL
+          example: FINISHED
+          readOnly: true
+        errors:
+          type: array
+          description: Additional information on possible causes of verification failure
+          items:
+            type: string
+          readOnly: true
+          uniqueItems: true
+        user:
+          $ref: '#/components/schemas/DiscoveredUserInfo'
+          description: Data discovered during identity checks
+          readOnly: true
+        checks:
+          type: array
+          description: Additional information about the validations performed and their results
+          items:
+            $ref: '#/components/schemas/ConversationProductValidationResult'
+          readOnly: true
+      required:
+      - status
+      - user
+    ConversationInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the conversation
+          example: e0c0b3cc-8238-414f-9940-9f14bd1b8693
         userKey:
           type: string
-          description: 'User ID on your system. This property is not used by the Authologic and is returned with the conversation status. If not given will be generated automatically. '
-          example: 7dfb9ded-c38f-49ae-95e2-307283a0b1f6
-          maxLength: 200
-          minLength: 1
-          pattern: ^[a-zA-Z0-9-_+=#@.:]+$
-        returnUrl:
+          description: Unique user identifier in the Customer's system
+          example: d5dbb8e0-192e-4bc6-972c-f7948409d10c
+        url:
           type: string
-          description: 'The address on your system where the user will be redirected after verifying his identity. If {conversationId} part was given,
+          description: The address where user should be redirected to perform the verification
+          example: https://sandbox.authologic.com/c/022e8eaf-b06d-44b9-a68f-45eef1353dbe
+        status:
+          type: string
+          description: 'Conversation state
 
-            it will be replaced with the conversation ID'
-          example: https://authologic.com/tests/return/?conversation={conversationId}
-        callbackUrl:
+            * CREATED - conversation ready to be run
+
+            * IN_PROGRESS - data is being determined from the query
+
+            * FINISHED - query checks have been completed
+
+            * CANCELED - checking interrupted by the user
+
+            * EXPIRED - conversation is expired
+
+            '
+          enum:
+          - CREATED
+          - IN_PROGRESS
+          - FINISHED
+          - CANCELED
+          - EXPIRED
+          example: CREATED
+        result:
+          $ref: '#/components/schemas/ConversationInfoResult'
+          description: The result of checking individual elements
+          title: ConversationResult
+        info:
+          type: array
+          description: The information about activated strategy elements
+          items:
+            $ref: '#/components/schemas/ConversationStrategyInfo'
+          title: ConversationInfo
+      required:
+      - id
+      - result
+      - status
+      - url
+      - userKey
+      title: Conversation
+    ApiError:
+      type: object
+      properties:
+        status:
           type: string
-          description: 'The address in your system to which information about the user will be sent. You can use placeholders: {conversationId}, {target} and {event}'
-          example: https://authologic.com/tests/callback/?conversation={conversationId}&target={target}&event={event}
-        layoutUrl:
+          description: Response status
+        message:
           type: string
-          description: "The address on your system where the user will be redirected when Authologic need contact with user. This allows to define process look on your side.\n            If {conversationId} part was given, it will be replaced with the conversation ID"
-          example: https://authologic.com/tests/layout/?conversation={conversationId}
-        strategy:
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
           type: string
-          description: Additional information on the user identity verification strategy
-          example: public:default
-          pattern: ^[a-zA-Z]+:[a-zA-Z0-9-_+:]+$
-        query:
-          $ref: '#/components/schemas/ProductQuery'
-          description: Query definition - List of information to be obtained
-        settings:
-          type: object
-          additionalProperties:
-            type: string
-          description: Additional, optional settings depend on the selected strategy.
-          example:
-            countryCode: PL
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    AuthProduct:
+      type: object
+      properties:
+        challenge:
+          type: string
+          description: Equivalent of a user's login in a given method.
+    AddressInfo:
+      type: object
+      properties:
+        text:
+          type: string
+          description: User's full address, not broken down into components. **Note:** This field has no format defined
+          example: ul. Wiśniowa 133/20 00-950 Warszawa PL
+          maxLength: 200
+          minLength: 0
+        addressLine:
+          type: string
+          description: User address
+          example: ul. Wiśniowa 133/20
+          maxLength: 200
+          minLength: 0
+        postalCode:
+          type: string
+          description: Postcode
+          example: 00-950
+          maxLength: 10
+          minLength: 0
+        city:
+          type: string
+          description: City
+          example: Warszawa
+          maxLength: 100
+          minLength: 0
+        country:
+          type: string
+          description: Country
+          example: PL
+          maxLength: 100
+          minLength: 0
+        state:
+          type: string
+          description: State/province
+          example: California
+          maxLength: 200
+          minLength: 0
+    MethodArgumentNotValidError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
     AMLUserInfo:
       type: object
       properties:
@@ -1971,28 +1829,170 @@ components:
           example: 73121243XXX
           maxLength: 50
           minLength: 0
-    ApiError:
+    AMLSubscription: {}
+    ConversationInfoAffordabilityProductResult:
       type: object
       properties:
         status:
           type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
+          description: 'Result status:
+
+            * IN_PROGRESS - checking in progress
+
+            * FINISHED - checking completed
+
+            * FAILED - checking completed but no data could be determined
+
+            '
+          enum:
+          - IN_PROGRESS
+          - FINISHED
+          - FAILED
+          - PARTIAL
+          example: FINISHED
+          readOnly: true
+        errors:
           type: array
-          description: Validation error list
+          description: Additional information on possible causes of verification failure
           items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
+            type: string
+          readOnly: true
+          uniqueItems: true
       required:
-      - message
       - status
-      - violations
-    AMLSubscription: {}
+    ProductQuery:
+      type: object
+      properties:
+        identity:
+          $ref: '#/components/schemas/IdentityProduct'
+          description: Configures the required user information to be provided
+        verify:
+          $ref: '#/components/schemas/VerifyProduct'
+          description: Configures which user information should be compared and verified
+        bankTransactions:
+          $ref: '#/components/schemas/BankTransactionsProduct'
+          description: Configures the required information about the user's banking transactions.
+        aml:
+          $ref: '#/components/schemas/AMLProduct'
+          description: Configures the required information about the AML checks.
+        auth:
+          $ref: '#/components/schemas/AuthProduct'
+          description: Configures the required information about auth product.
+        enquiry:
+          $ref: '#/components/schemas/EnquiryProduct'
+          description: Configures the required information about enquiry product.
+        affordability:
+          $ref: '#/components/schemas/AffordabilityProduct'
+          description: Configures the required information about affordability product.
+        ageVerification:
+          $ref: '#/components/schemas/AgeVerificationProduct'
+          description: '[BETA] Configures the required information about age verification product.'
+        databaseVerification:
+          $ref: '#/components/schemas/DatabaseVerificationProduct'
+          description: Configures the required information about database verification product.
+    BankTransactionsProduct:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'Transaction type to be retrieved:
+
+            * CREDIT - credit
+
+            * DEBIT - debit
+
+            * ALL - all types
+
+            '
+          enum:
+          - CREDIT
+          - DEBIT
+          - ALL
+        flags:
+          type: array
+          items:
+            type: string
+            enum:
+            - INCLUDE_SCHEDULED
+            - INCLUDE_TAGS
+          uniqueItems: true
+      required:
+      - flags
+      - type
+    PersonInfoInfo:
+      type: object
+      properties:
+        gender:
+          type: string
+          description: The gender of the user (MALE/FEMALE/OTHER)
+          enum:
+          - MALE
+          - FEMALE
+          - OTHER
+        nationality:
+          type: string
+          description: User's nationality
+          example: PL
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth
+        birthCity:
+          type: string
+          description: Place of birth
+          example: Gdańsk
+          maxLength: 200
+          minLength: 0
+        birthCountry:
+          type: string
+          description: Country of birth
+          example: PL
+        age:
+          type: integer
+          format: int32
+          description: Age
+          example: 25
+        foreignerStatus:
+          type: string
+          description: Foreigner status
+          example: UKR
+          maxLength: 50
+          minLength: 0
+    DiscoveredUserInfo:
+      type: object
+      properties:
+        person:
+          $ref: '#/components/schemas/PersonUserInfo'
+          description: Contains user-related information if the current user is a natural person
+        company:
+          $ref: '#/components/schemas/CompanyUserInfo'
+          description: Contains company-related information if the current user is a legal entity
+    ResidencePermitInfo:
+      type: object
+      description: User's residence permit
+      properties:
+        id:
+          type: string
+          description: Number
+          example: AD 24243423
+          maxLength: 50
+          minLength: 0
+        issueDate:
+          type: string
+          format: date
+          description: Date of issue of the document
+        expiryDate:
+          type: string
+          format: date
+          description: Document expiry date
+        issueCountry:
+          type: string
+          description: Country of issue of the document
+          example: GB
+        issuer:
+          type: string
+          description: Authority issuing the document
+          example: Wojewoda Mazowiecki
   securitySchemes:
     apiKey:
       type: http

@@ -217,60 +217,28 @@ paths:
           description: Server side error
 components:
   schemas:
-    Violation:
+    ConstraintViolationError:
       type: object
       properties:
-        field:
+        status:
           type: string
-          description: Field name
+          description: Response status
         message:
           type: string
           description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
       required:
-      - field
       - message
-    Media:
-      type: object
-      description: Information about media file
-      properties:
-        id:
-          type: string
-          description: Media id
-          example: c9c73416-6f77-11eb-b60f-0240214a8d4b
-        type:
-          type: string
-          description: "Media type:\n* DOCUMENT - identified person's document\n* FACE - identified person's face\n* REPORT - verification process report\n    "
-          enum:
-          - DOCUMENT
-          - FACE
-          - REPORT
-          example: DOCUMENT
-        subtype:
-          type: string
-          description: "Media subtype, for example type of the document. Subtype is empty, if the type is FACE.:\n* ID_CARD - identified person's id card\n* DRIVER_LICENSE - identified person's driver license\n* PASSPORT - identified person's passport\n* RESIDENCE_PERMIT - identified person's residence permit\n* UTILITY_BILL - identified person's proof of address\n    "
-          enum:
-          - ID_CARD
-          - DRIVER_LICENSE
-          - PASSPORT
-          - RESIDENCE_PERMIT
-          - UTILITY_BILL
-          example: ID_CARD
-        variant:
-          type: string
-          description: "Media variant, for example side of the document. Variant is empty, if the type is FACE.:\n* FRONT - front side of the document\n* BACK - back side of the document\n    "
-          enum:
-          - FRONT
-          - BACK
-          example: BACK
-        contentType:
-          type: string
-          description: Media content type
-          example: image/png
-      required:
-      - contentType
-      - id
-      - type
-    ConstraintViolationError:
+      - status
+      - violations
+    BadRequestApiError:
       type: object
       properties:
         status:
@@ -305,6 +273,27 @@ components:
       required:
       - id
       - list
+    ApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
     CustomValidationApiError:
       type: object
       properties:
@@ -347,7 +336,102 @@ components:
       - message
       - status
       - violations
+    OperationNotSupportedApiFieldError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    Media:
+      type: object
+      description: Information about media file
+      properties:
+        id:
+          type: string
+          description: Media id
+          example: c9c73416-6f77-11eb-b60f-0240214a8d4b
+        type:
+          type: string
+          description: "Media type:\n* DOCUMENT - identified person's document\n* FACE - identified person's face\n* REPORT - verification process report\n    "
+          enum:
+          - DOCUMENT
+          - FACE
+          - REPORT
+          example: DOCUMENT
+        subtype:
+          type: string
+          description: "Media subtype, for example type of the document. Subtype is empty, if the type is FACE.:\n* ID_CARD - identified person's id card\n* DRIVER_LICENSE - identified person's driver license\n* PASSPORT - identified person's passport\n* RESIDENCE_PERMIT - identified person's residence permit\n* UTILITY_BILL - identified person's proof of address\n    "
+          enum:
+          - ID_CARD
+          - DRIVER_LICENSE
+          - PASSPORT
+          - RESIDENCE_PERMIT
+          - UTILITY_BILL
+          example: ID_CARD
+        variant:
+          type: string
+          description: "Media variant, for example side of the document. Variant is empty, if the type is FACE.:\n* FRONT - front side of the document\n* BACK - back side of the document\n    "
+          enum:
+          - FRONT
+          - BACK
+          example: BACK
+        contentType:
+          type: string
+          description: Media content type
+          example: image/png
+      required:
+      - contentType
+      - id
+      - type
     MethodArgumentNotValidError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Descriptive error message
+      required:
+      - field
+      - message
+    MissingHeaderApiError:
       type: object
       properties:
         status:
@@ -379,90 +463,6 @@ components:
             $ref: '#/components/schemas/Media'
       required:
       - media
-    MissingHeaderApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    ApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    OperationNotSupportedApiFieldError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    BadRequestApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
   securitySchemes:
     apiKey:
       type: http

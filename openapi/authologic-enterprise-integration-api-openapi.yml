@@ -213,7 +213,86 @@ components:
       - message
       - status
       - violations
-    BadRequestApiError:
+    MethodArgumentNotValidError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    HeadlessPageArgError:
+      type: object
+      properties:
+        field:
+          type: string
+        code:
+          type: string
+      required:
+      - code
+      - field
+    MissingHeaderApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    HeadlessPage:
+      type: object
+      description: Page definition which should be rendered to the user
+      properties:
+        component:
+          type: string
+          description: Information needed to render the page
+        next:
+          type: string
+          description: Id of the page to which the user information should be submitted
+        args:
+          type: object
+          additionalProperties: {}
+          description: Option parameters which can be used by the user
+        errors:
+          type: array
+          description: Information about errors occurred when processing the data from the page
+          items:
+            $ref: '#/components/schemas/HeadlessPageArgError'
+    HeadlessNextPageRequest:
+      type: object
+      description: Map of parameters sent by the user
+      properties:
+        args:
+          type: object
+          additionalProperties:
+            type: string
+    OperationNotSupportedApiFieldError:
       type: object
       properties:
         status:
@@ -276,25 +355,18 @@ components:
       - message
       - status
       - violations
-    HeadlessPage:
+    Violation:
       type: object
-      description: Page definition which should be rendered to the user
       properties:
-        component:
+        field:
           type: string
-          description: Information needed to render the page
-        next:
+          description: Field name
+        message:
           type: string
-          description: Id of the page to which the user information should be submitted
-        args:
-          type: object
-          additionalProperties: {}
-          description: Option parameters which can be used by the user
-        errors:
-          type: array
-          description: Information about errors occurred when processing the data from the page
-          items:
-            $ref: '#/components/schemas/HeadlessPageArgError'
+          description: Descriptive error message
+      required:
+      - field
+      - message
     MethodArgumentTypeMismatchError:
       type: object
       properties:
@@ -316,7 +388,7 @@ components:
       - message
       - status
       - violations
-    OperationNotSupportedApiFieldError:
+    BadRequestApiError:
       type: object
       properties:
         status:
@@ -337,78 +409,6 @@ components:
       - message
       - status
       - violations
-    HeadlessPageArgError:
-      type: object
-      properties:
-        field:
-          type: string
-        code:
-          type: string
-      required:
-      - code
-      - field
-    MethodArgumentNotValidError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    Violation:
-      type: object
-      properties:
-        field:
-          type: string
-          description: Field name
-        message:
-          type: string
-          description: Descriptive error message
-      required:
-      - field
-      - message
-    MissingHeaderApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    HeadlessNextPageRequest:
-      type: object
-      description: Map of parameters sent by the user
-      properties:
-        args:
-          type: object
-          additionalProperties:
-            type: string
   securitySchemes:
     apiKey:
       type: http

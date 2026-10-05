@@ -1,0 +1,12 @@
+{
+ "url": "https://developer.authologic.com/openapi.json",
+ "requested_url": "https://developer.authologic.com/openapi.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 232458,
+ "sha256": "e22bf6fc51a7d9f868a3cb40968c0d6b45fd2e8465f8cc894a2df0ea9c0ad5d2",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the archived file is byte-identical to what the provider serves."
+}

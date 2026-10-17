@@ -99,7 +99,7 @@ paths:
           description: Server side error
 components:
   schemas:
-    MissingHeaderApiError:
+    ConstraintViolationError:
       type: object
       properties:
         status:
@@ -120,17 +120,92 @@ components:
       - message
       - status
       - violations
-    AffordabilitySourceOfFundsInformation:
+    AffordabilityResultDetails:
       type: object
       properties:
-        sourceOfFunds:
+        personalInformation:
+          $ref: '#/components/schemas/AffordabilityPersonalInformation'
+          description: Representation of the personal data collected in affordability assessment validation process
+        accountInformation:
+          $ref: '#/components/schemas/AffordabilityAccountInformation'
+          description: Representation of the data related with account collected in affordability assessment validation process
+        sourceOfFundsInformation:
+          $ref: '#/components/schemas/AffordabilitySourceOfFundsInformation'
+          description: Representation of the data related with source of funds information collected in affordability assessment validation process
+        documentInformation:
+          $ref: '#/components/schemas/AffordabilityDocumentInformation'
+          description: Representation of the data related with document collected in affordability assessment validation process
+        financialAnalysis:
+          $ref: '#/components/schemas/AffordabilityFinancialAnalysisInformation'
+          description: Summary of affordability assessment validation
+      title: AffordabilityResult
+    AffordabilityPersonalInformation:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: User name
+          example: Jan
+        lastName:
+          type: string
+          description: User surname
+          example: Kowalski
+        fullName:
+          type: string
+          description: Full surname
+          example: Jan Kowalski
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth
+        address:
+          $ref: '#/components/schemas/AffordabilityAddress'
+          description: Representation of address collected in affordability assessment validation process
+      title: AffordabilityPersonalInformation
+    OperationNotSupportedApiFieldError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
           type: array
-          description: List of sources of funds related to affordability results
+          description: Validation error list
           items:
-            $ref: '#/components/schemas/AffordabilitySourceOfFunds'
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
       required:
-      - sourceOfFunds
-      title: AffordabilitySourceOfFundsInformation
+      - message
+      - status
+      - violations
+    AffordabilityAccountInformation:
+      type: object
+      properties:
+        account:
+          type: array
+          description: List of account information
+          items:
+            $ref: '#/components/schemas/AffordabilityAccount'
+      required:
+      - account
+      title: AffordabilityAccountInformation
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Descriptive error message
+      required:
+      - field
+      - message
     AffordabilityAddress:
       type: object
       properties:
@@ -155,23 +230,7 @@ components:
           description: Country
           example: PL
       title: AffordabilityAddressInfo
-    AffordabilityFinancialAnalysisInformation:
-      type: object
-      properties:
-        income:
-          type: number
-          format: double
-          description: Summary income
-        expenditure:
-          type: number
-          format: double
-          description: Summary expenditure
-        currency:
-          type: string
-          description: Currency
-          example: EUR
-      title: AffordabilityFinancialAnalysisInformation
-    MethodArgumentTypeMismatchError:
+    MethodArgumentNotValidError:
       type: object
       properties:
         status:
@@ -192,17 +251,6 @@ components:
       - message
       - status
       - violations
-    Affordability:
-      type: object
-      properties:
-        items:
-          type: array
-          description: List of affordability assessment results
-          items:
-            $ref: '#/components/schemas/AffordabilityResultDetails'
-      required:
-      - items
-      title: Affordability
     AffordabilitySourceOfFunds:
       type: object
       properties:
@@ -271,85 +319,6 @@ components:
       - message
       - status
       - violations
-    AffordabilityCurrencyConversion:
-      type: object
-      properties:
-        convertedAmount:
-          type: number
-          format: double
-          description: Net income after conversion to target currency
-          example: 4766.9472
-        targetCurrency:
-          type: string
-          description: Target currency
-          example: USD
-        exchangeRate:
-          type: number
-          format: double
-          description: Exchange rate applied by provider
-          example: 1.177024
-      title: AffordabilityCurrencyConversion
-    ConstraintViolationError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    MethodArgumentNotValidError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    AffordabilityResultDetails:
-      type: object
-      properties:
-        personalInformation:
-          $ref: '#/components/schemas/AffordabilityPersonalInformation'
-          description: Representation of the personal data collected in affordability assessment validation process
-        accountInformation:
-          $ref: '#/components/schemas/AffordabilityAccountInformation'
-          description: Representation of the data related with account collected in affordability assessment validation process
-        sourceOfFundsInformation:
-          $ref: '#/components/schemas/AffordabilitySourceOfFundsInformation'
-          description: Representation of the data related with source of funds information collected in affordability assessment validation process
-        documentInformation:
-          $ref: '#/components/schemas/AffordabilityDocumentInformation'
-          description: Representation of the data related with document collected in affordability assessment validation process
-        financialAnalysis:
-          $ref: '#/components/schemas/AffordabilityFinancialAnalysisInformation'
-          description: Summary of affordability assessment validation
-      title: AffordabilityResult
     AffordabilityDocumentInformation:
       type: object
       properties:
@@ -386,73 +355,6 @@ components:
           description: Period end date that analysed document refers to
           example: '2023-12-31'
       title: AffordabilityDocumentInformation
-    AffordabilityPersonalInformation:
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: User name
-          example: Jan
-        lastName:
-          type: string
-          description: User surname
-          example: Kowalski
-        fullName:
-          type: string
-          description: Full surname
-          example: Jan Kowalski
-        birthDate:
-          type: string
-          format: date
-          description: Date of birth
-        address:
-          $ref: '#/components/schemas/AffordabilityAddress'
-          description: Representation of address collected in affordability assessment validation process
-      title: AffordabilityPersonalInformation
-    Violation:
-      type: object
-      properties:
-        field:
-          type: string
-          description: Field name
-        message:
-          type: string
-          description: Descriptive error message
-      required:
-      - field
-      - message
-    OperationNotSupportedApiFieldError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    AffordabilityAccountInformation:
-      type: object
-      properties:
-        account:
-          type: array
-          description: List of account information
-          items:
-            $ref: '#/components/schemas/AffordabilityAccount'
-      required:
-      - account
-      title: AffordabilityAccountInformation
     BadRequestApiError:
       type: object
       properties:
@@ -474,7 +376,25 @@ components:
       - message
       - status
       - violations
-    CustomValidationApiError:
+    AffordabilityCurrencyConversion:
+      type: object
+      properties:
+        convertedAmount:
+          type: number
+          format: double
+          description: Net income after conversion to target currency
+          example: 4766.9472
+        targetCurrency:
+          type: string
+          description: Target currency
+          example: USD
+        exchangeRate:
+          type: number
+          format: double
+          description: Exchange rate applied by provider
+          example: 1.177024
+      title: AffordabilityCurrencyConversion
+    MethodArgumentTypeMismatchError:
       type: object
       properties:
         status:
@@ -495,6 +415,22 @@ components:
       - message
       - status
       - violations
+    AffordabilityFinancialAnalysisInformation:
+      type: object
+      properties:
+        income:
+          type: number
+          format: double
+          description: Summary income
+        expenditure:
+          type: number
+          format: double
+          description: Summary expenditure
+        currency:
+          type: string
+          description: Currency
+          example: EUR
+      title: AffordabilityFinancialAnalysisInformation
     AffordabilityAccount:
       type: object
       properties:
@@ -529,6 +465,70 @@ components:
           description: Currency
           example: EUR
       title: AffordabilityAccount
+    CustomValidationApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MissingHeaderApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    Affordability:
+      type: object
+      properties:
+        items:
+          type: array
+          description: List of affordability assessment results
+          items:
+            $ref: '#/components/schemas/AffordabilityResultDetails'
+      required:
+      - items
+      title: Affordability
+    AffordabilitySourceOfFundsInformation:
+      type: object
+      properties:
+        sourceOfFunds:
+          type: array
+          description: List of sources of funds related to affordability results
+          items:
+            $ref: '#/components/schemas/AffordabilitySourceOfFunds'
+      required:
+      - sourceOfFunds
+      title: AffordabilitySourceOfFundsInformation
   securitySchemes:
     apiKey:
       type: http

@@ -213,38 +213,19 @@ components:
       - message
       - status
       - violations
-    MethodArgumentNotValidError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    HeadlessPageArgError:
+    Violation:
       type: object
       properties:
         field:
           type: string
-        code:
+          description: Field name
+        message:
           type: string
+          description: Descriptive error message
       required:
-      - code
       - field
-    MissingHeaderApiError:
+      - message
+    CustomValidationApiError:
       type: object
       properties:
         status:
@@ -284,14 +265,48 @@ components:
           description: Information about errors occurred when processing the data from the page
           items:
             $ref: '#/components/schemas/HeadlessPageArgError'
-    HeadlessNextPageRequest:
+    BadRequestApiError:
       type: object
-      description: Map of parameters sent by the user
       properties:
-        args:
-          type: object
-          additionalProperties:
-            type: string
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MissingHeaderApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
     OperationNotSupportedApiFieldError:
       type: object
       properties:
@@ -313,7 +328,15 @@ components:
       - message
       - status
       - violations
-    ApiError:
+    HeadlessNextPageRequest:
+      type: object
+      description: Map of parameters sent by the user
+      properties:
+        args:
+          type: object
+          additionalProperties:
+            type: string
+    MethodArgumentNotValidError:
       type: object
       properties:
         status:
@@ -334,39 +357,6 @@ components:
       - message
       - status
       - violations
-    CustomValidationApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    Violation:
-      type: object
-      properties:
-        field:
-          type: string
-          description: Field name
-        message:
-          type: string
-          description: Descriptive error message
-      required:
-      - field
-      - message
     MethodArgumentTypeMismatchError:
       type: object
       properties:
@@ -388,7 +378,17 @@ components:
       - message
       - status
       - violations
-    BadRequestApiError:
+    HeadlessPageArgError:
+      type: object
+      properties:
+        field:
+          type: string
+        code:
+          type: string
+      required:
+      - code
+      - field
+    ApiError:
       type: object
       properties:
         status:

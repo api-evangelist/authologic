@@ -433,6 +433,96 @@ paths:
           description: Server side error
 components:
   schemas:
+    ConstraintViolationError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Descriptive error message
+      required:
+      - field
+      - message
+    Account:
+      type: object
+      description: Information about transactions for a given account
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: The date for which the data is valid
+          example: '2020-09-24T08:27:14.515Z'
+        balance:
+          type: integer
+          format: int32
+          description: Account balance in basic units - e.g. in cents
+          example: 10030
+        bank:
+          type: string
+          description: Bank's SWIFT / BIC code
+          example: BREXPLPW
+        accountId:
+          type: string
+          description: Unique account identifier. All transactions from one account have the same ID
+          example: PL68249000050000400075212326
+        currency:
+          type: string
+          description: Currency code for the account
+          example: PLN
+        activationDate:
+          type: string
+          format: date
+          description: The date when the account was opened or the date of the oldest transaction found
+          example: '2020-09-24'
+      required:
+      - accountId
+      - bank
+      - currency
+      - date
+    CustomValidationApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
     TransactionStatistics:
       type: object
       description: Information about transaction statistics for a given account
@@ -500,61 +590,18 @@ components:
       - currency
       - dateFirst
       - dateLast
-    ConstraintViolationError:
+    Accounts:
       type: object
       properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
+        items:
           type: array
-          description: Validation error list
+          description: List of transaction information for each account
           items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
+            $ref: '#/components/schemas/Account'
       required:
-      - message
-      - status
-      - violations
-    Violation:
-      type: object
-      properties:
-        field:
-          type: string
-          description: Field name
-        message:
-          type: string
-          description: Descriptive error message
-      required:
-      - field
-      - message
-    MethodArgumentNotValidError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    OperationNotSupportedApiFieldError:
+      - items
+      title: TransactionsInfo
+    BadRequestApiError:
       type: object
       properties:
         status:
@@ -596,6 +643,69 @@ components:
       - message
       - status
       - violations
+    OperationNotSupportedApiFieldError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    MethodArgumentNotValidError:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Response status
+        message:
+          type: string
+          description: Descriptive error message
+        violations:
+          type: array
+          description: Validation error list
+          items:
+            $ref: '#/components/schemas/Violation'
+        statusDetail:
+          type: string
+          description: Response status detailed information
+      required:
+      - message
+      - status
+      - violations
+    TransactionsStatistics:
+      type: object
+      properties:
+        dateFrom:
+          type: string
+          format: date-time
+          description: The starting date of the search criteria or the date of the first transaction for all accounts if the criteria was empty
+          example: '2020-07-24T08:00:00Z'
+        dateTo:
+          type: string
+          format: date-time
+          description: End date of the search criteria or the last transaction date for all accounts if the criteria was empty
+          example: '2020-08-24T00:00:00Z'
+        items:
+          type: array
+          description: List of transaction statistics for each account separately
+          items:
+            $ref: '#/components/schemas/TransactionStatistics'
+      required:
+      - items
+      title: TransactionsStatistics
     Transaction:
       type: object
       description: Information about the transaction
@@ -686,132 +796,6 @@ components:
       - id
       - status
       - type
-    ApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    CustomValidationApiError:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Response status
-        message:
-          type: string
-          description: Descriptive error message
-        violations:
-          type: array
-          description: Validation error list
-          items:
-            $ref: '#/components/schemas/Violation'
-        statusDetail:
-          type: string
-          description: Response status detailed information
-      required:
-      - message
-      - status
-      - violations
-    TransactionsStatistics:
-      type: object
-      properties:
-        dateFrom:
-          type: string
-          format: date-time
-          description: The starting date of the search criteria or the date of the first transaction for all accounts if the criteria was empty
-          example: '2020-07-24T08:00:00Z'
-        dateTo:
-          type: string
-          format: date-time
-          description: End date of the search criteria or the last transaction date for all accounts if the criteria was empty
-          example: '2020-08-24T00:00:00Z'
-        items:
-          type: array
-          description: List of transaction statistics for each account separately
-          items:
-            $ref: '#/components/schemas/TransactionStatistics'
-      required:
-      - items
-      title: TransactionsStatistics
-    Accounts:
-      type: object
-      properties:
-        items:
-          type: array
-          description: List of transaction information for each account
-          items:
-            $ref: '#/components/schemas/Account'
-      required:
-      - items
-      title: TransactionsInfo
-    Transactions:
-      type: object
-      properties:
-        more:
-          type: boolean
-          description: Information whether there are more pages available
-          example: true
-        items:
-          type: array
-          description: List of transactions
-          items:
-            $ref: '#/components/schemas/Transaction'
-      required:
-      - items
-      - more
-      title: Transactions
-    Account:
-      type: object
-      description: Information about transactions for a given account
-      properties:
-        date:
-          type: string
-          format: date-time
-          description: The date for which the data is valid
-          example: '2020-09-24T08:27:14.515Z'
-        balance:
-          type: integer
-          format: int32
-          description: Account balance in basic units - e.g. in cents
-          example: 10030
-        bank:
-          type: string
-          description: Bank's SWIFT / BIC code
-          example: BREXPLPW
-        accountId:
-          type: string
-          description: Unique account identifier. All transactions from one account have the same ID
-          example: PL68249000050000400075212326
-        currency:
-          type: string
-          description: Currency code for the account
-          example: PLN
-        activationDate:
-          type: string
-          format: date
-          description: The date when the account was opened or the date of the oldest transaction found
-          example: '2020-09-24'
-      required:
-      - accountId
-      - bank
-      - currency
-      - date
     MethodArgumentTypeMismatchError:
       type: object
       properties:
@@ -833,7 +817,23 @@ components:
       - message
       - status
       - violations
-    BadRequestApiError:
+    Transactions:
+      type: object
+      properties:
+        more:
+          type: boolean
+          description: Information whether there are more pages available
+          example: true
+        items:
+          type: array
+          description: List of transactions
+          items:
+            $ref: '#/components/schemas/Transaction'
+      required:
+      - items
+      - more
+      title: Transactions
+    ApiError:
       type: object
       properties:
         status:

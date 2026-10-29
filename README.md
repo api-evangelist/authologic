@@ -1,4 +1,4 @@
-# Authologic (authologic)
+# Authologic
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,121 +66,150 @@
 
 Authologic is an identity verification platform providing businesses with a single API to aggregate multiple ID verification methods including government-issued digital IDs, Bank IDs, document OCR, liveness checks, and AML screening. It supports seamless KYC/KYB workflow integration for businesses across multiple countries.
 
-**URL:** [https://authologic.com](https://authologic.com)
+**Areas:** AML · Digital Identity · eID · Identity Verification · KYB · KYC · Liveness Check
 
-**Run:** [Capabilities Using Naftiko](https://github.com/naftiko/fleet?utm_source=api-evangelist&utm_medium=readme&utm_campaign=company-api-evangelist&utm_content=repo)
+## Authologic on APIs.io
 
-## Tags:
+Everything profiled for Authologic is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/authologic/](https://apis.io/providers/authologic/)** — or go straight to one of the APIs or properties below.
 
- - AML, Digital Identity, eID, Identity Verification, KYB, KYC, Liveness Check
+### APIs (11)
 
-## Timestamps
+- [Authologic Identity API](https://apis.io/apis/authologic/authologic-identity-api/) — The Authologic Identity API enables businesses to initiate identity verification processes and receive results programmatically. Supports document…
+- [Authologic Data Verification API](https://apis.io/apis/authologic/authologic-data-verification-api/) — The Authologic Data Verification API enables verification of personal data against authoritative sources including government databases and credit bureaus.
+- [Authologic Enquiry API](https://apis.io/apis/authologic/authologic-enquiry-api/) — The Authologic Enquiry API enables background checks and identity enquiries against national and international data sources for enhanced due diligence.
+- [Authologic Advanced API](https://apis.io/apis/authologic/authologic-advanced-api/) — 4. Advanced methods.
+- [Authologic Affordability assessment API](https://apis.io/apis/authologic/authologic-affordability-assessment-api/) — 7. Product: Affordability assessment
+- [Authologic AML API](https://apis.io/apis/authologic/authologic-aml-api/) — The Authologic AML API enables Anti-Money Laundering screening combined with identity verification in a single integrated flow for KYC/AML compliance.
+- [Authologic Bank API](https://apis.io/apis/authologic/authologic-bank-api/) — 2. Product: Bank Transactions
+- [Authologic Conversation API](https://apis.io/apis/authologic/authologic-conversation-api/) — 1. Base Methods needed for the verification process.
+- [Authologic Database Verification API](https://apis.io/apis/authologic/authologic-database-verification-api/) — 8. Product: Database Verification
+- [Authologic Enterprise Integration API](https://apis.io/apis/authologic/authologic-enterprise-integration-api/) — 6. Enterprise Integration
+- [Authologic Metadata API](https://apis.io/apis/authologic/authologic-metadata-api/) — 5. Advanced: Metadata
 
-- **Created:** 2025-05-02
-- **Modified:** 2026-04-19
+### Published properties
 
-## APIs
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-### Authologic Identity API
-The Authologic Identity API enables businesses to initiate identity verification processes and receive results programmatically. Supports document verification, eID, Bank ID, and biometric liveness check methods via a single integration.
+#### AsyncAPI (1)
 
-**Human URL:** [https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration](https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration)
+Event-driven and webhook contracts.
 
-#### Tags:
+- [Authologic Callbacks Webhooks](https://apis.io/asyncapis/authologic/authologic-callbacks-webhooks/)
 
- - eID, Identity Verification, KYC, Liveness
+#### MCP servers (1)
 
-#### Properties
+Model Context Protocol servers that expose the API to agents.
 
-- [Documentation](https://developer.authologic.com/docs/developer-documentation/product-identity-api-integration)
-- [GettingStarted](https://developer.authologic.com/docs/developer-documentation/integration-overview)
+- [authologic-mcp.yml](https://apis.io/servers/authologic/authologic-mcp-yml/)
 
-### Authologic AML API
-The Authologic AML API enables Anti-Money Laundering screening combined with identity verification in a single integrated flow for KYC/AML compliance.
+#### Agentic access (1)
 
-**Human URL:** [https://developer.authologic.com/docs/developer-documentation/product-aml-api-integration-with-identity](https://developer.authologic.com/docs/developer-documentation/product-aml-api-integration-with-identity)
+Which operations an agent can call, which act, and which need a human in the loop.
 
-#### Tags:
+- [Authologic Agentic Access](https://apis.io/agentic-access/authologic/authologic-agentic-access/)
 
- - AML, Compliance, Identity Verification, KYC
+#### Overlays (1)
 
-#### Properties
+OpenAPI overlays, including conversational phrasing for each operation.
 
-- [Documentation](https://developer.authologic.com/docs/developer-documentation/product-aml-api-integration-with-identity)
+- [Authologic Customer Api Overlay](https://apis.io/overlays/authologic/authologic-customer-api-overlay/)
 
-### Authologic Data Verification API
-The Authologic Data Verification API enables verification of personal data against authoritative sources including government databases and credit bureaus.
+#### Security (3)
 
-**Human URL:** [https://developer.authologic.com/docs/developer-documentation/product-data-verification-api-integration](https://developer.authologic.com/docs/developer-documentation/product-data-verification-api-integration)
+Authentication, trust centre, and vulnerability disclosure.
 
-#### Tags:
+- [Authologic Authentication](https://apis.io/security/authologic/authologic-authentication/)
+- [Authologic Domain Security](https://apis.io/security/authologic/authologic-domain-security/)
+- [Authologic Trust Center](https://apis.io/security/authologic/authologic-trust-center/)
 
- - Data Verification, Identity, KYC
+#### OAuth scopes (1)
 
-#### Properties
+The permissions the API asks for.
 
-- [Documentation](https://developer.authologic.com/docs/developer-documentation/product-data-verification-api-integration)
+- [Authologic Scopes](https://apis.io/scopes/authologic/authologic-scopes/)
 
-### Authologic Enquiry API
-The Authologic Enquiry API enables background checks and identity enquiries against national and international data sources for enhanced due diligence.
+#### Plans and pricing (1)
 
-**Human URL:** [https://developer.authologic.com/docs/developer-documentation/product-enquiry-api-integration](https://developer.authologic.com/docs/developer-documentation/product-enquiry-api-integration)
+Published plans, tiers and prices.
 
-#### Tags:
+- [Authologic Plans Pricing](https://apis.io/plans/authologic/authologic-plans-pricing/)
 
- - Background Check, Identity, KYB
+#### Rate limits (1)
 
-#### Properties
+Published request limits.
 
-- [Documentation](https://developer.authologic.com/docs/developer-documentation/product-enquiry-api-integration)
+- [Authologic Rate Limits](https://apis.io/rate-limits/authologic/authologic-rate-limits/)
 
-## Common Properties
+#### FinOps (1)
+
+What the API costs to run, by operation.
+
+- [Authologic Finops](https://apis.io/finops/authologic/authologic-finops/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
 - [Website](https://authologic.com/)
-- [Portal](https://developer.authologic.com/)
 - [Documentation](https://developer.authologic.com/docs/developer-documentation/integration-overview)
-- [GettingStarted](https://developer.authologic.com/docs/developer-documentation/integration-overview)
+- [Getting started](https://developer.authologic.com/docs/developer-documentation/integration-overview)
+- [API reference](https://developer.authologic.com/api)
+- [Sign up](https://omnipanel.authologic.com/signup)
 - [Blog](https://authologic.com/blog/)
-- [SignUp](https://authologic.com/)
-- [PrivacyPolicy](https://authologic.com/privacy-policy/)
+- [Terms of service](https://authologic.com/terms-of-use/)
+- [Privacy policy](https://authologic.com/privacy-policy/)
 
-## Features
+## API Evangelist rating
 
-| Name | Description |
-|------|-------------|
-| Single API Integration | One API integration provides access to multiple identity verification methods without separate integrations per provider. |
-| eID and Bank ID Support | Native support for government-issued digital IDs and Bank IDs across multiple European countries for high-trust verification. |
-| Document OCR and Liveness | Automated document scanning with OCR and biometric liveness detection to prevent spoofing and fraud. |
-| AML Screening | Integrated anti-money laundering screening against sanctions lists, PEP databases, and adverse media sources. |
-| OmniLink | No-integration verification flow using a hosted link for simple verification without technical implementation. |
-| Modular Workflows | Compose verification workflows from modular steps combining document, biometric, data, and AML checks. |
+**Kin Score 51.6** — developing · rubric 0.25.0 · scored 2026-10-23
 
-## Use Cases
+| Facet | Score |
+|---|---|
+| Discoverability | 73.2 |
+| Contract quality | 63.1 |
+| Contract governance | 18.2 |
+| Operational transparency | 15.8 |
+| Developer ergonomics | 73.2 |
+| Access clarity | 36.8 |
 
-| Name | Description |
-|------|-------------|
-| Customer Onboarding KYC | Verify customer identities during registration and onboarding for financial services, fintech, and regulated industries. |
-| AML Compliance | Combine identity verification with AML screening to meet financial institution compliance requirements. |
-| Business Verification (KYB) | Verify business identities and beneficial owners for B2B onboarding and corporate due diligence. |
-| Age Verification | Verify user ages using official ID documents for age-restricted products and services. |
+**Agent readiness 48.4** — agent-ready (gated down from agent-native)
 
-## Integrations
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | — |
+| Auth Clarity | served (partial credit) |
+| Idempotency | documented (partial credit) |
+| Error Semantics | verified |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | distinct |
 
-| Name | Description |
-|------|-------------|
-| European eID Networks | Integration with national eID infrastructures across multiple European countries for government-backed identity verification. |
-| Bank ID Systems | Connection to Bank ID systems in Poland, Sweden, Norway, and other markets for bank-verified identity assurance. |
-| Existing KYC Workflows | Designed to integrate alongside existing KYC/AML infrastructure as modular workflow components. |
+**Regulatory alignment 37.7** — AI & Biometrics
 
-## Solutions
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/authologic/](https://apis.io/providers/authologic/).
 
-| Name | Description |
-|------|-------------|
-| Financial Services KYC | Complete KYC solution for banks, fintechs, and payment providers with AML screening and document verification. |
-| Digital Identity Verification | Aggregate multiple ID verification methods via single API for flexible identity assurance across user populations. |
+## How this profile is made
 
-## Maintainers
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
 
-**FN:** Kin Lane
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Authologic: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
 
-**Email:** kin@apievangelist.com
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/authologic/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
